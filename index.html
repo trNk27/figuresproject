@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrailMark</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="lib/mock-api.js"></script>
+  <style>
+    :root {
+      --bg: hsl(145, 16%, 8%);
+      --surface: hsla(145, 12%, 13%, 0.72);
+      --surface2: hsla(145, 12%, 18%, 0.85);
+      --border: hsla(145, 12%, 22%, 0.45);
+      --green: hsl(145, 40%, 30%);
+      --green-l: hsl(145, 45%, 45%);
+      --amber: hsl(38, 72%, 52%);
+      --amber-l: hsl(38, 75%, 60%);
+      --text: hsl(145, 15%, 90%);
+      --muted: hsl(145, 10%, 62%);
+      --red: hsl(355, 68%, 55%);
+      --nav: 68px;
+      --head: 60px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      overflow-x: hidden;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    h1, h2, h3, .logo, .section-title, .modal-title, .wh-temp, .ghv {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+    }
+    .app-head {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: var(--head);
+      background: hsla(145, 16%, 8%, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--amber);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo i {
+      color: var(--green-l);
+      filter: drop-shadow(0 0 8px var(--green-l));
+      animation: spin-crosshairs 12s linear infinite;
+    }
+    @keyframes spin-crosshairs {
+      100% { transform: rotate(360deg); }
+    }
+    .head-right { display: flex; gap: 8px; }
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .icon-btn:hover {
+      color: var(--text);
+      background: var(--surface2);
+      transform: scale(1.05);
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: var(--nav);
+      background: hsla(145, 16%, 8%, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      z-index: 100;
+      padding-bottom: 8px;
+    }
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .nav-btn i {
+      font-size: 1.25rem;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-btn.active { color: var(--amber-l); }
+    .nav-btn.active i {
+      transform: scale(1.2) translateY(-2px);
+      text-shadow: 0 0 10px rgba(224, 168, 64, 0.4);
+    }
+    .page {
+      display: none;
+      padding: calc(var(--head) + 12px) 0 calc(var(--nav) + 16px);
+      min-height: 100vh;
+      animation: fade-in 0.3s ease-out;
+    }
+    .page.active { display: block; }
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card {
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin: 0 12px 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      border-color: hsla(38, 72%, 52%, 0.25);
+    }
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      padding: 8px 16px 6px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .pill-green {
+      background: rgba(61, 107, 79, 0.18);
+      color: #8be0a7;
+      border: 1px solid rgba(61, 107, 79, 0.4);
+    }
+    .pill-amber {
+      background: rgba(201, 148, 58, 0.15);
+      color: var(--amber-l);
+      border: 1px solid rgba(201, 148, 58, 0.3);
+    }
+    .pill-blue {
+      background: rgba(58, 130, 201, 0.15);
+      color: #8cc4f0;
+      border: 1px solid rgba(58, 130, 201, 0.3);
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-primary { background: var(--green); color: #fff; box-shadow: 0 4px 12px rgba(61,107,79,0.3); }
+    .btn-primary:hover { background: var(--green-l); transform: translateY(-1px); }
+    .btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: var(--muted); background: var(--surface2); }
+    .btn-amber { background: var(--amber); color: #fff; box-shadow: 0 4px 12px rgba(201,148,58,0.25); }
+    .btn-amber:hover { background: var(--amber-l); transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.5; cursor: default; transform: none !important; }
+    
+    /* Feed & Posts */
+    .compose-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .compose-prompt {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 10px 18px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .compose-prompt:hover {
+      border-color: var(--muted);
+      background: hsla(145, 12%, 22%, 0.4);
+    }
+    .post {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .post-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px 8px;
+    }
+    .post-meta { flex: 1; min-width: 0; }
+    .post-name { font-size: 0.92rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .post-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .post-body { padding: 8px 16px 10px; }
+    .post-caption { font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: hsl(145, 10%, 88%); }
+    .post-actions {
+      display: flex;
+      border-top: 1px solid var(--border);
+      padding: 4px 0;
+    }
+    .post-action {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .post-action:hover { color: var(--text); }
+    .post-action.liked { color: #eb6b5b; text-shadow: 0 0 10px rgba(235,107,91,0.25); }
+    
+    /* Tagged Harvest in Post */
+    .harvest-tag {
+      margin: 8px 16px;
+      background: hsla(145, 12%, 18%, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .harvest-tag-lbl {
+      font-size: 0.64rem;
+      color: var(--amber);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+    .harvest-tag-title { font-size: 0.95rem; font-weight: 800; }
+    .harvest-tag-meta {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 4px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .harvest-tag-meta span { display: flex; align-items: center; gap: 4px; }
+    
+    /* Shot Preview Vector Block */
+    .post-shot-preview, .log-shot-preview {
+      width: 72px;
+      height: 52px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      cursor: zoom-in;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+    .post-shot-preview:hover, .log-shot-preview:hover {
+      border-color: var(--amber);
+      background: hsla(145, 12%, 22%, 0.8);
+      transform: scale(1.05);
+    }
+    .post-shot-preview svg, .log-shot-preview svg {
+      width: 100%;
+      height: 100%;
+      max-height: 48px;
+    }
+
+    /* Shot marking container in modal */
+    .shot-container {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      margin: 10px auto;
+      background: hsla(145, 12%, 8%, 0.8);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      cursor: crosshair;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .shot-container svg {
+      width: 100%;
+      height: auto;
+      max-height: 160px;
+      display: block;
+    }
+    .hit-marker {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      margin-left: -12px;
+      margin-top: -12px;
+      border-radius: 50%;
+      background: rgba(196, 69, 54, 0.4);
+      border: 2px solid #eb6b5b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      animation: pulse-marker 1.6s infinite;
+      z-index: 10;
+    }
+    .hit-marker::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(255,255,255,0.8);
+    }
+    @keyframes pulse-marker {
+      0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(196, 69, 54, 0.8); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(196, 69, 54, 0); }
+      100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(196, 69, 54, 0); }
+    }
+
+    .feed-state { text-align: center; padding: 48px 24px; color: var(--muted); }
+    .feed-state i { font-size: 2.2rem; display: block; margin-bottom: 12px; color: var(--border); }
+    .feed-state strong { color: var(--text); display: block; margin-bottom: 6px; font-size: 1.05rem; }
+    
+    /* Comments */
+    .post-comments { border-top: 1px solid var(--border); background: hsla(145, 12%, 10%, 0.4); }
+    .comment-list { padding: 12px 16px 4px; }
+    .comment { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start; }
+    .comment-bubble {
+      flex: 1;
+      background: var(--surface2);
+      border-radius: 16px 16px 16px 4px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+    }
+    .comment-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .comment-author { font-size: 0.8rem; font-weight: 700; }
+    .comment-time { font-size: 0.68rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .comment-text { font-size: 0.86rem; line-height: 1.5; color: hsl(145, 8%, 88%); }
+    .comment-input-row { display: flex; gap: 10px; align-items: center; padding: 10px 16px 14px; }
+    .comment-input-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 10px 16px;
+      color: var(--text);
+      font-size: 0.86rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .comment-input-row input:focus { border-color: var(--green-l); background: hsla(145, 12%, 22%, 0.4); }
+    .comment-send {
+      background: var(--green);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .comment-send:hover { background: var(--green-l); transform: scale(1.05); }
+    
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: calc(var(--nav) + 20px);
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--amber);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      padding: 10px 24px;
+      border-radius: 30px;
+      z-index: 300;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 10px 25px rgba(201, 148, 58, 0.4);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    
+    /* Ballistics & Forms */
+    .balli-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    select, input, textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      width: 100%;
+      outline: none;
+      transition: all 0.2s;
+    }
+    select:focus, input:focus, textarea:focus { border-color: var(--green-l); background: hsla(145, 12%, 22%, 0.4); }
+    select option { background: hsl(145, 16%, 10%); }
+    .traj-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .traj-table th {
+      color: var(--muted);
+      font-weight: 800;
+      text-align: right;
+      padding: 8px;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .traj-table th:first-child, .traj-table td:first-child { text-align: left; }
+    .traj-table td { padding: 9px 8px; border-bottom: 1px solid rgba(38,48,41,0.4); text-align: right; font-variant-numeric: tabular-nums; }
+    .traj-table tr:last-child td { border-bottom: none; }
+    .drop-pos { color: #8be0a7; font-weight: 600; }
+    .drop-neg { color: #eb6b5b; font-weight: 600; }
+    
+    /* Conditions & Weather */
+    .weather-hero {
+      background: linear-gradient(135deg, hsl(145, 45%, 10%), hsl(145, 35%, 16%));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin: 0 12px 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .weather-hero::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 130px;
+      height: 130px;
+      background: hsla(145, 45%, 45%, 0.08);
+      border-radius: 50%;
+      filter: blur(20px);
+    }
+    .wh-temp { font-size: 3.6rem; font-weight: 300; letter-spacing: -2px; line-height: 1; color: #fff; }
+    .wh-cond { font-size: 0.95rem; color: hsl(145, 15%, 85%); margin-top: 6px; }
+    .wh-loc { font-size: 0.74rem; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .wh-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .wh-stat { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius-sm); padding: 10px 14px; flex: 1; min-width: 85px; }
+    .wh-stat-val { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .wh-stat-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    
+    .hunt-score {
+      background: linear-gradient(135deg, hsl(145, 30%, 14%), hsl(145, 20%, 18%));
+      border: 1.5px solid hsla(145, 45%, 45%, 0.35);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin: 0 12px 12px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 8px 24px rgba(61,107,79,0.15);
+    }
+    .score-ring { width: 76px; height: 76px; flex-shrink: 0; position: relative; }
+    .score-ring svg { transform: rotate(-90deg); }
+    .score-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.4rem; font-weight: 800; color: var(--amber-l); font-family: 'Outfit'; }
+    .score-info h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 6px; color: #fff; }
+    .score-info p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    
+    .wind-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin: 0 12px 12px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .wind-compass { width: 95px; height: 95px; flex-shrink: 0; }
+    .wind-compass svg { width: 100%; height: 100%; }
+    .forecast { display: flex; gap: 8px; padding: 0 12px 12px; overflow-x: auto; scrollbar-width: none; }
+    .forecast::-webkit-scrollbar { display: none; }
+    .fc-day { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; flex-shrink: 0; min-width: 75px; text-align: center; transition: all 0.2s; }
+    .fc-day:hover { border-color: var(--amber); }
+    .fc-day-name { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 800; }
+    .fc-icon { font-size: 1.5rem; margin: 8px 0; }
+    .fc-hi { font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .fc-lo { font-size: 0.8rem; color: var(--muted); }
+    
+    /* Log List & Stats */
+    .log-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 12px 12px; }
+    .log-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+    .log-stat-val { font-size: 1.5rem; font-weight: 800; color: var(--amber-l); font-family: 'Outfit'; }
+    .log-stat-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    
+    .log-entry {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin: 0 12px 10px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .log-entry:hover { border-color: var(--border-glow); }
+    .log-entry-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .log-entry-body { flex: 1; min-width: 0; }
+    .log-entry-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .log-entry-meta { font-size: 0.76rem; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+    .log-entry-meta span { display: flex; align-items: center; gap: 4px; }
+    .log-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: calc(var(--nav) + 20px);
+      right: max(16px, calc(50% - 224px));
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--amber);
+      border: none;
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(201, 148, 58, 0.4);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 90;
+    }
+    .fab:hover { background: var(--amber-l); transform: scale(1.1) rotate(90deg); }
+    
+    /* Profile Cover & Header */
+    .profile-cover {
+      height: 140px;
+      background: linear-gradient(135deg, hsl(145, 45%, 8%), hsl(145, 30%, 15%), hsl(145, 40%, 12%));
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .profile-cover::after {
+      content: '🌲🦌🌲🌲🦅🌲';
+      position: absolute;
+      bottom: -8px;
+      font-size: 2.2rem;
+      opacity: 0.15;
+      letter-spacing: 10px;
+      width: 100%;
+      text-align: center;
+    }
+    .profile-head { padding: 0 20px 20px; }
+    .profile-av {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 4px solid var(--bg);
+      margin-top: -40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .profile-name { font-size: 1.25rem; font-weight: 800; margin-top: 10px; }
+    .profile-handle { font-size: 0.82rem; color: var(--muted); margin-top: 1px; }
+    .profile-bio { font-size: 0.88rem; line-height: 1.55; margin-top: 10px; color: hsl(145, 8%, 88%); }
+    .profile-stats { display: flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 16px; background: var(--surface); }
+    .profile-stat { flex: 1; padding: 12px 8px; text-align: center; border-right: 1px solid var(--border); transition: background 0.2s; }
+    .profile-stat:hover { background: var(--surface2); }
+    .profile-stat:last-child { border-right: none; }
+    .profile-stat-val { font-size: 1.15rem; font-weight: 800; color: var(--amber-l); font-family: 'Outfit'; }
+    .profile-stat-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    
+    /* Modals & Overlays */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      animation: modal-bg-fade 0.25s ease-out;
+    }
+    .modal-overlay.open { display: flex; }
+    @keyframes modal-bg-fade { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+      animation: modal-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modal-slide-up {
+      from { transform: translateY(120px); }
+      to { transform: translateY(0); }
+    }
+    .modal-handle { width: 44px; height: 5px; background: var(--border); border-radius: 3px; margin: 0 auto 18px; }
+    .modal-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-grid .full { grid-column: 1 / -1; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+    .modal-actions .btn { flex: 1; justify-content: center; padding: 12px; }
+    .img-preview-wrap { position: relative; margin-top: 12px; border-radius: 12px; overflow: hidden; display: none; border: 1.5px solid var(--border); }
+    .img-preview-wrap img { width: 100%; max-height: 240px; object-fit: cover; display: block; }
+    .img-remove {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.78);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .img-remove:hover { background: var(--red); }
+    
+    /* Search & Sheets */
+    .search-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      background: var(--bg);
+      display: none;
+      flex-direction: column;
+      max-width: 480px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .search-overlay.open { display: flex; }
+    .search-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .search-head input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 24px;
+      padding: 10px 18px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+    .search-results { flex: 1; overflow-y: auto; }
+    .user-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+    .user-row:hover { background: var(--surface2); }
+    
+    .sheet-stats { display: flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 14px; background: var(--surface2); }
+    .sheet-stat { flex: 1; padding: 12px 8px; text-align: center; border-right: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+    .sheet-stat:last-child { border-right: none; cursor: default; }
+    .sheet-stat:not(:last-child):hover { background: hsla(145, 12%, 22%, 0.4); }
+    .sheet-stat-val { font-size: 1.1rem; font-weight: 800; color: var(--amber-l); font-family: 'Outfit'; }
+    .sheet-stat-lbl { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    
+    /* Lightbox & Games */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 400;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 24px;
+      cursor: zoom-out;
+      animation: modal-bg-fade 0.25s ease-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+    
+    .game-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, hsl(145, 45%, 8%), hsl(145, 55%, 5%));
+      z-index: 400;
+      display: none;
+      flex-direction: column;
+      max-width: 480px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .game-overlay.open { display: flex; }
+    .game-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+    .ghv { font-size: 1.55rem; font-weight: 900; line-height: 1; }
+    .ghl { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+    
+    .jagd-row { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+    .jagd-row:last-child { border-bottom: none; }
+    .jagd-months { display: flex; gap: 3px; margin-left: auto; flex-shrink: 0; }
+    .jagd-m { width: 20px; height: 20px; border-radius: 4px; font-size: 0.54rem; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .jagd-m.on { background: rgba(61,107,79,0.35); color: #8be0a7; }
+    .jagd-m.now { background: var(--amber); color: #1a1005; transform: scale(1.1); box-shadow: 0 0 8px rgba(201,148,58,0.5); }
+    .jagd-m.off { background: var(--surface2); color: var(--border); }
+    
+    @media(max-width:380px) { .wh-temp { font-size: 2.9rem; } }
+  </style>
+</head>
+<body>
+
+<header class="app-head">
+  <div class="logo"><i class="fa-solid fa-crosshairs"></i> TrailMark</div>
+  <div class="head-right">
+    <button class="icon-btn" onclick="showSearch()" title="Jäger suchen"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button class="icon-btn" onclick="logout()" title="Abmelden"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══ FEED ═══ -->
+<div id="page-feed" class="page active">
+  <div class="compose-bar">
+    <div id="compose-avatar-mini" style="flex-shrink:0"></div>
+    <div class="compose-prompt" onclick="openPostModal()">Was war los draußen?</div>
+    <button class="icon-btn" onclick="openPostModal(true)" title="Foto hinzufügen"><i class="fa-regular fa-image"></i></button>
+  </div>
+  <div id="feed-loading" class="feed-state"><i class="fa-solid fa-spinner fa-spin"></i>Feed wird geladen…</div>
+  <div id="feed-empty" class="feed-state" style="display:none">
+    <i class="fa-solid fa-users"></i>
+    <strong>Feed ist leer</strong>
+    Folge anderen Jägern oder erstelle deinen ersten Post.
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showSearch()"><i class="fa-solid fa-user-plus"></i> Jäger finden</button>
+      <button class="btn btn-outline" onclick="openPostModal()"><i class="fa-solid fa-pen"></i> Post erstellen</button>
+    </div>
+  </div>
+  <div id="feed-posts"></div>
+</div>
+
+<!-- ═══ BALLISTICS ═══ -->
+<div id="page-ballistics" class="page">
+  <div class="section-title">Ballistikrechner</div>
+  <div class="card">
+    <div class="balli-form">
+      <div class="form-group full">
+        <label>Patrone / Ladung</label>
+        <select id="b-cart">
+          <option value="308win">.308 Win 168gr SMK (BC 0.475)</option>
+          <option value="3006">.30-06 Sprg 165gr (BC 0.435)</option>
+          <option value="65cm" selected>6.5 Creedmoor 140gr (BC 0.535)</option>
+          <option value="300wm">.300 Win Mag 180gr (BC 0.507)</option>
+          <option value="243">.243 Win 95gr (BC 0.379)</option>
+          <option value="7mm">7mm Rem Mag 162gr (BC 0.572)</option>
+          <option value="338">.338 Lapua 300gr (BC 0.618)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Nulldistanz (m)</label><input type="number" id="b-zero" value="100" min="50" max="300" step="25"></div>
+      <div class="form-group"><label>Windgeschwindigkeit (km/h)</label><input type="number" id="b-wind" value="15" min="0" max="80"></div>
+      <div class="form-group"><label>Temperatur (°C)</label><input type="number" id="b-temp" value="10" min="-30" max="45"></div>
+      <div class="form-group"><label>Höhe (m)</label><input type="number" id="b-alt" value="600" min="0" max="4500" step="100"></div>
+      <div class="form-group full" style="margin-top:4px">
+        <button class="btn btn-amber" style="width:100%;justify-content:center" onclick="runBallistics()">
+          <i class="fa-solid fa-calculator"></i> Trajektorie berechnen
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="balli-results" style="display:none">
+    <div class="section-title">Trajektorie <span id="balli-sub" style="color:var(--text);font-weight:400;text-transform:none;letter-spacing:0;font-size:.78rem"></span></div>
+    <div class="card" style="padding:12px 8px">
+      <table class="traj-table">
+        <thead><tr><th>Dist (m)</th><th>m/s</th><th>J</th><th>Abf (cm)</th><th>MOA</th><th>Wind (cm)</th></tr></thead>
+        <tbody id="traj-body"></tbody>
+      </table>
+    </div>
+    <div class="section-title">Windversatz</div>
+    <div class="card"><div id="wind-guide" style="font-size:.84rem;line-height:1.9"></div></div>
+    <div class="card" style="display:flex;gap:10px">
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Ergebnis teilen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONDITIONS ═══ -->
+<div id="page-conditions" class="page">
+  <div style="padding:8px 12px 0">
+    <div class="hunt-score">
+      <div class="score-ring">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="30" fill="none" stroke="var(--border)" stroke-width="5"/>
+          <circle cx="36" cy="36" r="30" fill="none" stroke="var(--amber)" stroke-width="5"
+            stroke-dasharray="188.5" stroke-dashoffset="23" stroke-linecap="round"/>
+        </svg>
+        <div class="score-num">88</div>
+      </div>
+      <div class="score-info">
+        <h3>Ausgezeichnete Bedingungen</h3>
+        <p>Kühle Temperaturen, wenig Wind, stabiler Luftdruck. Starke Rehwild-Aktivität in der Dämmerung erwartet.</p>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Temp OK</span>
+          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Wenig Wind</span>
+          <span class="pill pill-amber" style="font-size:.7rem"><i class="fa-solid fa-arrow-down"></i> Druck ↓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="weather-hero">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div class="wh-temp">3°C</div>
+        <div class="wh-cond">Teils bewölkt · Gefühlt -1°C</div>
+        <div class="wh-loc"><i class="fa-solid fa-location-dot"></i> Steiermark, Österreich · vor 4 Min.</div>
+      </div>
+      <div style="font-size:3rem;line-height:1">⛅</div>
+    </div>
+    <div class="wh-row">
+      <div class="wh-stat"><div class="wh-stat-val">72%</div><div class="wh-stat-lbl">Luftfeuchte</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">1021 hPa</div><div class="wh-stat-lbl">Luftdruck</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">16 km</div><div class="wh-stat-lbl">Sicht</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">🌔 68%</div><div class="wh-stat-lbl">Mond</div></div>
+    </div>
+  </div>
+  <div class="section-title">Wind</div>
+  <div class="wind-card">
+    <div class="wind-compass">
+      <svg viewBox="0 0 90 90">
+        <circle cx="45" cy="45" r="42" fill="var(--surface2)" stroke="var(--border)" stroke-width="1.5"/>
+        <text x="45" y="14" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">N</text>
+        <text x="45" y="82" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">S</text>
+        <text x="10" y="49" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">W</text>
+        <text x="80" y="49" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">E</text>
+        <g transform="translate(45,45) rotate(-22.5)">
+          <polygon points="0,-28 5,-10 0,-16 -5,-10" fill="var(--amber)" opacity=".9"/>
+          <polygon points="0,28 5,10 0,16 -5,10" fill="var(--muted)" opacity=".6"/>
+        </g>
+        <circle cx="45" cy="45" r="4" fill="var(--bg)"/>
+      </svg>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:1.6rem;font-weight:700">13 km/h <span style="font-size:.85rem;color:var(--muted);font-weight:400">NNW</span></div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Böen bis 22 km/h</div>
+      <div class="divider" style="margin:10px 0"></div>
+      <div style="font-size:.82rem;line-height:1.9">
+        <div><span style="color:var(--muted)">Querwind:</span> <strong>12 km/h</strong></div>
+        <div><span style="color:var(--muted)">Gegenwind:</span> <strong>5 km/h</strong></div>
+        <div><span style="color:var(--muted)">.308 @ 300 m:</span> <strong style="color:var(--amber-l)">8 cm</strong></div>
+      </div>
+    </div>
+  </div>
+  <div class="section-title">5-Tage Prognose</div>
+  <div class="forecast">
+    <div class="fc-day" style="background:var(--surface2);border-color:var(--amber)"><div class="fc-day-name">Heute</div><div class="fc-icon">⛅</div><div class="fc-hi">3°</div><div class="fc-lo">-3°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Sa</div><div class="fc-icon">☀️</div><div class="fc-hi">8°</div><div class="fc-lo">1°</div></div>
+    <div class="fc-day"><div class="fc-day-name">So</div><div class="fc-icon">🌧️</div><div class="fc-hi">2°</div><div class="fc-lo">-2°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Mo</div><div class="fc-icon">❄️</div><div class="fc-hi">-1°</div><div class="fc-lo">-6°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Di</div><div class="fc-icon">🌨️</div><div class="fc-hi">-4°</div><div class="fc-lo">-9°</div></div>
+  </div>
+  <div class="card" style="display:flex;gap:10px;margin-top:4px">
+    <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Bedingungen teilen</button>
+  </div>
+
+  <div style="padding:0 12px 0;display:flex;align-items:center;gap:10px;margin-top:4px">
+    <div class="section-title" style="padding:8px 0 6px;flex:1">Live-Wetter (GPS)</div>
+    <button class="btn btn-primary" style="padding:7px 16px;font-size:.8rem" onclick="loadRealWeather()">
+      <i class="fa-solid fa-location-crosshairs"></i> Laden
+    </button>
+    <span id="weather-gps-status" style="font-size:.74rem;color:var(--muted)"></span>
+  </div>
+  <div id="weather-live-card"></div>
+
+  <div style="display:flex;align-items:center;padding:0 16px">
+    <div class="section-title" style="padding:8px 0 6px;flex:1">Jagdzeiten Österreich</div>
+    <span id="jagd-month-lbl" style="font-size:.74rem;color:var(--muted)"></span>
+  </div>
+  <div class="card" style="padding:0" id="jagd-calendar"></div>
+  <div style="height:8px"></div>
+</div>
+
+<!-- ═══ LOG ═══ -->
+<div id="page-log" class="page">
+  <div class="log-stats">
+    <div class="log-stat"><div class="log-stat-val" id="stat-harvests">—</div><div class="log-stat-lbl">Abschüsse</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-avg-dist">—</div><div class="log-stat-lbl">Ø Distanz (m)</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-longest">—</div><div class="log-stat-lbl">Weiteste (m)</div></div>
+  </div>
+  <div style="padding:0 12px 8px;display:flex;justify-content:space-between;align-items:center">
+    <span class="section-title" style="padding:0">Abschussbuch</span>
+    <select id="log-filter" style="width:auto;padding:6px 10px;font-size:.78rem" onchange="filterLog()">
+      <option value="">Alle Wildarten</option>
+      <option>Rehbock</option><option>Ricke</option><option>Hirsch</option><option>Kahlwild</option>
+      <option>Gamsbock</option><option>Gams</option><option>Steinbock</option>
+      <option>Wildschwein</option><option>Fuchs</option><option>Dachs</option>
+      <option>Feldhase</option><option>Fasan</option><option>Rebhuhn</option><option>Andere</option>
+    </select>
+  </div>
+  <div id="log-list"></div>
+</div>
+
+<!-- ═══ PROFILE ═══ -->
+<div id="page-profile" class="page" style="padding-top:var(--head)">
+  <div class="profile-cover"></div>
+  <div class="profile-head">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div class="profile-av" id="profile-av-wrap">🧑</div>
+      <div style="display:flex;gap:8px;padding-top:8px">
+        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem" onclick="openEditProfile()"><i class="fa-solid fa-pen"></i> Bearbeiten</button>
+        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem" onclick="openPostModal()"><i class="fa-solid fa-pen-to-square"></i> Post</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <div class="profile-name" id="profile-name">—</div>
+      <span class="pill" id="profile-private-badge" style="display:none;font-size:.66rem;padding:3px 8px;background:rgba(0,0,0,.3);border:1px solid var(--border)"><i class="fa-solid fa-lock" style="font-size:.6rem"></i> Privat</span>
+    </div>
+    <div class="profile-handle" id="profile-handle">—</div>
+    <div class="profile-bio" id="profile-bio" style="color:var(--muted)">Lädt…</div>
+    <div class="profile-stats">
+      <div class="profile-stat" id="stat-btn-followers" style="cursor:pointer">
+        <div class="profile-stat-val" id="profile-followers">—</div>
+        <div class="profile-stat-lbl">Followers</div>
+      </div>
+      <div class="profile-stat" id="stat-btn-following" style="cursor:pointer">
+        <div class="profile-stat-val" id="profile-following">—</div>
+        <div class="profile-stat-lbl">Following</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val" id="profile-harvests">—</div>
+        <div class="profile-stat-lbl">Abschüsse</div>
+      </div>
+    </div>
+  </div>
+  <div class="section-title">Wildschießstand</div>
+  <div class="card" style="display:flex;align-items:center;gap:16px;padding:18px 20px;margin-bottom:4px">
+    <div style="font-size:2.8rem;line-height:1;flex-shrink:0">🎯</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700;font-size:.95rem;margin-bottom:4px">Minispiel</div>
+      <div style="font-size:.78rem;color:var(--muted)" id="game-best-txt">Noch kein Highscore</div>
+    </div>
+    <button class="btn btn-amber" style="padding:9px 20px;flex-shrink:0" onclick="openGame()">Spielen</button>
+  </div>
+  <div class="section-title">Meine Ausrüstung</div>
+  <div id="gear-section"></div>
+  <div style="height:8px"></div>
+</div>
+
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="feed"><i class="fa-solid fa-house"></i><span>Feed</span></button>
+  <button class="nav-btn" data-page="ballistics"><i class="fa-solid fa-bullseye"></i><span>Ballistik</span></button>
+  <button class="nav-btn" data-page="conditions"><i class="fa-solid fa-wind"></i><span>Wetter</span></button>
+  <button class="nav-btn" data-page="log"><i class="fa-solid fa-book-open"></i><span>Buch</span></button>
+  <button class="nav-btn" data-page="profile"><i class="fa-regular fa-user"></i><span>Profil</span></button>
+</nav>
+
+<button class="fab" id="main-fab" onclick="fabAction()"><i class="fa-solid fa-plus"></i></button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══ MODAL: LOG HARVEST ═══ -->
+<div class="modal-overlay" id="log-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title"><i class="fa-solid fa-plus" style="color:var(--amber)"></i> Abschuss eintragen</div>
+    <div class="modal-grid">
+      <div class="form-group full"><label>Wildart</label>
+        <select id="m-species">
+          <option>Rehbock</option><option>Ricke</option><option>Hirsch</option><option>Kahlwild</option>
+          <option>Gamsbock</option><option>Gams</option><option>Steinbock</option>
+          <option>Wildschwein</option><option>Fuchs</option><option>Dachs</option>
+          <option>Feldhase</option><option>Fasan</option><option>Rebhuhn</option><option>Andere</option>
+        </select>
+      </div>
+
+      <!-- Shot Vitals Placement interactive selector -->
+      <div class="form-group full" id="m-shot-placement-group">
+        <label>Treffersitz markieren (Tippe auf das Vitals-Schema)</label>
+        <div class="shot-container" id="m-shot-container" onclick="handleShotContainerClick(event)">
+          <div id="m-shot-svg-wrap" style="width:100%"></div>
+          <div class="hit-marker" id="m-shot-marker" style="display:none"></div>
+        </div>
+        <input type="hidden" id="m-hit-x">
+        <input type="hidden" id="m-hit-y">
+      </div>
+
+      <div class="form-group"><label>Datum</label><input type="date" id="m-date"></div>
+      <div class="form-group"><label>Distanz (m)</label><input type="number" id="m-dist" placeholder="150"></div>
+      <div class="form-group"><label>Patrone</label>
+        <select id="m-cart">
+          <option>.308 Win</option><option>.30-06</option><option>6.5 Creedmoor</option>
+          <option>.300 Win Mag</option><option>.243 Win</option><option>7mm Rem Mag</option><option>.338 Lapua</option>
+          <option>8×57 IS</option><option>7×64</option><option>9,3×62</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Wind (km/h)</label><input type="number" id="m-mwind" placeholder="10"></div>
+      <div class="form-group"><label>Fluchtstrecke (m)</label><input type="number" id="m-escape-dist" placeholder="z.B. 15" min="0"></div>
+      <div class="form-group"><label>Ort</label><input type="text" id="m-loc" placeholder="Steiermark, Österreich"></div>
+      <div class="form-group full"><label>Notizen</label><textarea id="m-notes" rows="2" placeholder="Schussbeschreibung, Witterung…"></textarea></div>
+      <div class="form-group full" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="m-share" style="width:auto;accent-color:var(--amber)" checked>
+        <label for="m-share" style="text-transform:none;letter-spacing:0;font-size:.84rem;color:var(--text);cursor:pointer">Öffentlich sichtbar</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeLogModal()">Abbrechen</button>
+      <button class="btn btn-amber" onclick="saveLogEntry()"><i class="fa-solid fa-check"></i> Eintragen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CREATE POST ═══ -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="modal-title" style="margin:0">Neuer Post</div>
+      <button class="btn btn-amber" id="btn-submit-post" onclick="submitPost()" style="padding:8px 18px">Post</button>
+    </div>
+    <textarea id="post-body-txt" rows="4" placeholder="Was war los draußen?" style="resize:none"></textarea>
+    <div class="img-preview-wrap" id="post-img-preview">
+      <img id="post-img-preview-src" src="" alt="">
+      <button class="img-remove" onclick="removePostImage()"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <input type="file" id="post-img-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+    <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:flex;gap:8px;align-items:center">
+      <button class="btn btn-outline" style="padding:8px 14px;font-size:.82rem" onclick="document.getElementById('post-img-input').click()">
+        <i class="fa-regular fa-image"></i> Foto
+      </button>
+      <select id="post-harvest-sel" style="flex:1;font-size:.82rem;padding:8px 10px">
+        <option value="">Abschuss markieren (optional)</option>
+      </select>
+    </div>
+    <div id="post-error" style="color:#e8776a;font-size:.8rem;margin-top:8px;display:none"></div>
+  </div>
+</div>
+
+<!-- ═══ USER PROFILE SHEET ═══ -->
+<div class="modal-overlay" id="profile-sheet">
+  <div class="modal" style="max-height:88vh;padding:0;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:20px 20px 16px;flex-shrink:0">
+      <div class="modal-handle"></div>
+      <div id="sheet-loading" style="text-align:center;padding:32px;color:var(--muted)">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i>
+      </div>
+      <div id="sheet-content" style="display:none">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+          <div id="sheet-avatar"></div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <div style="font-size:1rem;font-weight:700" id="sheet-name"></div>
+              <span class="pill" id="sheet-lock-badge" style="display:none;font-size:.64rem;padding:2px 7px;background:rgba(0,0,0,.3);border:1px solid var(--border)"><i class="fa-solid fa-lock" style="font-size:.58rem"></i> Privat</span>
+            </div>
+            <div style="font-size:.78rem;color:var(--muted)" id="sheet-handle"></div>
+          </div>
+          <button id="sheet-follow-btn" class="btn btn-primary" style="padding:7px 16px;font-size:.82rem"></button>
+        </div>
+        <div id="sheet-bio" style="font-size:.84rem;color:var(--muted);margin-bottom:12px;line-height:1.4"></div>
+        <div class="sheet-stats">
+          <div class="sheet-stat" id="sheet-stat-followers"><div class="sheet-stat-val" id="sheet-followers">—</div><div class="sheet-stat-lbl">Followers</div></div>
+          <div class="sheet-stat" id="sheet-stat-following"><div class="sheet-stat-val" id="sheet-following">—</div><div class="sheet-stat-lbl">Following</div></div>
+          <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-harvests">—</div><div class="sheet-stat-lbl">Abschüsse</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="sheet-posts-wrap" style="display:none;border-top:1px solid var(--border);overflow-y:auto;flex:1">
+      <div class="section-title" style="padding:10px 16px 4px">Posts</div>
+      <div id="sheet-posts-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT PROFILE MODAL ═══ -->
+<div class="modal-overlay" id="edit-profile-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title"><i class="fa-solid fa-user-pen" style="color:var(--amber)"></i> Profil bearbeiten</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div id="edit-av-preview" style="width:64px;height:64px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px solid var(--border)" onclick="document.getElementById('edit-av-input').click()"></div>
+      <div>
+        <div style="font-size:.85rem;font-weight:600">Profilfoto</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:2px">Tippe zum Ändern</div>
+        <input type="file" id="edit-av-input" accept="image/*" style="display:none" onchange="handleAvatarSelect(event)">
+      </div>
+    </div>
+    <div class="modal-grid">
+      <div class="form-group full"><label>Anzeigename</label><input type="text" id="ep-name" maxlength="50" placeholder="Dein Name"></div>
+      <div class="form-group full"><label>Ort</label><input type="text" id="ep-location" placeholder="Steiermark, Österreich" maxlength="80"></div>
+      <div class="form-group full"><label>Bio</label><textarea id="ep-bio" rows="2" placeholder="Leidenschaftlicher Jäger…" maxlength="200" style="resize:none"></textarea></div>
+      <div class="form-group full"><label>Ausrüstung</label><textarea id="ep-equipment" rows="3" placeholder="Steyr Mannlicher Pro Hunter · 7×64&#10;Swarovski EL 10×42…" maxlength="500" style="resize:none"></textarea></div>
+      <div class="form-group full" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
+        <div>
+          <div style="font-size:.85rem;font-weight:600"><i class="fa-solid fa-lock" style="color:var(--muted);margin-right:6px"></i> Privates Konto</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Nur Follower sehen deine Posts</div>
+        </div>
+        <input type="checkbox" id="ep-private" style="width:20px;height:20px;accent-color:var(--amber);cursor:pointer;flex-shrink:0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('edit-profile-modal').classList.remove('open')">Abbrechen</button>
+      <button class="btn btn-amber" id="btn-save-profile" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Speichern</button>
+    </div>
+    <div id="ep-error" style="color:#e8776a;font-size:.8rem;margin-top:8px;display:none"></div>
+  </div>
+</div>
+
+<!-- ═══ LIST SHEET (followers / following) ═══ -->
+<div class="modal-overlay" id="list-sheet">
+  <div class="modal" style="max-height:75vh;padding:0;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <button class="icon-btn" onclick="document.getElementById('list-sheet').classList.remove('open')"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="modal-title" id="list-sheet-title" style="margin:0;flex:1">Followers</div>
+    </div>
+    <div id="list-sheet-loading" style="text-align:center;padding:40px;color:var(--muted)"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i></div>
+    <div id="list-sheet-content" style="display:none;overflow-y:auto;flex:1"></div>
+  </div>
+</div>
+
+<!-- ═══ SEARCH OVERLAY ═══ -->
+<div class="search-overlay" id="search-overlay">
+  <div class="search-head">
+    <button class="icon-btn" onclick="hideSearch()"><i class="fa-solid fa-arrow-left"></i></button>
+    <input type="text" id="search-input" placeholder="Jäger nach Name oder Benutzername suchen…" oninput="debounceSearch(this.value)">
+  </div>
+  <div class="search-results" id="search-results">
+    <div class="feed-state" style="padding:40px 24px">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <strong>Jäger finden</strong>
+      Name oder Benutzername eingeben.
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+  <div style="color:rgba(255,255,255,.35);font-size:.74rem;margin-top:12px">Tippen zum Schließen</div>
+</div>
+
+<!-- ═══ GAME OVERLAY ═══ -->
+<div class="game-overlay" id="game-overlay">
+  <div class="game-hud">
+    <div style="text-align:center">
+      <div class="ghv" id="g-score" style="color:#e0a840">0</div>
+      <div class="ghl">Punkte</div>
+    </div>
+    <div style="text-align:center">
+      <div class="ghv" id="g-timer" style="color:var(--text)">45</div>
+      <div class="ghl">Sekunden</div>
+    </div>
+    <div style="text-align:center">
+      <div class="ghv" id="g-combo" style="color:var(--muted)">1x</div>
+      <div class="ghl">Kombo</div>
+    </div>
+    <button class="icon-btn" onclick="closeGame()" style="margin-left:4px"><i class="fa-solid fa-times"></i></button>
+  </div>
+  <div id="game-start-screen" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:40px;text-align:center">
+    <div style="font-size:3.5rem;line-height:1">🎯</div>
+    <div>
+      <div style="font-size:1.7rem;font-weight:800;margin-bottom:10px">Wildschießstand</div>
+      <div style="font-size:.88rem;color:var(--muted);max-width:280px;line-height:1.55;margin:0 auto">Tippe die Scheiben so schnell wie möglich! Aufeinanderfolgende Treffer erhöhen den Kombo-Multiplikator.</div>
+    </div>
+    <div id="g-best-display" style="font-size:.9rem;color:#e0a840;min-height:1.2em"></div>
+    <button class="btn btn-amber" style="padding:14px 40px;font-size:1.05rem;font-weight:800;border-radius:50px" onclick="startGame()">
+      <i class="fa-solid fa-crosshairs"></i> Feuer!
+    </button>
+  </div>
+  <canvas id="game-canvas" style="display:none;flex:1;touch-action:none" onclick="onGameTap(event)" ontouchstart="onGameTap(event)"></canvas>
+  <div id="game-over-screen" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center">
+    <div style="font-size:2.5rem">🏆</div>
+    <div style="font-size:1.2rem;font-weight:700;color:var(--muted)">Ergebnis</div>
+    <div style="font-size:3.5rem;font-weight:800;color:#e0a840" id="g-final-score">0</div>
+    <div id="g-new-best" style="color:#7ecf9a;font-weight:700;font-size:1rem;display:none">🎉 Neuer Rekord!</div>
+    <div style="font-size:.82rem;color:var(--muted)" id="g-best-score-end"></div>
+    <div style="display:flex;gap:12px;margin-top:6px">
+      <button class="btn btn-amber" style="padding:11px 24px" onclick="startGame()"><i class="fa-solid fa-redo"></i> Nochmal</button>
+      <button class="btn btn-outline" style="padding:11px 24px" onclick="shareGameScore()"><i class="fa-solid fa-share-nodes"></i> Teilen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Animal SVGs & Shot Placement Logic ──
+const ANIMAL_SVGS = {
+  cervid: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 20,105 C 30,105 35,103 40,93 C 43,85 43,70 45,60 C 46,53 37,40 33,25 C 30,15 33,5 37,0 C 38,3 40,8 44,10 C 47,6 46,2 47,-3 C 48,-5 50,-5 50,-1 C 50,7 54,12 58,16 C 62,12 64,4 67,-2 C 68,-4 70,-4 70,0 C 69,8 67,17 70,24 C 74,32 82,34 90,36 C 100,39 115,40 125,44 C 135,48 145,54 150,64 C 153,70 155,78 156,87 C 157,97 158,104 160,110 C 161,112 162,114 162,116 C 162,118 158,118 156,116 C 152,112 150,102 148,92 C 146,84 142,80 132,80 C 122,80 110,82 100,82 C 85,82 75,87 68,95 C 62,102 58,112 56,119 C 55,122 52,122 51,119 C 50,112 46,102 42,95 C 38,89 30,87 25,89 C 20,91 18,98 16,108 C 15,112 14,116 13,118 C 12,120 10,120 10,118 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(223, 232, 224, 0.4)" stroke-width="1.8" />
+    <circle cx="78" cy="68" r="16" fill="rgba(61,107,79,0.15)" stroke="var(--green-light)" stroke-width="1" stroke-dasharray="3,3" />
+    <text x="78" y="70" font-size="6" font-weight="700" fill="var(--green-light)" text-anchor="middle" letter-spacing="0.3">KAMMER</text>
+  </svg>`,
+  boar: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 15,90 C 20,80 25,72 32,68 C 40,64 50,60 62,56 C 75,52 90,50 108,52 C 125,54 140,58 152,65 C 162,71 168,78 172,86 C 176,94 178,102 179,110 C 179,112 175,112 173,110 C 169,105 163,98 155,94 C 145,90 135,88 122,88 C 110,88 95,90 85,92 C 75,94 68,98 62,104 C 58,110 55,116 54,119 C 53,122 50,122 49,119 C 48,112 44,104 38,98 C 32,92 25,90 20,92 C 16,94 14,100 12,106 C 11,108 10,110 9,112 C 8,114 6,114 6,112 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(223, 232, 224, 0.4)" stroke-width="1.8" />
+    <ellipse cx="80" cy="76" rx="18" ry="14" fill="rgba(61,107,79,0.15)" stroke="var(--green-light)" stroke-width="1" stroke-dasharray="3,3" />
+    <text x="80" y="78" font-size="6" font-weight="700" fill="var(--green-light)" text-anchor="middle" letter-spacing="0.3">KAMMER</text>
+  </svg>`,
+  chamois: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 22,95 C 28,95 32,93 36,83 C 38,76 38,62 40,52 C 41,45 35,32 32,20 C 30,12 32,6 35,2 C 36,4 37,8 39,10 C 41,6 41,2 42,-3 C 43,-5 44,-5 45,-1 C 46,7 48,12 52,15 C 55,12 56,5 58,-1 C 59,-3 60,-3 60,0 C 60,7 59,15 62,20 C 65,26 72,28 78,30 C 86,32 98,34 106,37 C 114,40 122,45 126,52 C 128,56 129,62 130,68 C 131,75 132,80 133,85 C 134,86 135,87 135,88 C 135,89 132,89 130,88 C 127,85 125,78 123,72 C 121,66 118,63 110,63 C 102,63 93,64 85,64 C 73,64 65,68 60,73 C 55,78 52,85 50,90 C 49,92 47,92 46,90 C 45,85 42,78 39,73 C 35,69 29,67 25,69 C 21,70 19,75 17,83 C 16,86 15,89 14,91 C 13,92 12,92 12,91 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(223, 232, 224, 0.4)" stroke-width="1.8" />
+    <circle cx="70" cy="54" r="14" fill="rgba(61,107,79,0.15)" stroke="var(--green-light)" stroke-width="1" stroke-dasharray="3,3" />
+    <text x="70" y="56" font-size="6" font-weight="700" fill="var(--green-light)" text-anchor="middle" letter-spacing="0.3">KAMMER</text>
+  </svg>`,
+  predator: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 15,85 C 22,85 26,83 30,75 C 32,69 32,58 34,50 C 35,43 31,32 29,22 C 27,15 29,10 32,6 C 33,8 34,12 36,14 C 38,10 38,6 39,2 C 40,0 41,0 42,3 C 43,9 45,13 48,16 C 51,13 52,7 54,2 C 55,0 56,0 56,3 C 56,9 55,16 57,20 C 59,25 64,27 69,29 C 76,31 85,32 92,35 C 99,38 106,42 109,48 C 111,52 112,57 113,62 C 114,68 115,72 116,76 C 117,77 118,78 118,79 C 118,80 115,80 113,79 C 111,76 109,70 107,65 C 105,60 102,57 96,57 C 90,57 82,58 75,58 C 65,58 58,62 54,66 C 50,70 48,76 46,80 C 45,82 43,82 42,80 C 41,75 38,69 35,66 C 32,62 26,60 22,62 C 18,63 16,68 14,75 C 13,78 12,80 11,82 C 10,83 9,83 9,82 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(223, 232, 224, 0.4)" stroke-width="1.8" />
+    <circle cx="62" cy="46" r="12" fill="rgba(61,107,79,0.15)" stroke="var(--green-light)" stroke-width="1" stroke-dasharray="3,3" />
+    <text x="62" y="48" font-size="5" font-weight="700" fill="var(--green-light)" text-anchor="middle" letter-spacing="0.3">KAMMER</text>
+  </svg>`,
+  target: `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="60" r="42" fill="rgba(255,255,255,0.03)" stroke="rgba(223, 232, 224, 0.3)" stroke-width="1.5" />
+    <circle cx="100" cy="60" r="30" fill="none" stroke="rgba(223, 232, 224, 0.3)" stroke-width="1" />
+    <circle cx="100" cy="60" r="18" fill="none" stroke="rgba(223, 232, 224, 0.4)" stroke-width="1" />
+    <circle cx="100" cy="60" r="6" fill="rgba(201,148,58,0.2)" stroke="var(--amber)" stroke-width="1" />
+    <line x1="100" y1="10" x2="100" y2="110" stroke="rgba(223, 232, 224, 0.3)" stroke-width="1" stroke-dasharray="3,3" />
+    <line x1="40" y1="60" x2="160" y2="60" stroke="rgba(223, 232, 224, 0.3)" stroke-width="1" stroke-dasharray="3,3" />
+  </svg>`
+};
+
+function getSpeciesCategory(species) {
+  const s = (species || '').toLowerCase();
+  if (s.includes('bock') || s.includes('ricke') || s.includes('hirsch') || s.includes('kahlwild') || s.includes('reh')) {
+    return 'cervid';
+  }
+  if (s.includes('schwein') || s.includes('wildschwein') || s.includes('keiler') || s.includes('bache') || s.includes('frischling') || s.includes('überläufer')) {
+    return 'boar';
+  }
+  if (s.includes('gams') || s.includes('steinbock') || s.includes('ziege')) {
+    return 'chamois';
+  }
+  if (s.includes('fuchs') || s.includes('dachs') || s.includes('marder') || s.includes('raubwild')) {
+    return 'predator';
+  }
+  return 'target'; // default
+}
+
+function renderShotPlacement(speciesCategory, hitX, hitY) {
+  const baseSvg = ANIMAL_SVGS[speciesCategory] || ANIMAL_SVGS.target;
+  if (hitX !== null && hitX !== undefined && hitY !== null && hitY !== undefined) {
+    const marker = `<g class="hit-point-marker">
+      <circle cx="${hitX}%" cy="${hitY}%" r="7" fill="rgba(196, 69, 54, 0.65)" stroke="#fff" stroke-width="1.5" />
+      <circle cx="${hitX}%" cy="${hitY}%" r="2" fill="#fff" />
+    </g>`;
+    return baseSvg.replace('</svg>', marker + '</svg>');
+  }
+  return baseSvg;
+}
+
+function handleShotContainerClick(e) {
+  const container = document.getElementById('m-shot-container');
+  const rect = container.getBoundingClientRect();
+  
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  
+  document.getElementById('m-hit-x').value = x.toFixed(1);
+  document.getElementById('m-hit-y').value = y.toFixed(1);
+  
+  const marker = document.getElementById('m-shot-marker');
+  marker.style.left = x + '%';
+  marker.style.top = y + '%';
+  marker.style.display = 'flex';
+}
+
+function updateShotPlacementSelector() {
+  const species = document.getElementById('m-species').value;
+  const cat = getSpeciesCategory(species);
+  const wrap = document.getElementById('m-shot-svg-wrap');
+  wrap.innerHTML = ANIMAL_SVGS[cat];
+  
+  document.getElementById('m-hit-x').value = '';
+  document.getElementById('m-hit-y').value = '';
+  document.getElementById('m-shot-marker').style.display = 'none';
+}
+
+function openShotLightbox(cat, hitX, hitY) {
+  const container = document.createElement('div');
+  container.className = 'lightbox open';
+  container.id = 'shot-lightbox';
+  container.onclick = () => container.remove();
+  
+  container.innerHTML = `
+    <div class="card" style="width:90%; max-width:400px; padding:24px; text-align:center; background:rgba(21, 28, 23, 0.95); backdrop-filter:blur(24px); border:1px solid var(--border); box-shadow:0 24px 64px rgba(0,0,0,0.8)" onclick="event.stopPropagation()">
+      <h3 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:12px; color:var(--amber-l)"><i class="fa-solid fa-crosshairs"></i> Treffersitz-Analyse</h3>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:16px">
+        ${renderShotPlacement(cat, hitX, hitY)}
+      </div>
+      <button class="btn btn-outline" style="width:100%; justify-content:center" onclick="document.getElementById('shot-lightbox').remove()">Schließen</button>
+    </div>
+  `;
+  document.body.appendChild(container);
+}
+
+// ── Auth & boot ──
+let currentUser = null;
+
+async function initApp() {
+  // Bind species change listener for Shot Placement Selector
+  const mSpec = document.getElementById('m-species');
+  if (mSpec) {
+    mSpec.addEventListener('change', updateShotPlacementSelector);
+    updateShotPlacementSelector();
+  }
+  
+  try {
+    const r = await fetch('/api/auth/me');
+    if (!r.ok) { window.location.href = '/login.html'; return; }
+    currentUser = (await r.json()).user;
+    applyUserToUI(currentUser);
+    loadFeed();
+    loadHarvests();
+    renderJagdkalender();
+    updateGameBestText();
+    document.getElementById('stat-btn-followers').onclick = () => showUserList('followers', currentUser.username);
+    document.getElementById('stat-btn-following').onclick = () => showUserList('following', currentUser.username);
+  } catch { window.location.href = '/login.html'; }
+}
+
+function applyUserToUI(u) {
+  document.getElementById('profile-name').textContent   = u.display_name || u.username;
+  document.getElementById('profile-handle').textContent = '@' + u.username + (u.location ? ' · ' + u.location : '');
+  document.getElementById('profile-bio').textContent    = u.bio || 'Noch kein Bio.';
+  document.getElementById('profile-bio').style.color    = u.bio ? 'var(--text)' : 'var(--muted)';
+  document.getElementById('profile-followers').textContent = u.followers_count ?? '0';
+  document.getElementById('profile-following').textContent = u.following_count  ?? '0';
+  const badge = document.getElementById('profile-private-badge');
+  if (badge) badge.style.display = u.is_private ? 'inline-flex' : 'none';
+  const mini = document.getElementById('compose-avatar-mini');
+  if (mini) mini.innerHTML = makeAvatar(u, 36);
+  const av = document.getElementById('profile-av-wrap');
+  if (av) {
+    av.style.overflow = 'hidden';
+    if (u.avatar_url) {
+      av.innerHTML = `<img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover">`;
+      av.style.background = 'none'; av.style.fontSize = '0';
+    } else {
+      av.style.background = avatarColor(u.username);
+      av.style.fontSize = '1.6rem'; av.style.fontWeight = '700'; av.style.color = '#fff';
+      av.innerHTML = (u.display_name || u.username)[0].toUpperCase();
+    }
+  }
+  const gs = document.getElementById('gear-section');
+  if (gs) {
+    if (u.equipment) {
+      gs.innerHTML = `<div class="card"><p style="font-size:.87rem;line-height:1.7;white-space:pre-wrap;word-break:break-word">${esc(u.equipment)}</p></div>`;
+    } else {
+      gs.innerHTML = `<div class="card"><div style="text-align:center;padding:20px 0;color:var(--muted)"><i class="fa-solid fa-gun" style="font-size:1.8rem;display:block;margin-bottom:10px;color:var(--border)"></i><strong style="color:var(--text);font-size:.88rem">Noch keine Ausrüstung</strong><div style="font-size:.78rem;margin-top:4px">Profil bearbeiten um Ausrüstung hinzuzufügen.</div></div></div>`;
+    }
+  }
+}
+
+async function logout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/login.html';
+}
+
+// ── Navigation ──
+let currentPage = 'feed';
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentPage = btn.dataset.page;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + currentPage).classList.add('active');
+    btn.classList.add('active');
+    const fab = document.getElementById('main-fab');
+    fab.style.display = (currentPage === 'feed' || currentPage === 'log') ? 'flex' : 'none';
+  });
+});
+function fabAction() {
+  if (currentPage === 'feed') openPostModal();
+  else if (currentPage === 'log') openLogModal();
+}
+
+// ── Feed ──
+async function loadFeed() {
+  const loading = document.getElementById('feed-loading');
+  const empty   = document.getElementById('feed-empty');
+  const list    = document.getElementById('feed-posts');
+  loading.style.display = 'block'; empty.style.display = 'none'; list.innerHTML = '';
+  try {
+    const r = await fetch('/api/posts');
+    if (!r.ok) { loading.style.display = 'none'; return; }
+    const { posts } = await r.json();
+    loading.style.display = 'none';
+    if (!posts || posts.length === 0) { empty.style.display = 'block'; return; }
+    list.innerHTML = posts.map(renderPost).join('');
+  } catch (e) { loading.style.display = 'none'; console.error('loadFeed', e); }
+}
+
+function renderPost(p) {
+  const isOwn = currentUser && p.author_id === currentUser.id;
+  const av = makeAvatar(p, 38);
+  const img = p.image_url
+    ? `<div onclick="openLightbox('${esc(p.image_url)}')" style="cursor:zoom-in"><img src="${esc(p.image_url)}" style="width:100%;max-height:480px;object-fit:cover;display:block" loading="lazy"></div>` : '';
+  const tag = p.harvest_id ? `
+    <div class="harvest-tag">
+      <div class="harvest-tag-lbl"><i class="fa-solid fa-crosshairs"></i> Tagged Harvest</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
+        <div>
+          <div class="harvest-tag-title">${esc(p.species||'—')}</div>
+          <div class="harvest-tag-meta">
+            ${p.distance_yards ? `<span>${p.distance_yards} m</span>` : ''}
+            ${p.cartridge ? `<span>${esc(p.cartridge)}</span>` : ''}
+            ${p.harvest_location ? `<span>${esc(p.harvest_location)}</span>` : ''}
+            ${p.escape_distance_meters !== null ? `<span><i class="fa-solid fa-running"></i> ${p.escape_distance_meters} m Flucht</span>` : ''}
+          </div>
+        </div>
+        ${p.hit_x !== null && p.hit_y !== null ? `
+        <div class="post-shot-preview" onclick="openShotLightbox('${getSpeciesCategory(p.species)}', ${p.hit_x}, ${p.hit_y})" title="Treffersitz ansehen">
+          ${renderShotPlacement(getSpeciesCategory(p.species), p.hit_x, p.hit_y)}
+        </div>` : ''}
+      </div>
+    </div>` : '';
+  const body = p.body ? `<div class="post-body"><div class="post-caption">${esc(p.body)}</div></div>` : '';
+  const cc = p.comment_count || 0;
+  return `<div class="post" data-post-id="${p.id}">
+    <div class="post-head">
+      <div onclick="viewProfile('${esc(p.username)}')" style="cursor:pointer;flex-shrink:0">${av}</div>
+      <div class="post-meta">
+        <div class="post-name">${esc(p.display_name||p.username)} <span style="color:var(--muted);font-weight:400;font-size:.78rem">@${esc(p.username)}</span></div>
+        <div class="post-sub">${timeAgo(p.created_at)}</div>
+      </div>
+      ${isOwn
+        ? `<button class="icon-btn" onclick="deletePost(${p.id})"><i class="fa-solid fa-trash" style="font-size:.82rem"></i></button>`
+        : `<button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>`}
+    </div>
+    ${img}${tag}${body}
+    <div class="post-actions">
+      <button class="post-action${p.liked_by_me?' liked':''}" onclick="togglePostLike(${p.id},this)">
+        <i class="${p.liked_by_me?'fa-solid':'fa-regular'} fa-heart"></i>
+        <span>${p.like_count||0}</span>
+      </button>
+      <button class="post-action" id="comments-btn-${p.id}" onclick="toggleComments(${p.id},this)">
+        <i class="fa-regular fa-comment"></i>
+        <span>${cc}</span>
+      </button>
+      <button class="post-action" onclick="sharePost(${p.id})"><i class="fa-solid fa-share-nodes"></i> Teilen</button>
+    </div>
+    <div class="post-comments" id="comments-${p.id}" style="display:none"></div>
+  </div>`;
+}
+
+async function togglePostLike(postId, btn) {
+  const liked = btn.classList.contains('liked');
+  btn.classList.toggle('liked');
+  const icon = btn.querySelector('i');
+  const span = btn.querySelector('span');
+  icon.className = liked ? 'fa-regular fa-heart' : 'fa-solid fa-heart';
+  span.textContent = parseInt(span.textContent) + (liked ? -1 : 1);
+  if (!liked) showToast('Waidmannsheil! 🦌');
+  try {
+    const r = await fetch('/api/likes', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ post_id: postId }),
+    });
+    if (r.ok) {
+      const { liked: l, count } = await r.json();
+      btn.classList.toggle('liked', l);
+      icon.className = l ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+      span.textContent = count;
+    }
+  } catch {}
+}
+
+async function toggleComments(postId, btn) {
+  const section = document.getElementById('comments-' + postId);
+  if (section.style.display !== 'none') { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  section.innerHTML = `<div style="text-align:center;padding:18px;color:var(--muted)"><i class="fa-solid fa-spinner fa-spin"></i></div>`;
+  try {
+    const r = await fetch('/api/posts/' + postId);
+    if (!r.ok) { section.style.display = 'none'; return; }
+    const { comments } = await r.json();
+    renderComments(postId, comments);
+  } catch { section.style.display = 'none'; }
+}
+
+function renderComments(postId, comments) {
+  const section = document.getElementById('comments-' + postId);
+  const list = (comments || []).map(c => {
+    const isOwn = currentUser && c.author_id === currentUser.id;
+    return `<div class="comment" data-comment-id="${c.id}">
+      ${makeAvatar(c, 28)}
+      <div class="comment-bubble">
+        <div class="comment-meta">
+          <span class="comment-author">${esc(c.display_name||c.username)}</span>
+          <span class="comment-time">${timeAgo(c.created_at)}${isOwn
+            ? ` <button onclick="deleteComment(${postId},${c.id},this)" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:0 2px;font-size:.7rem;line-height:1"><i class="fa-solid fa-trash"></i></button>` : ''}</span>
+        </div>
+        <div class="comment-text">${esc(c.body)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  section.innerHTML = `
+    <div class="comment-list">${list || `<div style="text-align:center;color:var(--muted);font-size:.82rem;padding:8px 0">Noch keine Kommentare.</div>`}</div>
+    <div class="comment-input-row">
+      ${makeAvatar(currentUser || {username:'?',display_name:'?'}, 28)}
+      <input type="text" placeholder="Kommentar hinzufügen…" onkeydown="if(event.key==='Enter')addComment(${postId},this)">
+      <button class="comment-send" onclick="addComment(${postId},this.previousElementSibling)"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>`;
+}
+
+async function addComment(postId, input) {
+  const body = input.value.trim();
+  if (!body) return;
+  input.disabled = true;
+  try {
+    const r = await fetch('/api/posts/' + postId, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ body }),
+    });
+    if (!r.ok) { input.disabled = false; return; }
+    input.value = ''; input.disabled = false;
+    const r2 = await fetch('/api/posts/' + postId);
+    if (r2.ok) renderComments(postId, (await r2.json()).comments);
+    const btn = document.getElementById('comments-btn-' + postId);
+    if (btn) { const s = btn.querySelector('span'); s.textContent = parseInt(s.textContent) + 1; }
+  } catch { input.disabled = false; }
+}
+
+async function deleteComment(postId, commentId, trashBtn) {
+  if (!confirm('Kommentar löschen?')) return;
+  const r = await fetch(`/api/posts/${postId}?comment=${commentId}`, { method: 'DELETE' });
+  if (r.ok) {
+    const el = trashBtn.closest('[data-comment-id]');
+    if (el) el.remove();
+    const btn = document.getElementById('comments-btn-' + postId);
+    if (btn) { const s = btn.querySelector('span'); s.textContent = Math.max(0, parseInt(s.textContent) - 1); }
+  }
+}
+
+async function deletePost(postId) {
+  if (!confirm('Post löschen?')) return;
+  const r = await fetch('/api/posts/' + postId, { method: 'DELETE' });
+  if (r.ok) {
+    const el = document.querySelector(`[data-post-id="${postId}"]`);
+    if (el) el.remove();
+    if (!document.querySelector('.post')) {
+      document.getElementById('feed-posts').innerHTML = '';
+      document.getElementById('feed-empty').style.display = 'block';
+    }
+  }
+}
+
+function sharePost(postId) {
+  const url = window.location.origin;
+  if (navigator.share) navigator.share({ title: 'TrailMark', url });
+  else { navigator.clipboard?.writeText(url); alert('Link kopiert!'); }
+}
+
+// ── Post composer ──
+let pendingImageData = null;
+
+async function openPostModal(focusImage = false) {
+  document.getElementById('post-body-txt').value = '';
+  document.getElementById('post-error').style.display = 'none';
+  removePostImage();
+  const sel = document.getElementById('post-harvest-sel');
+  sel.innerHTML = '<option value="">Abschuss markieren (optional)</option>';
+  try {
+    const r = await fetch('/api/harvests');
+    if (r.ok) {
+      const { harvests } = await r.json();
+      harvests.forEach(h => {
+        const o = document.createElement('option');
+        o.value = h.id;
+        o.textContent = h.species + (h.date ? ' · ' + fmt(h.date) : '') + (h.location ? ' · ' + h.location : '');
+        sel.appendChild(o);
+      });
+    }
+  } catch {}
+  document.getElementById('post-modal').classList.add('open');
+  if (focusImage) setTimeout(() => document.getElementById('post-img-input').click(), 200);
+  else setTimeout(() => document.getElementById('post-body-txt').focus(), 200);
+}
+function closePostModal() { document.getElementById('post-modal').classList.remove('open'); pendingImageData = null; }
+function handleImageSelect(e) {
+  const file = e.target.files[0]; if (!file) return;
+  compressImage(file).then(data => {
+    pendingImageData = data;
+    document.getElementById('post-img-preview-src').src = data;
+    document.getElementById('post-img-preview').style.display = 'block';
+  });
+}
+function removePostImage() {
+  pendingImageData = null;
+  document.getElementById('post-img-preview').style.display = 'none';
+  document.getElementById('post-img-preview-src').src = '';
+  document.getElementById('post-img-input').value = '';
+}
+async function submitPost() {
+  const body = document.getElementById('post-body-txt').value.trim();
+  const harvestId = document.getElementById('post-harvest-sel').value;
+  const errEl = document.getElementById('post-error');
+  errEl.style.display = 'none';
+  if (!body && !pendingImageData) { errEl.textContent = 'Text oder Foto hinzufügen.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('btn-submit-post');
+  btn.disabled = true; btn.textContent = 'Posting…';
+  try {
+    let imageUrl = null;
+    if (pendingImageData) {
+      const up = await fetch('/api/upload', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data:pendingImageData}) });
+      if (!up.ok) { errEl.textContent = 'Bild-Upload fehlgeschlagen.'; errEl.style.display = 'block'; return; }
+      imageUrl = (await up.json()).url;
+    }
+    const r = await fetch('/api/posts', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({body:body||null,image_url:imageUrl,harvest_id:harvestId||null}) });
+    if (!r.ok) { errEl.textContent = (await r.json()).error || 'Fehler.'; errEl.style.display = 'block'; return; }
+    closePostModal(); loadFeed();
+  } catch { errEl.textContent = 'Netzwerkfehler.'; errEl.style.display = 'block'; }
+  finally { btn.disabled = false; btn.textContent = 'Post'; }
+}
+async function compressImage(file) {
+  return new Promise(resolve => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX = 1200; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w >= h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h); URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = url;
+  });
+}
+
+// ── Profile editing ──
+let pendingAvatarUrl = null;
+
+function openEditProfile() {
+  if (!currentUser) return;
+  pendingAvatarUrl = null;
+  document.getElementById('ep-name').value     = currentUser.display_name || '';
+  document.getElementById('ep-location').value = currentUser.location || '';
+  document.getElementById('ep-bio').value       = currentUser.bio || '';
+  document.getElementById('ep-equipment').value = currentUser.equipment || '';
+  document.getElementById('ep-private').checked = currentUser.is_private || false;
+  const prev = document.getElementById('edit-av-preview');
+  prev.style.overflow = 'hidden';
+  if (currentUser.avatar_url) {
+    prev.innerHTML = `<img src="${esc(currentUser.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    prev.style.background = 'none';
+  } else {
+    prev.style.background = avatarColor(currentUser.username);
+    prev.innerHTML = `<span style="font-size:1.4rem;font-weight:700;color:#fff">${(currentUser.display_name||currentUser.username)[0].toUpperCase()}</span>`;
+  }
+  document.getElementById('ep-error').style.display = 'none';
+  document.getElementById('edit-profile-modal').classList.add('open');
+}
+async function handleAvatarSelect(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const prev = document.getElementById('edit-av-preview');
+  prev.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:var(--muted)"></i>';
+  try {
+    const data = await compressImage(file);
+    const up = await fetch('/api/upload', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data,type:'profile'}) });
+    if (!up.ok) throw new Error();
+    pendingAvatarUrl = (await up.json()).url;
+    prev.innerHTML = `<img src="${pendingAvatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } catch { prev.innerHTML = '<i class="fa-solid fa-camera"></i>'; alert('Foto-Upload fehlgeschlagen.'); }
+}
+async function saveProfile() {
+  const btn = document.getElementById('btn-save-profile');
+  const errEl = document.getElementById('ep-error');
+  btn.disabled = true; btn.textContent = 'Speichern…'; errEl.style.display = 'none';
+  const data = {
+    display_name: document.getElementById('ep-name').value.trim() || null,
+    location:     document.getElementById('ep-location').value.trim() || null,
+    bio:          document.getElementById('ep-bio').value.trim() || null,
+    equipment:    document.getElementById('ep-equipment').value.trim() || null,
+    avatar_url:   pendingAvatarUrl || currentUser.avatar_url || null,
+    is_private:   document.getElementById('ep-private').checked,
+  };
+  try {
+    const r = await fetch('/api/auth/me', { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+    if (!r.ok) { errEl.textContent = 'Speichern fehlgeschlagen.'; errEl.style.display = 'block'; return; }
+    currentUser = (await r.json()).user;
+    applyUserToUI(currentUser);
+    document.getElementById('edit-profile-modal').classList.remove('open');
+  } catch { errEl.textContent = 'Netzwerkfehler.'; errEl.style.display = 'block'; }
+  finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Speichern'; }
+}
+
+// ── User list (followers / following) ──
+async function showUserList(type, username) {
+  const sheet = document.getElementById('list-sheet');
+  document.getElementById('list-sheet-title').textContent = type === 'followers' ? 'Followers' : 'Following';
+  document.getElementById('list-sheet-loading').style.display = 'block';
+  document.getElementById('list-sheet-content').style.display = 'none';
+  sheet.classList.add('open');
+  try {
+    const r = await fetch(`/api/users/${username}?view=${type}`);
+    if (!r.ok) { sheet.classList.remove('open'); return; }
+    const { users } = await r.json();
+    const content = document.getElementById('list-sheet-content');
+    if (!users.length) {
+      content.innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-users"></i><strong>Noch keine ${type === 'followers' ? 'Follower' : 'Following'}</strong></div>`;
+    } else {
+      content.innerHTML = users.map(u => `
+        <div class="user-row" onclick="document.getElementById('list-sheet').classList.remove('open');viewProfile('${esc(u.username)}')">
+          ${makeAvatar(u, 44)}
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:.9rem">${esc(u.display_name||u.username)}</div>
+            <div style="font-size:.74rem;color:var(--muted)">@${esc(u.username)}${u.location?' · '+esc(u.location):''}</div>
+          </div>
+          ${currentUser && u.id !== currentUser.id ? `
+            <button class="btn ${u.is_following?'btn-outline':'btn-primary'}" style="padding:7px 14px;font-size:.78rem;flex-shrink:0"
+                    onclick="event.stopPropagation();toggleFollow(${u.id},this)">
+              ${u.is_following?'Following':'Follow'}
+            </button>` : ''}
+        </div>`).join('');
+    }
+    document.getElementById('list-sheet-loading').style.display = 'none';
+    content.style.display = 'block';
+  } catch { sheet.classList.remove('open'); }
+}
+
+// ── User search ──
+let _st;
+function debounceSearch(q) {
+  clearTimeout(_st);
+  if (q.trim().length < 2) {
+    document.getElementById('search-results').innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-magnifying-glass"></i><strong>Jäger finden</strong>Name oder Benutzername eingeben.</div>`;
+    return;
+  }
+  _st = setTimeout(() => searchUsers(q.trim()), 300);
+}
+async function searchUsers(q) {
+  const container = document.getElementById('search-results');
+  container.innerHTML = `<div class="feed-state" style="padding:32px"><i class="fa-solid fa-spinner fa-spin"></i></div>`;
+  const r = await fetch('/api/users/search?q=' + encodeURIComponent(q));
+  if (!r.ok) return;
+  const { users } = await r.json();
+  if (!users.length) { container.innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-user-slash"></i><strong>Kein Ergebnis</strong></div>`; return; }
+  container.innerHTML = users.map(u => `
+    <div class="user-row" onclick="viewProfile('${esc(u.username)}');hideSearch()">
+      ${makeAvatar(u, 44)}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:.9rem">${esc(u.display_name||u.username)}</div>
+        <div style="font-size:.74rem;color:var(--muted)">@${esc(u.username)}${u.location?' · '+esc(u.location):''}</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:1px">${u.followers_count} Follower${u.followers_count!==1?'s':''}</div>
+      </div>
+      <button class="btn ${u.is_following?'btn-outline':'btn-primary'}" style="padding:7px 14px;font-size:.78rem;flex-shrink:0"
+              onclick="event.stopPropagation();toggleFollow(${u.id},this)">
+        ${u.is_following?'Following':'Follow'}
+      </button>
+    </div>`).join('');
+}
+async function toggleFollow(targetId, btn) {
+  btn.disabled = true;
+  const r = await fetch('/api/follows', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target_id:targetId}) });
+  btn.disabled = false;
+  if (!r.ok) return;
+  const { following } = await r.json();
+  btn.textContent = following ? 'Following' : 'Follow';
+  btn.className = `btn ${following?'btn-outline':'btn-primary'}`;
+  btn.style.cssText = 'padding:7px 14px;font-size:.78rem;flex-shrink:0';
+  if (following) loadFeed();
+}
+function showSearch() { document.getElementById('search-overlay').classList.add('open'); setTimeout(()=>document.getElementById('search-input').focus(),100); }
+function hideSearch() {
+  document.getElementById('search-overlay').classList.remove('open');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-magnifying-glass"></i><strong>Jäger finden</strong>Name oder Benutzername eingeben.</div>`;
+}
+
+// ── User profile sheet ──
+let sheetUsername = null;
+
+async function viewProfile(username) {
+  sheetUsername = username;
+  const sheet = document.getElementById('profile-sheet');
+  document.getElementById('sheet-loading').style.display = 'block';
+  document.getElementById('sheet-content').style.display = 'none';
+  document.getElementById('sheet-posts-wrap').style.display = 'none';
+  sheet.classList.add('open');
+  try {
+    const [rp, rpp] = await Promise.all([
+      fetch('/api/users/' + username),
+      fetch(`/api/users/${username}?view=posts`),
+    ]);
+    if (!rp.ok) { sheet.classList.remove('open'); return; }
+    const { user: u } = await rp.json();
+
+    document.getElementById('sheet-avatar').innerHTML   = makeAvatar(u, 54);
+    document.getElementById('sheet-name').textContent   = u.display_name || u.username;
+    document.getElementById('sheet-handle').textContent = '@' + u.username + (u.location ? ' · ' + u.location : '');
+    document.getElementById('sheet-bio').textContent    = u.bio || '';
+    document.getElementById('sheet-followers').textContent = u.followers_count;
+    document.getElementById('sheet-following').textContent = u.following_count;
+    document.getElementById('sheet-harvests').textContent  = u.harvest_count;
+    const lockBadge = document.getElementById('sheet-lock-badge');
+    if (lockBadge) lockBadge.style.display = u.is_private ? 'inline-flex' : 'none';
+    document.getElementById('sheet-stat-followers').onclick = () => { sheet.classList.remove('open'); showUserList('followers', u.username); };
+    document.getElementById('sheet-stat-following').onclick = () => { sheet.classList.remove('open'); showUserList('following', u.username); };
+
+    const fb = document.getElementById('sheet-follow-btn');
+    if (currentUser && u.id === currentUser.id) {
+      fb.style.display = 'none';
+    } else {
+      fb.style.display = '';
+      fb.className = `btn ${u.is_following?'btn-outline':'btn-primary'}`;
+      fb.style.cssText = 'padding:7px 16px;font-size:.82rem';
+      fb.textContent = u.is_following ? 'Following' : 'Follow';
+      fb.onclick = async () => {
+        fb.disabled = true;
+        const r2 = await fetch('/api/follows', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target_id:u.id}) });
+        fb.disabled = false;
+        if (!r2.ok) return;
+        const { following } = await r2.json();
+        fb.className = `btn ${following?'btn-outline':'btn-primary'}`;
+        fb.textContent = following ? 'Following' : 'Follow';
+        document.getElementById('sheet-followers').textContent = parseInt(document.getElementById('sheet-followers').textContent) + (following?1:-1);
+        if (following) { loadFeed(); viewProfile(sheetUsername); }
+      };
+    }
+
+    document.getElementById('sheet-loading').style.display = 'none';
+    document.getElementById('sheet-content').style.display = 'block';
+
+    const postsWrap = document.getElementById('sheet-posts-wrap');
+    const postsList = document.getElementById('sheet-posts-list');
+    postsWrap.style.display = 'block';
+    if (rpp.ok) {
+      const { posts, private: isPrivate } = await rpp.json();
+      if (isPrivate && !posts) {
+        postsList.innerHTML = `<div class="feed-state" style="padding:32px 24px"><i class="fa-solid fa-lock"></i><strong>Privates Konto</strong>Folge diesem Jäger um Posts zu sehen.</div>`;
+      } else if (!posts || posts.length === 0) {
+        postsList.innerHTML = `<div class="feed-state" style="padding:32px 24px"><i class="fa-solid fa-camera"></i><strong>Noch keine Posts</strong></div>`;
+      } else {
+        postsList.innerHTML = posts.map(renderPost).join('');
+      }
+    }
+  } catch { sheet.classList.remove('open'); }
+}
+
+// ── Harvest log ──
+const ICONS = {
+  'Rehbock':'🦌','Ricke':'🦌','Hirsch':'🦌','Kahlwild':'🦌',
+  'Gamsbock':'🐐','Gams':'🐐','Steinbock':'🐐',
+  'Wildschwein':'🐗','Fuchs':'🦊','Dachs':'🦡',
+  'Feldhase':'🐇','Fasan':'🦃','Rebhuhn':'🦃','Andere':'🎯'
+};
+let allHarvests = [];
+function filterLog() { const f=document.getElementById('log-filter').value; renderHarvestList(f?allHarvests.filter(h=>h.species===f):allHarvests); }
+async function loadHarvests() {
+  try {
+    const r = await fetch('/api/harvests'); if (!r.ok) return;
+    const { harvests } = await r.json();
+    allHarvests = harvests; renderHarvestList(harvests);
+    const dists = harvests.map(h=>h.distance_yards).filter(Boolean);
+    document.getElementById('stat-harvests').textContent = harvests.length;
+    document.getElementById('stat-avg-dist').textContent = dists.length ? Math.round(dists.reduce((a,b)=>a+b,0)/dists.length) : '—';
+    document.getElementById('stat-longest').textContent  = dists.length ? Math.max(...dists) : '—';
+    document.getElementById('profile-harvests').textContent = harvests.length;
+  } catch(e) { console.error('loadHarvests',e); }
+}
+function renderHarvestList(harvests) {
+  const list = document.getElementById('log-list');
+  if (!harvests.length) { list.innerHTML=`<div class="feed-state" style="padding:40px 20px"><i class="fa-solid fa-book-open"></i><strong>Noch kein Abschuss</strong>Tippe + um den ersten einzutragen.</div>`; return; }
+  list.innerHTML = harvests.map(h => {
+    const hasShotPlacement = h.hit_x !== null && h.hit_y !== null;
+    const speciesCat = getSpeciesCategory(h.species);
+    return `<div class="log-entry">
+      <div class="log-entry-icon">${ICONS[h.species]||'🎯'}</div>
+      <div class="log-entry-body">
+        <div class="log-entry-title">${esc(h.species)}</div>
+        <div class="log-entry-meta">
+          <span><i class="fa-regular fa-calendar"></i> ${h.date?fmt(h.date):'—'}</span>
+          ${h.distance_yards?`<span><i class="fa-solid fa-ruler-horizontal"></i> ${h.distance_yards} m</span>`:''}
+          ${h.cartridge?`<span><i class="fa-solid fa-crosshairs"></i> ${esc(h.cartridge)}</span>`:''}
+          ${h.escape_distance_meters !== null ? `<span><i class="fa-solid fa-running"></i> ${h.escape_distance_meters} m Flucht</span>` : ''}
+        </div>
+        <div class="log-tags">
+          ${h.location?`<span class="pill pill-amber" style="font-size:.7rem">${esc(h.location)}</span>`:''}
+          ${h.is_public?'<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-globe"></i> Öffentlich</span>':'<span class="pill" style="font-size:.7rem;background:rgba(0,0,0,.2);border:1px solid var(--border)"><i class="fa-solid fa-lock"></i> Privat</span>'}
+        </div>
+      </div>
+      ${hasShotPlacement ? `
+      <div class="log-shot-preview" onclick="openShotLightbox('${speciesCat}', ${h.hit_x}, ${h.hit_y})" title="Treffersitz ansehen">
+        ${renderShotPlacement(speciesCat, h.hit_x, h.hit_y)}
+      </div>` : ''}
+      <div style="display:flex;flex-direction:column;gap:4px;align-self:flex-start">
+        <button class="icon-btn" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="icon-btn" style="color:var(--red)" onclick="deleteHarvest(${h.id},this)"><i class="fa-solid fa-trash" style="font-size:.76rem"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openLogModal()  {
+  document.getElementById('log-modal').classList.add('open');
+  updateShotPlacementSelector();
+}
+function closeLogModal() { document.getElementById('log-modal').classList.remove('open'); }
+async function saveLogEntry() {
+  const btn = document.querySelector('#log-modal .btn-amber');
+  btn.disabled = true; btn.textContent = 'Speichern…';
+  try {
+    const hit_x = document.getElementById('m-hit-x').value;
+    const hit_y = document.getElementById('m-hit-y').value;
+    const escape_dist = document.getElementById('m-escape-dist').value;
+    
+    const r = await fetch('/api/harvests', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+      species:document.getElementById('m-species').value, date:document.getElementById('m-date').value||null,
+      distance_yards:document.getElementById('m-dist').value||null, cartridge:document.getElementById('m-cart').value,
+      wind_mph:document.getElementById('m-mwind').value||null, location:document.getElementById('m-loc').value,
+      notes:document.getElementById('m-notes').value, is_public:document.getElementById('m-share').checked,
+      hit_x: hit_x ? parseFloat(hit_x) : null,
+      hit_y: hit_y ? parseFloat(hit_y) : null,
+      escape_distance_meters: escape_dist ? parseInt(escape_dist) : null
+    })});
+    if (!r.ok) { alert('Speichern fehlgeschlagen.'); return; }
+    closeLogModal();
+    ['m-date','m-dist','m-loc','m-notes','m-mwind','m-escape-dist','m-hit-x','m-hit-y'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('m-share').checked = true;
+    document.getElementById('m-shot-marker').style.display = 'none';
+    await loadHarvests();
+  } catch { alert('Netzwerkfehler.'); }
+  finally { btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-check"></i> Eintragen'; }
+}
+
+// ── Ballistics (metric I/O, imperial internal) ──
+const CARTS = {
+  '308win':{ name:'.308 Win 168gr',  bc:0.475, mv:2650, wt:168 },
+  '3006':  { name:'.30-06 165gr',    bc:0.435, mv:2800, wt:165 },
+  '65cm':  { name:'6.5 CM 140gr',    bc:0.535, mv:2710, wt:140 },
+  '300wm': { name:'.300 WM 180gr',   bc:0.507, mv:2960, wt:180 },
+  '243':   { name:'.243 Win 95gr',   bc:0.379, mv:3025, wt:95  },
+  '7mm':   { name:'7mm RM 162gr',    bc:0.572, mv:2950, wt:162 },
+  '338':   { name:'.338 Lapua 300gr',bc:0.618, mv:2650, wt:300 },
+};
+function velAt(v0,bc,r){ return v0*Math.pow(1-0.015/bc,r/100); }
+function tofAt(v0,bc,r){ const N=200,dr=r/N; let t=0; for(let i=0;i<N;i++) t+=(dr*3)/velAt(v0,bc,(i+.5)*dr); return t; }
+function runBallistics() {
+  const key=document.getElementById('b-cart').value, c=CARTS[key];
+  const zero_m=+document.getElementById('b-zero').value||100, wind_kph=+document.getElementById('b-wind').value||0,
+        temp_c=+document.getElementById('b-temp').value||10, alt_m=+document.getElementById('b-alt').value||600;
+  const zero_yd=zero_m/0.9144, wind_mph=wind_kph/1.60934, temp_f=temp_c*9/5+32, alt_ft=alt_m*3.28084;
+  const bcEff=c.bc*Math.exp((alt_ft+(59-temp_f)*120)/145000), mv=c.mv;
+  const tofZ=tofAt(mv,bcEff,zero_yd), theta=(1.5-(-0.5*32.174*tofZ*tofZ*12))/zero_yd;
+  let rows='',wl='';
+  [100,200,300,400,500,600,700,800].forEach(r_m=>{
+    const r_yd=r_m/0.9144, v_fps=velAt(mv,bcEff,r_yd), t=tofAt(mv,bcEff,r_yd);
+    const drop_in=-1.5+theta*r_yd+(-0.5*32.174*t*t*12), drop_cm=drop_in*2.54;
+    const moa=drop_in/(r_yd/100*1.047), wd_cm=wind_mph*1.467*(t-(r_yd*3)/mv)*12*2.54;
+    const ke_j=(c.wt*v_fps*v_fps)/450400*1.35582, v_ms=v_fps*0.3048;
+    const dc=drop_cm>=0?'drop-pos':'drop-neg';
+    rows+=`<tr><td><strong>${r_m}</strong></td><td>${Math.round(v_ms)}</td><td>${Math.round(ke_j)}</td><td class="${dc}">${drop_cm>=0?'+':''}${drop_cm.toFixed(1)}</td><td class="${dc}">${moa>=0?'+':''}${moa.toFixed(1)}</td><td>${wd_cm>0?'+':''}${wd_cm.toFixed(1)}</td></tr>`;
+    wl+=`<div><span style="color:var(--muted);min-width:72px;display:inline-block">${r_m} m:</span> <strong>${wd_cm>0?'+':''}${wd_cm.toFixed(1)} cm</strong> <span style="color:var(--muted);font-size:.78rem">(${(wd_cm/2.54/(r_yd/100*1.047)).toFixed(1)} MOA)</span></div>`;
+  });
+  document.getElementById('traj-body').innerHTML=rows;
+  document.getElementById('balli-sub').textContent=`· ${c.name} · Nulldistanz: ${zero_m} m`;
+  document.getElementById('wind-guide').innerHTML=`<p style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${wind_kph} km/h Querwind · ${c.name}</p>${wl}`;
+  document.getElementById('balli-results').style.display='block';
+}
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tid); t._tid = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+// ── Utils ──
+function esc(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function timeAgo(d){ const sec=Math.floor((Date.now()-new Date(d))/1000); if(sec<60)return'gerade eben'; if(sec<3600)return Math.floor(sec/60)+'min'; if(sec<86400)return Math.floor(sec/3600)+'h'; if(sec<604800)return Math.floor(sec/86400)+'d'; return new Date(d).toLocaleDateString('de-AT',{day:'numeric',month:'short'}); }
+function fmt(d){ return new Date(d).toLocaleDateString('de-AT',{day:'numeric',month:'short',year:'numeric'}); }
+function avatarColor(u){ const c=['#3d6b4f','#6b4f3d','#4f3d6b','#3d4f6b','#6b3d4f','#4f6b3d']; let h=0; for(const ch of(u||''))h=(h*31+ch.charCodeAt(0))&0xffffffff; return c[Math.abs(h)%c.length]; }
+function makeAvatar(u,sz){ if(u.avatar_url)return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;overflow:hidden;flex-shrink:0"><img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover"></div>`; const l=((u.display_name||u.username||'?')[0]).toUpperCase(); return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${avatarColor(u.username)};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.round(sz*.42)}px;color:#fff;flex-shrink:0">${l}</div>`; }
+
+// ── Lightbox ──
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── Harvest delete ──
+async function deleteHarvest(id, btn) {
+  if (!confirm('Abschuss löschen?')) return;
+  btn.disabled = true;
+  const r = await fetch('/api/harvests?id=' + id, { method: 'DELETE' });
+  if (r.ok) {
+    const el = btn.closest('.log-entry');
+    if (el) el.remove();
+    allHarvests = allHarvests.filter(h => h.id !== id);
+    const dists = allHarvests.map(h => h.distance_yards).filter(Boolean);
+    document.getElementById('stat-harvests').textContent = allHarvests.length;
+    document.getElementById('stat-avg-dist').textContent = dists.length ? Math.round(dists.reduce((a,b)=>a+b,0)/dists.length) : '—';
+    document.getElementById('stat-longest').textContent  = dists.length ? Math.max(...dists) : '—';
+    document.getElementById('profile-harvests').textContent = allHarvests.length;
+  } else { btn.disabled = false; }
+}
+
+// ── Real weather via Open-Meteo ──
+async function loadRealWeather() {
+  const status = document.getElementById('weather-gps-status');
+  const card   = document.getElementById('weather-live-card');
+  status.textContent = 'Standort ermitteln…';
+  if (!navigator.geolocation) { status.textContent = 'GPS nicht verfügbar'; return; }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const { latitude: lat, longitude: lon } = pos.coords;
+    status.textContent = 'Wird geladen…';
+    try {
+      const [wr, gr] = await Promise.all([
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&temperature_unit=celsius`),
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=de`)
+      ]);
+      const wData = await wr.json();
+      const gData = await gr.json();
+      const c = wData.current;
+      const city  = gData.address?.city || gData.address?.town || gData.address?.village || gData.address?.county || '';
+      const state = gData.address?.state || '';
+      const locStr = [city, state].filter(Boolean).join(', ') || `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+      const wIcon = weatherCodeIcon(c.weather_code);
+      const windDir = degToCompass(c.wind_direction_10m);
+      card.innerHTML = `
+        <div class="weather-hero" style="margin:0 12px 12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div class="wh-temp">${Math.round(c.temperature_2m)}°C</div>
+              <div class="wh-cond">${weatherCodeDesc(c.weather_code)} · Gefühlt ${Math.round(c.apparent_temperature)}°C</div>
+              <div class="wh-loc"><i class="fa-solid fa-location-dot"></i> ${esc(locStr)} · Live</div>
+            </div>
+            <div style="font-size:3rem;line-height:1">${wIcon}</div>
+          </div>
+          <div class="wh-row">
+            <div class="wh-stat"><div class="wh-stat-val">${c.relative_humidity_2m}%</div><div class="wh-stat-lbl">Luftfeuchte</div></div>
+            <div class="wh-stat"><div class="wh-stat-val">${Math.round(c.surface_pressure)} hPa</div><div class="wh-stat-lbl">Luftdruck</div></div>
+            <div class="wh-stat"><div class="wh-stat-val">${Math.round(c.wind_speed_10m)} km/h ${windDir}</div><div class="wh-stat-lbl">Wind</div></div>
+          </div>
+        </div>`;
+      status.textContent = '';
+    } catch { status.textContent = 'Fehler beim Laden.'; }
+  }, () => { status.textContent = 'GPS verweigert.'; });
+}
+function weatherCodeIcon(c) {
+  if (c===0) return '☀️'; if (c<=2) return '🌤️'; if (c===3) return '☁️';
+  if (c<=48) return '🌫️'; if (c<=55) return '🌦️'; if (c<=67) return '🌧️';
+  if (c<=77) return '❄️'; if (c<=82) return '🌦️'; if (c<=86) return '🌨️'; return '⛈️';
+}
+function weatherCodeDesc(c) {
+  const m={0:'Klarer Himmel',1:'Überwiegend klar',2:'Teils bewölkt',3:'Bedeckt',45:'Nebel',48:'Raureif',51:'Nieselregen',53:'Nieselregen',55:'Starker Nieselregen',61:'Leichter Regen',63:'Regen',65:'Starker Regen',71:'Leichter Schneefall',73:'Schneefall',75:'Starker Schneefall',80:'Regenschauer',81:'Regenschauer',82:'Starke Schauer',85:'Schneeschauer',86:'Starke Schneeschauer',95:'Gewitter'};
+  return m[c] || 'Bewölkt';
+}
+function degToCompass(d) {
+  const dirs=['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  return dirs[Math.round(d/22.5)%16];
+}
+
+// ── Jagdkalender ──
+function renderJagdkalender() {
+  const now = new Date().getMonth() + 1;
+  const SEASONS = [
+    {s:'Rehbock',    icon:'🦌', m:[5,6,7,8,9,10]},
+    {s:'Ricke',      icon:'🦌', m:[9,10,11,12,1,2]},
+    {s:'Hirsch',     icon:'🦌', m:[9,10,11]},
+    {s:'Kahlwild',   icon:'🦌', m:[8,9,10,11,12,1]},
+    {s:'Gamsbock',   icon:'🐐', m:[8,9,10,11,12]},
+    {s:'Gams',       icon:'🐐', m:[10,11,12]},
+    {s:'Wildschwein',icon:'🐗', m:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    {s:'Fuchs',      icon:'🦊', m:[10,11,12,1,2,3]},
+    {s:'Feldhase',   icon:'🐇', m:[10,11,12]},
+    {s:'Fasan',      icon:'🦃', m:[10,11,12,1]},
+  ];
+  const mLabels=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const mNames =['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  const el = document.getElementById('jagd-month-lbl');
+  if (el) el.textContent = mNames[now-1];
+  const cal = document.getElementById('jagd-calendar');
+  if (!cal) return;
+  cal.innerHTML = SEASONS.map(s => {
+    const open = s.m.includes(now);
+    const pills = mLabels.map((lbl,i) => {
+      const mo = i+1, cls = mo===now ? 'now' : s.m.includes(mo) ? 'on' : 'off';
+      return `<div class="jagd-m ${cls}" title="${mNames[i]}">${lbl}</div>`;
+    }).join('');
+    return `<div class="jagd-row">
+      <span style="font-size:1.1rem;flex-shrink:0">${s.icon}</span>
+      <span style="font-size:.82rem;min-width:88px">${s.s}</span>
+      ${open
+        ? '<span class="pill pill-green" style="font-size:.63rem;padding:2px 7px;flex-shrink:0">Offen</span>'
+        : '<span style="font-size:.7rem;color:var(--muted);flex-shrink:0">Zu</span>'}
+      <div class="jagd-months">${pills}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Wildschießstand (Minigame) ──
+let gameState = 'idle';
+let gameScore = 0, gameCombo = 1, gameTimerSecs = 45;
+let gameTargets = [], gameParticles = [], gameMisses = [];
+let gameRAF = null, gameTimerInterval = null, gameLastSpawn = 0;
+const GAME_SECS = 45, TARGET_LIFE = 2400, TARGET_R = 38;
+
+function openGame() {
+  const best = localStorage.getItem('tm_schussrekord');
+  document.getElementById('g-best-display').textContent = best ? 'Rekord: ' + best + ' Punkte' : '';
+  document.getElementById('game-start-screen').style.display = 'flex';
+  document.getElementById('game-canvas').style.display = 'none';
+  document.getElementById('game-over-screen').style.display = 'none';
+  document.getElementById('game-overlay').classList.add('open');
+}
+function closeGame() {
+  cancelAnimationFrame(gameRAF); clearInterval(gameTimerInterval);
+  document.getElementById('game-overlay').classList.remove('open');
+  gameState = 'idle';
+}
+function updateGameBestText() {
+  const best = localStorage.getItem('tm_schussrekord');
+  const el = document.getElementById('game-best-txt');
+  if (el) el.textContent = best ? 'Rekord: ' + best + ' Punkte' : 'Noch kein Highscore';
+}
+function startGame() {
+  document.getElementById('game-start-screen').style.display = 'none';
+  document.getElementById('game-over-screen').style.display = 'none';
+  const canvas = document.getElementById('game-canvas');
+  canvas.style.display = 'block';
+  canvas.width  = Math.min(480, window.innerWidth);
+  canvas.height = window.innerHeight - 68;
+  gameScore = 0; gameCombo = 1; gameTimerSecs = GAME_SECS;
+  gameTargets = []; gameParticles = []; gameMisses = []; gameLastSpawn = 0;
+  gameState = 'playing';
+  document.getElementById('g-score').textContent = '0';
+  document.getElementById('g-timer').textContent = GAME_SECS;
+  document.getElementById('g-timer').style.color = 'var(--dfe8e0,#dfe8e0)';
+  document.getElementById('g-combo').textContent = '1x';
+  document.getElementById('g-combo').style.color = '#7a9180';
+  clearInterval(gameTimerInterval);
+  gameTimerInterval = setInterval(() => {
+    gameTimerSecs--;
+    const tel = document.getElementById('g-timer');
+    tel.textContent = gameTimerSecs;
+    tel.style.color = gameTimerSecs <= 10 ? '#c44536' : '#dfe8e0';
+    if (gameTimerSecs <= 0) endGame();
+  }, 1000);
+  cancelAnimationFrame(gameRAF);
+  gameRAF = requestAnimationFrame(gameLoop);
+}
+function gameLoop(ts) {
+  if (gameState !== 'playing') return;
+  const canvas = document.getElementById('game-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  // Background
+  const bg = ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#0b1a10'); bg.addColorStop(1,'#162b1e');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+  // Tree silhouettes
+  const treeData = [[.08,.88,20,62],[.18,.92,14,42],[.28,.84,22,70],[.38,.9,15,44],[.5,.86,24,72],[.6,.91,16,48],[.7,.85,21,65],[.82,.9,15,45],[.92,.87,19,58],[.97,.93,12,36],[.03,.93,11,34],[.44,.92,13,40]];
+  ctx.fillStyle='#0d2218';
+  treeData.forEach(([xf,yf,w,h]) => {
+    const x=W*xf, y=H*yf;
+    ctx.beginPath(); ctx.moveTo(x,y-h); ctx.lineTo(x-w,y); ctx.lineTo(x+w,y); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x,y-h*.6); ctx.lineTo(x-w*.72,y-h*.22); ctx.lineTo(x+w*.72,y-h*.22); ctx.closePath(); ctx.fill();
+  });
+  ctx.fillStyle='#0a180d'; ctx.fillRect(0,H*.91,W,H*.09);
+  // Spawn targets (max 3)
+  const alive = gameTargets.filter(t=>!t.done);
+  if (alive.length < 3 && ts - gameLastSpawn > 550 + Math.random()*350) {
+    const mg = TARGET_R+24;
+    gameTargets.push({ x:mg+Math.random()*(W-mg*2), y:mg+Math.random()*(H*.72-mg*2), born:ts, hit:false, done:false, hitTs:0 });
+    gameLastSpawn = ts;
+  }
+  // Draw targets
+  gameTargets.forEach(t => {
+    if (t.done) return;
+    const prog = (ts - t.born) / TARGET_LIFE;
+    if (prog >= 1) { t.done = true; gameCombo = 1; updateComboDisplay(); return; }
+    const scale = prog < .12 ? prog/.12 : prog < .75 ? 1 : 1-(prog-.75)/.25;
+    const r = TARGET_R * scale;
+    const alpha = t.hit ? Math.max(0, 1-(ts-t.hitTs)/280) : 1;
+    if (t.hit && alpha <= 0) { t.done = true; return; }
+    ctx.save(); ctx.globalAlpha = alpha;
+    // Concentric rings: white-black-white-black-amber
+    [{f:'#f0ece4',r:1},{f:'#1a1a1a',r:.78},{f:'#f0ece4',r:.58},{f:'#1a1a1a',r:.38},{f:'#c9943a',r:.18}].forEach(ring => {
+      ctx.beginPath(); ctx.arc(t.x,t.y,r*ring.r,0,Math.PI*2);
+      ctx.fillStyle=ring.f; ctx.fill();
+      ctx.strokeStyle='rgba(0,0,0,.2)'; ctx.lineWidth=0.5; ctx.stroke();
+    });
+    if (t.hit) {
+      ctx.beginPath(); ctx.arc(t.x,t.y,r+(ts-t.hitTs)*.1,0,Math.PI*2);
+      ctx.strokeStyle='#7ecf9a'; ctx.lineWidth=3; ctx.globalAlpha=alpha*.7; ctx.stroke();
+    }
+    ctx.restore();
+  });
+  // Particles
+  gameParticles = gameParticles.filter(p=>ts-p.born<800);
+  gameParticles.forEach(p => {
+    const age=(ts-p.born)/800;
+    ctx.globalAlpha=1-age; ctx.fillStyle=p.color;
+    ctx.font=`bold ${p.sz}px "Segoe UI",sans-serif`; ctx.textAlign='center';
+    ctx.fillText(p.txt, p.x, p.y-age*46); ctx.globalAlpha=1;
+  });
+  // Miss flashes
+  gameMisses = gameMisses.filter(m=>ts-m.born<380);
+  gameMisses.forEach(m => {
+    const age=(ts-m.born)/380; ctx.globalAlpha=(1-age)*.75;
+    ctx.fillStyle='#e8776a'; ctx.font='bold 24px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('✕',m.x,m.y); ctx.globalAlpha=1;
+  });
+  gameRAF = requestAnimationFrame(gameLoop);
+}
+function updateComboDisplay() {
+  const el = document.getElementById('g-combo');
+  el.textContent = gameCombo+'x';
+  el.style.color = gameCombo>=4?'#c9943a':gameCombo>=2?'#7ecf9a':'#7a9180';
+}
+function onGameTap(e) {
+  if (gameState !== 'playing') return;
+  e.preventDefault();
+  const canvas = document.getElementById('game-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const cx = e.touches ? e.touches[0].clientX : e.clientX;
+  const cy = e.touches ? e.touches[0].clientY : e.clientY;
+  const x = (cx-rect.left)*(canvas.width/rect.width);
+  const y = (cy-rect.top)*(canvas.height/rect.height);
+  let hit = false;
+  for (let i=gameTargets.length-1; i>=0; i--) {
+    const t = gameTargets[i];
+    if (t.done||t.hit) continue;
+    const prog=(performance.now()-t.born)/TARGET_LIFE;
+    const scale=prog<.12?prog/.12:prog<.75?1:1-(prog-.75)/.25;
+    if (Math.hypot(x-t.x,y-t.y) <= TARGET_R*scale) {
+      t.hit=true; t.hitTs=performance.now();
+      gameCombo=Math.min(gameCombo+1,5);
+      const pts=10*gameCombo; gameScore+=pts;
+      document.getElementById('g-score').textContent=gameScore;
+      updateComboDisplay();
+      gameParticles.push({x:t.x,y:t.y-TARGET_R*.8,txt:'+'+pts,born:performance.now(),color:gameCombo>=3?'#e0a840':'#7ecf9a',sz:15+gameCombo*2});
+      if (gameCombo===3) showToast('Kombo! 🎯');
+      hit=true; break;
+    }
+  }
+  if (!hit) {
+    gameCombo=1; updateComboDisplay();
+    gameMisses.push({x,y,born:performance.now()});
+  }
+}
+function endGame() {
+  gameState='over'; clearInterval(gameTimerInterval); cancelAnimationFrame(gameRAF);
+  document.getElementById('game-canvas').style.display='none';
+  const best=parseInt(localStorage.getItem('tm_schussrekord')||'0');
+  const isNew=gameScore>best;
+  if (isNew) localStorage.setItem('tm_schussrekord',gameScore);
+  document.getElementById('g-final-score').textContent=gameScore;
+  document.getElementById('g-new-best').style.display=isNew?'block':'none';
+  document.getElementById('g-best-score-end').textContent='Bestes Ergebnis: '+Math.max(best,gameScore)+' Punkte';
+  document.getElementById('game-over-screen').style.display='flex';
+  updateGameBestText();
+}
+function shareGameScore() {
+  const score=document.getElementById('g-final-score').textContent;
+  const text=`Ich habe ${score} Punkte im Wildschießstand auf TrailMark erzielt! 🎯`;
+  if (navigator.share) navigator.share({title:'TrailMark Schießstand',text});
+  else navigator.clipboard?.writeText(text).then(()=>showToast('Text kopiert!'));
+}
+
+// ── Modal close on overlay tap ──
+['log-modal','post-modal','profile-sheet','edit-profile-modal','list-sheet'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{ if(e.target===e.currentTarget)e.currentTarget.classList.remove('open'); });
+});
+
+// ── Boot ──
+runBallistics();
+initApp();
+</script>
+</body>
+</html>
