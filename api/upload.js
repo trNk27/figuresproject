@@ -11,7 +11,7 @@ module.exports = async function handler(req, res) {
   try { ({ userId } = await verifyToken(token)); }
   catch { return res.status(401).json({ error: 'Invalid token' }); }
 
-  const { data } = req.body || {};
+  const { data, type } = req.body || {};
   if (!data) return res.status(400).json({ error: 'No image data' });
 
   const base64 = data.replace(/^data:image\/\w+;base64,/, '');
@@ -20,8 +20,9 @@ module.exports = async function handler(req, res) {
   if (buffer.length > 8 * 1024 * 1024)
     return res.status(400).json({ error: 'Image must be under 8 MB after compression' });
 
-  const ext  = (data.match(/^data:image\/(\w+);/) || [])[1] || 'jpg';
-  const name = `posts/${userId}/${Date.now()}.${ext}`;
+  const ext    = (data.match(/^data:image\/(\w+);/) || [])[1] || 'jpg';
+  const folder = type === 'profile' ? 'profiles' : 'posts';
+  const name   = `${folder}/${userId}/${Date.now()}.${ext}`;
 
   try {
     const blob = await put(name, buffer, {

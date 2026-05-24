@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,23 +9,19 @@
     :root{--bg:#0e1210;--surface:#151c17;--surface2:#1c2620;--border:#263029;--green:#3d6b4f;--green-l:#4e8963;--amber:#c9943a;--amber-l:#e0a840;--text:#dfe8e0;--muted:#7a9180;--red:#c44536;--nav:62px;--head:54px}
     *{margin:0;padding:0;box-sizing:border-box}
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
-    /* Header */
     .app-head{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--head);background:rgba(14,18,16,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100}
     .logo{font-size:1.25rem;font-weight:700;color:var(--amber);letter-spacing:.5px;display:flex;align-items:center;gap:8px}
     .logo i{color:var(--green-l)}
     .head-right{display:flex;gap:4px}
     .icon-btn{background:none;border:none;color:var(--muted);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;transition:color .2s,background .2s}
     .icon-btn:hover{color:var(--text);background:var(--surface2)}
-    /* Nav */
     .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--nav);background:rgba(14,18,16,.97);backdrop-filter:blur(8px);border-top:1px solid var(--border);display:flex;z-index:100}
     .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.62rem;font-weight:500;letter-spacing:.3px;text-transform:uppercase;transition:color .2s;padding-bottom:2px}
     .nav-btn i{font-size:1.15rem;transition:transform .2s}
     .nav-btn.active{color:var(--amber-l)}
     .nav-btn.active i{transform:scale(1.1)}
-    /* Pages */
     .page{display:none;padding:calc(var(--head) + 10px) 0 calc(var(--nav) + 12px);min-height:100vh}
     .page.active{display:block}
-    /* Cards / shared */
     .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin:0 12px 12px}
     .section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:8px 16px 6px}
     .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
@@ -47,10 +43,9 @@
     .compose-prompt:hover{border-color:var(--muted)}
     .post{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:8px}
     .post-head{display:flex;align-items:center;gap:10px;padding:12px 14px 8px}
-    .post-avatar{width:38px;height:38px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
     .post-meta{flex:1;min-width:0}
     .post-name{font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .post-sub{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-top:1px}
+    .post-sub{font-size:.72rem;color:var(--muted);margin-top:1px}
     .post-body{padding:8px 14px 6px}
     .post-caption{font-size:.88rem;line-height:1.55;white-space:pre-wrap;word-break:break-word}
     .post-actions{display:flex;border-top:1px solid var(--border);padding:2px 0}
@@ -64,6 +59,22 @@
     .feed-state{text-align:center;padding:52px 28px;color:var(--muted)}
     .feed-state i{font-size:2.5rem;display:block;margin-bottom:14px;color:var(--border)}
     .feed-state strong{color:var(--text);display:block;margin-bottom:6px}
+    /* Comments */
+    .post-comments{border-top:1px solid var(--border)}
+    .comment-list{padding:10px 14px 4px}
+    .comment{display:flex;gap:8px;margin-bottom:10px;align-items:flex-start}
+    .comment-bubble{flex:1;background:var(--surface2);border-radius:14px 14px 14px 4px;padding:8px 12px}
+    .comment-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+    .comment-author{font-size:.78rem;font-weight:600}
+    .comment-time{font-size:.67rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+    .comment-text{font-size:.84rem;line-height:1.4;white-space:pre-wrap;word-break:break-word}
+    .comment-input-row{display:flex;gap:8px;align-items:center;padding:8px 14px 12px}
+    .comment-input-row input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:8px 14px;color:var(--text);font-size:.84rem;outline:none}
+    .comment-input-row input:focus{border-color:var(--green-l)}
+    .comment-send{background:var(--green);border:none;color:#fff;border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem}
+    /* Toast */
+    .toast{position:fixed;bottom:calc(var(--nav)+20px);left:50%;transform:translateX(-50%) translateY(8px);background:var(--amber);color:#fff;font-weight:700;font-size:.92rem;padding:10px 22px;border-radius:24px;z-index:300;pointer-events:none;opacity:0;transition:opacity .25s,transform .25s;white-space:nowrap;box-shadow:0 4px 16px rgba(201,148,58,.5)}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     /* Ballistics */
     .balli-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .form-group{display:flex;flex-direction:column;gap:5px}
@@ -123,7 +134,7 @@
     .profile-cover{height:130px;background:linear-gradient(135deg,#0d2418,#1e3d2a,#2a4d1a);position:relative;overflow:hidden}
     .profile-cover::after{content:'🌲🦌🌲🌲🦅🌲';position:absolute;bottom:-10px;font-size:2rem;opacity:.3;letter-spacing:8px;width:100%;text-align:center}
     .profile-head{padding:0 16px 16px}
-    .profile-av{width:76px;height:76px;border-radius:50%;background:var(--surface2);border:3px solid var(--bg);margin-top:-38px;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;z-index:1}
+    .profile-av{width:76px;height:76px;border-radius:50%;background:var(--surface2);border:3px solid var(--bg);margin-top:-38px;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;z-index:1;overflow:hidden}
     .profile-name{font-size:1.2rem;font-weight:700;margin-top:8px}
     .profile-handle{font-size:.82rem;color:var(--muted)}
     .profile-bio{font-size:.84rem;line-height:1.4;margin-top:8px}
@@ -132,12 +143,6 @@
     .profile-stat:last-child{border-right:none}
     .profile-stat-val{font-size:1.1rem;font-weight:700;color:var(--amber-l)}
     .profile-stat-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
-    .gear-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
-    .gear-item:last-child{border-bottom:none}
-    .gear-icon{width:38px;height:38px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-    .gear-info{flex:1}
-    .gear-name{font-size:.88rem;font-weight:600}
-    .gear-sub{font-size:.73rem;color:var(--muted);margin-top:2px}
     /* Modals */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
@@ -148,11 +153,10 @@
     .modal-grid .full{grid-column:1/-1}
     .modal-actions{display:flex;gap:10px;margin-top:16px}
     .modal-actions .btn{flex:1;justify-content:center}
-    /* Image preview */
     .img-preview-wrap{position:relative;margin-top:10px;border-radius:10px;overflow:hidden;display:none}
     .img-preview-wrap img{width:100%;max-height:220px;object-fit:cover;display:block}
     .img-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center}
-    /* Search overlay */
+    /* Search */
     .search-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);display:none;flex-direction:column;max-width:480px;left:50%;transform:translateX(-50%)}
     .search-overlay.open{display:flex}
     .search-head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
@@ -161,10 +165,11 @@
     .search-results{flex:1;overflow-y:auto}
     .user-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer}
     .user-row:hover{background:var(--surface)}
-    /* User profile sheet */
+    /* Sheet stats */
     .sheet-stats{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:12px}
-    .sheet-stat{flex:1;padding:10px 8px;text-align:center;border-right:1px solid var(--border)}
-    .sheet-stat:last-child{border-right:none}
+    .sheet-stat{flex:1;padding:10px 8px;text-align:center;border-right:1px solid var(--border);cursor:pointer;transition:background .15s}
+    .sheet-stat:last-child{border-right:none;cursor:default}
+    .sheet-stat:not(:last-child):hover{background:var(--surface2)}
     .sheet-stat-val{font-size:1rem;font-weight:700;color:var(--amber-l)}
     .sheet-stat-lbl{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
     @media(max-width:380px){.wh-temp{font-size:2.8rem}}
@@ -172,12 +177,11 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="app-head">
   <div class="logo"><i class="fa-solid fa-crosshairs"></i> TrailMark</div>
   <div class="head-right">
-    <button class="icon-btn" onclick="showSearch()" title="Find hunters"><i class="fa-solid fa-magnifying-glass"></i></button>
-    <button class="icon-btn" onclick="logout()" title="Sign out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    <button class="icon-btn" onclick="showSearch()" title="Jäger suchen"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button class="icon-btn" onclick="logout()" title="Abmelden"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
   </div>
 </header>
 
@@ -187,21 +191,17 @@
 <div id="page-feed" class="page active">
   <div class="compose-bar">
     <div id="compose-avatar-mini" style="flex-shrink:0"></div>
-    <div class="compose-prompt" onclick="openPostModal()">What happened out there?</div>
-    <button class="icon-btn" onclick="openPostModal(true)" title="Add photo"><i class="fa-regular fa-image"></i></button>
+    <div class="compose-prompt" onclick="openPostModal()">Was war los draußen?</div>
+    <button class="icon-btn" onclick="openPostModal(true)" title="Foto hinzufügen"><i class="fa-regular fa-image"></i></button>
   </div>
-
-  <div id="feed-loading" class="feed-state">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-    Loading your feed…
-  </div>
+  <div id="feed-loading" class="feed-state"><i class="fa-solid fa-spinner fa-spin"></i>Feed wird geladen…</div>
   <div id="feed-empty" class="feed-state" style="display:none">
     <i class="fa-solid fa-users"></i>
-    <strong>Your feed is empty</strong>
-    Follow other hunters to see their posts here, or be the first to post.
+    <strong>Feed ist leer</strong>
+    Folge anderen Jägern oder erstelle deinen ersten Post.
     <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="showSearch()"><i class="fa-solid fa-user-plus"></i> Find Hunters</button>
-      <button class="btn btn-outline" onclick="openPostModal()"><i class="fa-solid fa-pen"></i> Create Post</button>
+      <button class="btn btn-primary" onclick="showSearch()"><i class="fa-solid fa-user-plus"></i> Jäger finden</button>
+      <button class="btn btn-outline" onclick="openPostModal()"><i class="fa-solid fa-pen"></i> Post erstellen</button>
     </div>
   </div>
   <div id="feed-posts"></div>
@@ -209,11 +209,11 @@
 
 <!-- ═══ BALLISTICS ═══ -->
 <div id="page-ballistics" class="page">
-  <div class="section-title">Ballistics Calculator</div>
+  <div class="section-title">Ballistikrechner</div>
   <div class="card">
     <div class="balli-form">
       <div class="form-group full">
-        <label>Cartridge / Load</label>
+        <label>Patrone / Ladung</label>
         <select id="b-cart">
           <option value="308win">.308 Win 168gr SMK (BC 0.475)</option>
           <option value="3006">.30-06 Sprg 165gr (BC 0.435)</option>
@@ -224,29 +224,29 @@
           <option value="338">.338 Lapua 300gr (BC 0.618)</option>
         </select>
       </div>
-      <div class="form-group"><label>Zero Range (yds)</label><input type="number" id="b-zero" value="100" min="50" max="300" step="25"></div>
-      <div class="form-group"><label>Wind Speed (mph)</label><input type="number" id="b-wind" value="10" min="0" max="50"></div>
-      <div class="form-group"><label>Temperature (°F)</label><input type="number" id="b-temp" value="40" min="-40" max="110"></div>
-      <div class="form-group"><label>Altitude (ft)</label><input type="number" id="b-alt" value="4500" min="0" max="14000" step="500"></div>
+      <div class="form-group"><label>Nulldistanz (m)</label><input type="number" id="b-zero" value="100" min="50" max="300" step="25"></div>
+      <div class="form-group"><label>Windgeschwindigkeit (km/h)</label><input type="number" id="b-wind" value="15" min="0" max="80"></div>
+      <div class="form-group"><label>Temperatur (°C)</label><input type="number" id="b-temp" value="10" min="-30" max="45"></div>
+      <div class="form-group"><label>Höhe (m)</label><input type="number" id="b-alt" value="600" min="0" max="4500" step="100"></div>
       <div class="form-group full" style="margin-top:4px">
         <button class="btn btn-amber" style="width:100%;justify-content:center" onclick="runBallistics()">
-          <i class="fa-solid fa-calculator"></i> Calculate Trajectory
+          <i class="fa-solid fa-calculator"></i> Trajektorie berechnen
         </button>
       </div>
     </div>
   </div>
   <div id="balli-results" style="display:none">
-    <div class="section-title">Trajectory Table <span id="balli-sub" style="color:var(--text);font-weight:400;text-transform:none;letter-spacing:0;font-size:.78rem"></span></div>
+    <div class="section-title">Trajektorie <span id="balli-sub" style="color:var(--text);font-weight:400;text-transform:none;letter-spacing:0;font-size:.78rem"></span></div>
     <div class="card" style="padding:12px 8px">
       <table class="traj-table">
-        <thead><tr><th>Range</th><th>Vel fps</th><th>ft·lbs</th><th>Drop"</th><th>MOA</th><th>Wind"</th></tr></thead>
+        <thead><tr><th>Dist (m)</th><th>m/s</th><th>J</th><th>Abf (cm)</th><th>MOA</th><th>Wind (cm)</th></tr></thead>
         <tbody id="traj-body"></tbody>
       </table>
     </div>
-    <div class="section-title">Wind Drift Guide</div>
+    <div class="section-title">Windversatz</div>
     <div class="card"><div id="wind-guide" style="font-size:.84rem;line-height:1.9"></div></div>
     <div class="card" style="display:flex;gap:10px">
-      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Post Results</button>
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Ergebnis teilen</button>
     </div>
   </div>
 </div>
@@ -264,12 +264,12 @@
         <div class="score-num">88</div>
       </div>
       <div class="score-info">
-        <h3>Excellent Hunting Conditions</h3>
-        <p>Cool temps, low wind &amp; stable pressure. Peak whitetail movement expected at dusk.</p>
+        <h3>Ausgezeichnete Bedingungen</h3>
+        <p>Kühle Temperaturen, wenig Wind, stabiler Luftdruck. Starke Rehwild-Aktivität in der Dämmerung erwartet.</p>
         <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Good Temp</span>
-          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Calm Wind</span>
-          <span class="pill pill-amber" style="font-size:.7rem"><i class="fa-solid fa-arrow-down"></i> Pressure ↓</span>
+          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Temp OK</span>
+          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Wenig Wind</span>
+          <span class="pill pill-amber" style="font-size:.7rem"><i class="fa-solid fa-arrow-down"></i> Druck ↓</span>
         </div>
       </div>
     </div>
@@ -277,17 +277,17 @@
   <div class="weather-hero">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div>
-        <div class="wh-temp">38°F</div>
-        <div class="wh-cond">Partly Cloudy · Feels like 31°F</div>
-        <div class="wh-loc"><i class="fa-solid fa-location-dot"></i> Hamilton, MT · Updated 4 min ago</div>
+        <div class="wh-temp">3°C</div>
+        <div class="wh-cond">Teils bewölkt · Gefühlt -1°C</div>
+        <div class="wh-loc"><i class="fa-solid fa-location-dot"></i> Steiermark, Österreich · vor 4 Min.</div>
       </div>
       <div style="font-size:3rem;line-height:1">⛅</div>
     </div>
     <div class="wh-row">
-      <div class="wh-stat"><div class="wh-stat-val">72%</div><div class="wh-stat-lbl">Humidity</div></div>
-      <div class="wh-stat"><div class="wh-stat-val">30.18"</div><div class="wh-stat-lbl">Pressure</div></div>
-      <div class="wh-stat"><div class="wh-stat-val">10 mi</div><div class="wh-stat-lbl">Visibility</div></div>
-      <div class="wh-stat"><div class="wh-stat-val">🌔 68%</div><div class="wh-stat-lbl">Moon</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">72%</div><div class="wh-stat-lbl">Luftfeuchte</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">1021 hPa</div><div class="wh-stat-lbl">Luftdruck</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">16 km</div><div class="wh-stat-lbl">Sicht</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">🌔 68%</div><div class="wh-stat-lbl">Mond</div></div>
     </div>
   </div>
   <div class="section-title">Wind</div>
@@ -307,43 +307,44 @@
       </svg>
     </div>
     <div style="flex:1">
-      <div style="font-size:1.6rem;font-weight:700">8 mph <span style="font-size:.85rem;color:var(--muted);font-weight:400">NNW</span></div>
-      <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Gusts up to 14 mph</div>
+      <div style="font-size:1.6rem;font-weight:700">13 km/h <span style="font-size:.85rem;color:var(--muted);font-weight:400">NNW</span></div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Böen bis 22 km/h</div>
       <div class="divider" style="margin:10px 0"></div>
       <div style="font-size:.82rem;line-height:1.9">
-        <div><span style="color:var(--muted)">Crosswind:</span> <strong>7.4 mph</strong></div>
-        <div><span style="color:var(--muted)">Headwind:</span> <strong>3.1 mph</strong></div>
-        <div><span style="color:var(--muted)">.308 @ 300 yds:</span> <strong style="color:var(--amber-l)">3.2"</strong></div>
+        <div><span style="color:var(--muted)">Querwind:</span> <strong>12 km/h</strong></div>
+        <div><span style="color:var(--muted)">Gegenwind:</span> <strong>5 km/h</strong></div>
+        <div><span style="color:var(--muted)">.308 @ 300 m:</span> <strong style="color:var(--amber-l)">8 cm</strong></div>
       </div>
     </div>
   </div>
-  <div class="section-title">5-Day Forecast</div>
+  <div class="section-title">5-Tage Prognose</div>
   <div class="forecast">
-    <div class="fc-day" style="background:var(--surface2);border-color:var(--amber)"><div class="fc-day-name">Today</div><div class="fc-icon">⛅</div><div class="fc-hi">42°</div><div class="fc-lo">29°</div></div>
-    <div class="fc-day"><div class="fc-day-name">Sat</div><div class="fc-icon">☀️</div><div class="fc-hi">48°</div><div class="fc-lo">31°</div></div>
-    <div class="fc-day"><div class="fc-day-name">Sun</div><div class="fc-icon">🌧️</div><div class="fc-hi">37°</div><div class="fc-lo">28°</div></div>
-    <div class="fc-day"><div class="fc-day-name">Mon</div><div class="fc-icon">❄️</div><div class="fc-hi">31°</div><div class="fc-lo">18°</div></div>
-    <div class="fc-day"><div class="fc-day-name">Tue</div><div class="fc-icon">🌨️</div><div class="fc-hi">28°</div><div class="fc-lo">14°</div></div>
+    <div class="fc-day" style="background:var(--surface2);border-color:var(--amber)"><div class="fc-day-name">Heute</div><div class="fc-icon">⛅</div><div class="fc-hi">3°</div><div class="fc-lo">-3°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Sa</div><div class="fc-icon">☀️</div><div class="fc-hi">8°</div><div class="fc-lo">1°</div></div>
+    <div class="fc-day"><div class="fc-day-name">So</div><div class="fc-icon">🌧️</div><div class="fc-hi">2°</div><div class="fc-lo">-2°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Mo</div><div class="fc-icon">❄️</div><div class="fc-hi">-1°</div><div class="fc-lo">-6°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Di</div><div class="fc-icon">🌨️</div><div class="fc-hi">-4°</div><div class="fc-lo">-9°</div></div>
   </div>
   <div class="card" style="display:flex;gap:10px;margin-top:4px">
-    <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Share Conditions</button>
+    <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Bedingungen teilen</button>
   </div>
 </div>
 
 <!-- ═══ LOG ═══ -->
 <div id="page-log" class="page">
   <div class="log-stats">
-    <div class="log-stat"><div class="log-stat-val" id="stat-harvests">—</div><div class="log-stat-lbl">Harvests</div></div>
-    <div class="log-stat"><div class="log-stat-val" id="stat-avg-dist">—</div><div class="log-stat-lbl">Avg Yards</div></div>
-    <div class="log-stat"><div class="log-stat-val" id="stat-longest">—</div><div class="log-stat-lbl">Longest Shot</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-harvests">—</div><div class="log-stat-lbl">Abschüsse</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-avg-dist">—</div><div class="log-stat-lbl">Ø Distanz (m)</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-longest">—</div><div class="log-stat-lbl">Weiteste (m)</div></div>
   </div>
   <div style="padding:0 12px 8px;display:flex;justify-content:space-between;align-items:center">
-    <span class="section-title" style="padding:0">Harvest Log</span>
+    <span class="section-title" style="padding:0">Abschussbuch</span>
     <select id="log-filter" style="width:auto;padding:6px 10px;font-size:.78rem" onchange="filterLog()">
-      <option value="">All Species</option>
-      <option>Bull Elk</option><option>Cow Elk</option><option>Mule Deer Buck</option>
-      <option>Whitetail Buck</option><option>Pronghorn</option><option>Black Bear</option>
-      <option>Bison</option><option>Coyote</option>
+      <option value="">Alle Wildarten</option>
+      <option>Rehbock</option><option>Ricke</option><option>Hirsch</option><option>Kahlwild</option>
+      <option>Gamsbock</option><option>Gams</option><option>Steinbock</option>
+      <option>Wildschwein</option><option>Fuchs</option><option>Dachs</option>
+      <option>Feldhase</option><option>Fasan</option><option>Rebhuhn</option><option>Andere</option>
     </select>
   </div>
   <div id="log-list"></div>
@@ -354,91 +355,87 @@
   <div class="profile-cover"></div>
   <div class="profile-head">
     <div style="display:flex;justify-content:space-between;align-items:flex-end">
-      <div class="profile-av" id="profile-av-wrap" style="font-size:2rem">🧑</div>
+      <div class="profile-av" id="profile-av-wrap">🧑</div>
       <div style="display:flex;gap:8px;padding-top:8px">
-        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem"><i class="fa-solid fa-pen"></i> Edit</button>
+        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem" onclick="openEditProfile()"><i class="fa-solid fa-pen"></i> Bearbeiten</button>
         <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem" onclick="openPostModal()"><i class="fa-solid fa-pen-to-square"></i> Post</button>
       </div>
     </div>
-    <div class="profile-name" id="profile-name">—</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <div class="profile-name" id="profile-name">—</div>
+      <span class="pill" id="profile-private-badge" style="display:none;font-size:.66rem;padding:3px 8px;background:rgba(0,0,0,.3);border:1px solid var(--border)"><i class="fa-solid fa-lock" style="font-size:.6rem"></i> Privat</span>
+    </div>
     <div class="profile-handle" id="profile-handle">—</div>
-    <div class="profile-bio" id="profile-bio" style="color:var(--muted)">Loading…</div>
+    <div class="profile-bio" id="profile-bio" style="color:var(--muted)">Lädt…</div>
     <div class="profile-stats">
-      <div class="profile-stat"><div class="profile-stat-val" id="profile-followers">—</div><div class="profile-stat-lbl">Followers</div></div>
-      <div class="profile-stat"><div class="profile-stat-val" id="profile-following">—</div><div class="profile-stat-lbl">Following</div></div>
-      <div class="profile-stat"><div class="profile-stat-val" id="profile-harvests">—</div><div class="profile-stat-lbl">Harvests</div></div>
+      <div class="profile-stat" id="stat-btn-followers" style="cursor:pointer">
+        <div class="profile-stat-val" id="profile-followers">—</div>
+        <div class="profile-stat-lbl">Followers</div>
+      </div>
+      <div class="profile-stat" id="stat-btn-following" style="cursor:pointer">
+        <div class="profile-stat-val" id="profile-following">—</div>
+        <div class="profile-stat-lbl">Following</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val" id="profile-harvests">—</div>
+        <div class="profile-stat-lbl">Abschüsse</div>
+      </div>
     </div>
   </div>
-  <div class="section-title">My Gear</div>
-  <div class="card">
-    <div class="gear-item">
-      <div class="gear-icon">🔫</div>
-      <div class="gear-info"><div class="gear-name">Remington 700 BDL</div><div class="gear-sub">.300 Win Mag · Leupold VX-5HD 3-15×44</div></div>
-      <span class="pill pill-amber" style="font-size:.7rem">Primary</span>
-    </div>
-    <div class="gear-item">
-      <div class="gear-icon">🔫</div>
-      <div class="gear-info"><div class="gear-name">Ruger American</div><div class="gear-sub">6.5 Creedmoor · Vortex Viper PST 4-16×50</div></div>
-      <span class="pill pill-blue" style="font-size:.7rem">Backup</span>
-    </div>
-    <div class="gear-item">
-      <div class="gear-icon">🔭</div>
-      <div class="gear-info"><div class="gear-name">Swarovski EL 10×42</div><div class="gear-sub">Primary glassing optic</div></div>
-    </div>
-    <div class="gear-item">
-      <div class="gear-icon">📏</div>
-      <div class="gear-info"><div class="gear-name">Leica Rangemaster 2800.COM</div><div class="gear-sub">Laser rangefinder · Bluetooth ballistics sync</div></div>
-    </div>
-  </div>
+  <div class="section-title">Meine Ausrüstung</div>
+  <div id="gear-section"></div>
   <div style="height:8px"></div>
 </div>
 
 </main>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-btn active" data-page="feed"><i class="fa-solid fa-house"></i><span>Feed</span></button>
-  <button class="nav-btn" data-page="ballistics"><i class="fa-solid fa-bullseye"></i><span>Ballistics</span></button>
-  <button class="nav-btn" data-page="conditions"><i class="fa-solid fa-wind"></i><span>Conditions</span></button>
-  <button class="nav-btn" data-page="log"><i class="fa-solid fa-book-open"></i><span>Log</span></button>
-  <button class="nav-btn" data-page="profile"><i class="fa-regular fa-user"></i><span>Profile</span></button>
+  <button class="nav-btn" data-page="ballistics"><i class="fa-solid fa-bullseye"></i><span>Ballistik</span></button>
+  <button class="nav-btn" data-page="conditions"><i class="fa-solid fa-wind"></i><span>Wetter</span></button>
+  <button class="nav-btn" data-page="log"><i class="fa-solid fa-book-open"></i><span>Buch</span></button>
+  <button class="nav-btn" data-page="profile"><i class="fa-regular fa-user"></i><span>Profil</span></button>
 </nav>
 
-<!-- FAB -->
 <button class="fab" id="main-fab" onclick="fabAction()"><i class="fa-solid fa-plus"></i></button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <!-- ═══ MODAL: LOG HARVEST ═══ -->
 <div class="modal-overlay" id="log-modal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title"><i class="fa-solid fa-plus" style="color:var(--amber)"></i> Log New Harvest</div>
+    <div class="modal-title"><i class="fa-solid fa-plus" style="color:var(--amber)"></i> Abschuss eintragen</div>
     <div class="modal-grid">
-      <div class="form-group full"><label>Species</label>
+      <div class="form-group full"><label>Wildart</label>
         <select id="m-species">
-          <option>Bull Elk</option><option>Cow Elk</option><option>Mule Deer Buck</option>
-          <option>Whitetail Buck</option><option>Pronghorn</option><option>Black Bear</option>
-          <option>Bison</option><option>Coyote</option><option>Other</option>
+          <option>Rehbock</option><option>Ricke</option><option>Hirsch</option><option>Kahlwild</option>
+          <option>Gamsbock</option><option>Gams</option><option>Steinbock</option>
+          <option>Wildschwein</option><option>Fuchs</option><option>Dachs</option>
+          <option>Feldhase</option><option>Fasan</option><option>Rebhuhn</option><option>Andere</option>
         </select>
       </div>
-      <div class="form-group"><label>Date</label><input type="date" id="m-date"></div>
-      <div class="form-group"><label>Distance (yds)</label><input type="number" id="m-dist" placeholder="250"></div>
-      <div class="form-group"><label>Cartridge</label>
+      <div class="form-group"><label>Datum</label><input type="date" id="m-date"></div>
+      <div class="form-group"><label>Distanz (m)</label><input type="number" id="m-dist" placeholder="150"></div>
+      <div class="form-group"><label>Patrone</label>
         <select id="m-cart">
           <option>.308 Win</option><option>.30-06</option><option>6.5 Creedmoor</option>
           <option>.300 Win Mag</option><option>.243 Win</option><option>7mm Rem Mag</option><option>.338 Lapua</option>
+          <option>8×57 IS</option><option>7×64</option><option>9,3×62</option>
         </select>
       </div>
-      <div class="form-group"><label>Wind (mph)</label><input type="number" id="m-mwind" placeholder="8"></div>
-      <div class="form-group full"><label>Location</label><input type="text" id="m-loc" placeholder="Bitterroot Valley, MT"></div>
-      <div class="form-group full"><label>Notes</label><textarea id="m-notes" rows="2" placeholder="Shot details, conditions…"></textarea></div>
+      <div class="form-group"><label>Wind (km/h)</label><input type="number" id="m-mwind" placeholder="10"></div>
+      <div class="form-group full"><label>Ort</label><input type="text" id="m-loc" placeholder="Steiermark, Österreich"></div>
+      <div class="form-group full"><label>Notizen</label><textarea id="m-notes" rows="2" placeholder="Schussbeschreibung, Witterung…"></textarea></div>
       <div class="form-group full" style="display:flex;align-items:center;gap:10px">
         <input type="checkbox" id="m-share" style="width:auto;accent-color:var(--amber)" checked>
-        <label for="m-share" style="text-transform:none;letter-spacing:0;font-size:.84rem;color:var(--text);cursor:pointer">Make public</label>
+        <label for="m-share" style="text-transform:none;letter-spacing:0;font-size:.84rem;color:var(--text);cursor:pointer">Öffentlich sichtbar</label>
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeLogModal()">Cancel</button>
-      <button class="btn btn-amber" onclick="saveLogEntry()"><i class="fa-solid fa-check"></i> Save Entry</button>
+      <button class="btn btn-outline" onclick="closeLogModal()">Abbrechen</button>
+      <button class="btn btn-amber" onclick="saveLogEntry()"><i class="fa-solid fa-check"></i> Eintragen</button>
     </div>
   </div>
 </div>
@@ -448,10 +445,10 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div class="modal-title" style="margin:0">New Post</div>
+      <div class="modal-title" style="margin:0">Neuer Post</div>
       <button class="btn btn-amber" id="btn-submit-post" onclick="submitPost()" style="padding:8px 18px">Post</button>
     </div>
-    <textarea id="post-body-txt" rows="4" placeholder="What happened out there?" style="resize:none"></textarea>
+    <textarea id="post-body-txt" rows="4" placeholder="Was war los draußen?" style="resize:none"></textarea>
     <div class="img-preview-wrap" id="post-img-preview">
       <img id="post-img-preview-src" src="" alt="">
       <button class="img-remove" onclick="removePostImage()"><i class="fa-solid fa-times"></i></button>
@@ -459,10 +456,10 @@
     <input type="file" id="post-img-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
     <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:flex;gap:8px;align-items:center">
       <button class="btn btn-outline" style="padding:8px 14px;font-size:.82rem" onclick="document.getElementById('post-img-input').click()">
-        <i class="fa-regular fa-image"></i> Photo
+        <i class="fa-regular fa-image"></i> Foto
       </button>
       <select id="post-harvest-sel" style="flex:1;font-size:.82rem;padding:8px 10px">
-        <option value="">Tag a harvest (optional)</option>
+        <option value="">Abschuss markieren (optional)</option>
       </select>
     </div>
     <div id="post-error" style="color:#e8776a;font-size:.8rem;margin-top:8px;display:none"></div>
@@ -471,27 +468,82 @@
 
 <!-- ═══ USER PROFILE SHEET ═══ -->
 <div class="modal-overlay" id="profile-sheet">
-  <div class="modal" style="max-height:70vh">
-    <div class="modal-handle"></div>
-    <div id="sheet-loading" style="text-align:center;padding:32px;color:var(--muted)">
-      <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i>
-    </div>
-    <div id="sheet-content" style="display:none">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
-        <div id="sheet-avatar"></div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:1rem;font-weight:700" id="sheet-name"></div>
-          <div style="font-size:.78rem;color:var(--muted)" id="sheet-handle"></div>
+  <div class="modal" style="max-height:88vh;padding:0;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:20px 20px 16px;flex-shrink:0">
+      <div class="modal-handle"></div>
+      <div id="sheet-loading" style="text-align:center;padding:32px;color:var(--muted)">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i>
+      </div>
+      <div id="sheet-content" style="display:none">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+          <div id="sheet-avatar"></div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <div style="font-size:1rem;font-weight:700" id="sheet-name"></div>
+              <span class="pill" id="sheet-lock-badge" style="display:none;font-size:.64rem;padding:2px 7px;background:rgba(0,0,0,.3);border:1px solid var(--border)"><i class="fa-solid fa-lock" style="font-size:.58rem"></i> Privat</span>
+            </div>
+            <div style="font-size:.78rem;color:var(--muted)" id="sheet-handle"></div>
+          </div>
+          <button id="sheet-follow-btn" class="btn btn-primary" style="padding:7px 16px;font-size:.82rem"></button>
         </div>
-        <button id="sheet-follow-btn" class="btn btn-primary" style="padding:7px 16px;font-size:.82rem"></button>
-      </div>
-      <div id="sheet-bio" style="font-size:.84rem;color:var(--muted);margin-bottom:12px;line-height:1.4"></div>
-      <div class="sheet-stats">
-        <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-followers">—</div><div class="sheet-stat-lbl">Followers</div></div>
-        <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-following">—</div><div class="sheet-stat-lbl">Following</div></div>
-        <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-harvests">—</div><div class="sheet-stat-lbl">Harvests</div></div>
+        <div id="sheet-bio" style="font-size:.84rem;color:var(--muted);margin-bottom:12px;line-height:1.4"></div>
+        <div class="sheet-stats">
+          <div class="sheet-stat" id="sheet-stat-followers"><div class="sheet-stat-val" id="sheet-followers">—</div><div class="sheet-stat-lbl">Followers</div></div>
+          <div class="sheet-stat" id="sheet-stat-following"><div class="sheet-stat-val" id="sheet-following">—</div><div class="sheet-stat-lbl">Following</div></div>
+          <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-harvests">—</div><div class="sheet-stat-lbl">Abschüsse</div></div>
+        </div>
       </div>
     </div>
+    <div id="sheet-posts-wrap" style="display:none;border-top:1px solid var(--border);overflow-y:auto;flex:1">
+      <div class="section-title" style="padding:10px 16px 4px">Posts</div>
+      <div id="sheet-posts-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT PROFILE MODAL ═══ -->
+<div class="modal-overlay" id="edit-profile-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title"><i class="fa-solid fa-user-pen" style="color:var(--amber)"></i> Profil bearbeiten</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div id="edit-av-preview" style="width:64px;height:64px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px solid var(--border)" onclick="document.getElementById('edit-av-input').click()"></div>
+      <div>
+        <div style="font-size:.85rem;font-weight:600">Profilfoto</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:2px">Tippe zum Ändern</div>
+        <input type="file" id="edit-av-input" accept="image/*" style="display:none" onchange="handleAvatarSelect(event)">
+      </div>
+    </div>
+    <div class="modal-grid">
+      <div class="form-group full"><label>Anzeigename</label><input type="text" id="ep-name" maxlength="50" placeholder="Dein Name"></div>
+      <div class="form-group full"><label>Ort</label><input type="text" id="ep-location" placeholder="Steiermark, Österreich" maxlength="80"></div>
+      <div class="form-group full"><label>Bio</label><textarea id="ep-bio" rows="2" placeholder="Leidenschaftlicher Jäger…" maxlength="200" style="resize:none"></textarea></div>
+      <div class="form-group full"><label>Ausrüstung</label><textarea id="ep-equipment" rows="3" placeholder="Steyr Mannlicher Pro Hunter · 7×64&#10;Swarovski EL 10×42…" maxlength="500" style="resize:none"></textarea></div>
+      <div class="form-group full" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
+        <div>
+          <div style="font-size:.85rem;font-weight:600"><i class="fa-solid fa-lock" style="color:var(--muted);margin-right:6px"></i> Privates Konto</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Nur Follower sehen deine Posts</div>
+        </div>
+        <input type="checkbox" id="ep-private" style="width:20px;height:20px;accent-color:var(--amber);cursor:pointer;flex-shrink:0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('edit-profile-modal').classList.remove('open')">Abbrechen</button>
+      <button class="btn btn-amber" id="btn-save-profile" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Speichern</button>
+    </div>
+    <div id="ep-error" style="color:#e8776a;font-size:.8rem;margin-top:8px;display:none"></div>
+  </div>
+</div>
+
+<!-- ═══ LIST SHEET (followers / following) ═══ -->
+<div class="modal-overlay" id="list-sheet">
+  <div class="modal" style="max-height:75vh;padding:0;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <button class="icon-btn" onclick="document.getElementById('list-sheet').classList.remove('open')"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="modal-title" id="list-sheet-title" style="margin:0;flex:1">Followers</div>
+    </div>
+    <div id="list-sheet-loading" style="text-align:center;padding:40px;color:var(--muted)"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i></div>
+    <div id="list-sheet-content" style="display:none;overflow-y:auto;flex:1"></div>
   </div>
 </div>
 
@@ -499,21 +551,19 @@
 <div class="search-overlay" id="search-overlay">
   <div class="search-head">
     <button class="icon-btn" onclick="hideSearch()"><i class="fa-solid fa-arrow-left"></i></button>
-    <input type="text" id="search-input" placeholder="Search hunters by name or username…" oninput="debounceSearch(this.value)">
+    <input type="text" id="search-input" placeholder="Jäger nach Name oder Benutzername suchen…" oninput="debounceSearch(this.value)">
   </div>
   <div class="search-results" id="search-results">
     <div class="feed-state" style="padding:40px 24px">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <strong>Find Hunters</strong>
-      Type a name or username to search.
+      <strong>Jäger finden</strong>
+      Name oder Benutzername eingeben.
     </div>
   </div>
 </div>
 
 <script>
-// ─────────────────────────────────────────────
-// Auth & boot
-// ─────────────────────────────────────────────
+// ── Auth & boot ──
 let currentUser = null;
 
 async function initApp() {
@@ -524,24 +574,42 @@ async function initApp() {
     applyUserToUI(currentUser);
     loadFeed();
     loadHarvests();
-  } catch {
-    window.location.href = '/login.html';
-  }
+    document.getElementById('stat-btn-followers').onclick = () => showUserList('followers', currentUser.username);
+    document.getElementById('stat-btn-following').onclick = () => showUserList('following', currentUser.username);
+  } catch { window.location.href = '/login.html'; }
 }
 
 function applyUserToUI(u) {
-  document.getElementById('profile-name').textContent    = u.display_name || u.username;
-  document.getElementById('profile-handle').textContent  = '@' + u.username + (u.location ? ' · ' + u.location : '');
-  document.getElementById('profile-bio').textContent     = u.bio || 'No bio yet.';
-  document.getElementById('profile-bio').style.color     = u.bio ? 'var(--text)' : 'var(--muted)';
+  document.getElementById('profile-name').textContent   = u.display_name || u.username;
+  document.getElementById('profile-handle').textContent = '@' + u.username + (u.location ? ' · ' + u.location : '');
+  document.getElementById('profile-bio').textContent    = u.bio || 'Noch kein Bio.';
+  document.getElementById('profile-bio').style.color    = u.bio ? 'var(--text)' : 'var(--muted)';
   document.getElementById('profile-followers').textContent = u.followers_count ?? '0';
   document.getElementById('profile-following').textContent = u.following_count  ?? '0';
+  const badge = document.getElementById('profile-private-badge');
+  if (badge) badge.style.display = u.is_private ? 'inline-flex' : 'none';
   const mini = document.getElementById('compose-avatar-mini');
   if (mini) mini.innerHTML = makeAvatar(u, 36);
   const av = document.getElementById('profile-av-wrap');
-  if (av) { av.style.fontSize = '1.6rem'; av.style.fontWeight = '700'; av.style.color = '#fff';
-            av.style.background = avatarColor(u.username);
-            av.textContent = (u.display_name || u.username)[0].toUpperCase(); }
+  if (av) {
+    av.style.overflow = 'hidden';
+    if (u.avatar_url) {
+      av.innerHTML = `<img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover">`;
+      av.style.background = 'none'; av.style.fontSize = '0';
+    } else {
+      av.style.background = avatarColor(u.username);
+      av.style.fontSize = '1.6rem'; av.style.fontWeight = '700'; av.style.color = '#fff';
+      av.innerHTML = (u.display_name || u.username)[0].toUpperCase();
+    }
+  }
+  const gs = document.getElementById('gear-section');
+  if (gs) {
+    if (u.equipment) {
+      gs.innerHTML = `<div class="card"><p style="font-size:.87rem;line-height:1.7;white-space:pre-wrap;word-break:break-word">${esc(u.equipment)}</p></div>`;
+    } else {
+      gs.innerHTML = `<div class="card"><div style="text-align:center;padding:20px 0;color:var(--muted)"><i class="fa-solid fa-gun" style="font-size:1.8rem;display:block;margin-bottom:10px;color:var(--border)"></i><strong style="color:var(--text);font-size:.88rem">Noch keine Ausrüstung</strong><div style="font-size:.78rem;margin-top:4px">Profil bearbeiten um Ausrüstung hinzuzufügen.</div></div></div>`;
+    }
+  }
 }
 
 async function logout() {
@@ -549,9 +617,7 @@ async function logout() {
   window.location.href = '/login.html';
 }
 
-// ─────────────────────────────────────────────
-// Navigation
-// ─────────────────────────────────────────────
+// ── Navigation ──
 let currentPage = 'feed';
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -569,9 +635,7 @@ function fabAction() {
   else if (currentPage === 'log') openLogModal();
 }
 
-// ─────────────────────────────────────────────
-// Feed
-// ─────────────────────────────────────────────
+// ── Feed ──
 async function loadFeed() {
   const loading = document.getElementById('feed-loading');
   const empty   = document.getElementById('feed-empty');
@@ -584,15 +648,12 @@ async function loadFeed() {
     loading.style.display = 'none';
     if (!posts || posts.length === 0) { empty.style.display = 'block'; return; }
     list.innerHTML = posts.map(renderPost).join('');
-  } catch (e) {
-    loading.style.display = 'none';
-    console.error('loadFeed', e);
-  }
+  } catch (e) { loading.style.display = 'none'; console.error('loadFeed', e); }
 }
 
 function renderPost(p) {
   const isOwn = currentUser && p.author_id === currentUser.id;
-  const av = `<div style="width:38px;height:38px;border-radius:50%;background:${avatarColor(p.username)};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;cursor:pointer" onclick="viewProfile('${esc(p.username)}')">${(p.display_name||p.username)[0].toUpperCase()}</div>`;
+  const av = makeAvatar(p, 38);
   const img = p.image_url
     ? `<div><img src="${esc(p.image_url)}" style="width:100%;max-height:480px;object-fit:cover;display:block" loading="lazy"></div>` : '';
   const tag = p.harvest_id ? `
@@ -600,15 +661,16 @@ function renderPost(p) {
       <div class="harvest-tag-lbl"><i class="fa-solid fa-crosshairs"></i> Tagged Harvest</div>
       <div class="harvest-tag-title">${esc(p.species||'—')}</div>
       <div class="harvest-tag-meta">
-        ${p.distance_yards ? `<span>${p.distance_yards} yds</span>` : ''}
+        ${p.distance_yards ? `<span>${p.distance_yards} m</span>` : ''}
         ${p.cartridge ? `<span>${esc(p.cartridge)}</span>` : ''}
         ${p.harvest_location ? `<span>${esc(p.harvest_location)}</span>` : ''}
       </div>
     </div>` : '';
   const body = p.body ? `<div class="post-body"><div class="post-caption">${esc(p.body)}</div></div>` : '';
+  const cc = p.comment_count || 0;
   return `<div class="post" data-post-id="${p.id}">
     <div class="post-head">
-      ${av}
+      <div onclick="viewProfile('${esc(p.username)}')" style="cursor:pointer;flex-shrink:0">${av}</div>
       <div class="post-meta">
         <div class="post-name">${esc(p.display_name||p.username)} <span style="color:var(--muted);font-weight:400;font-size:.78rem">@${esc(p.username)}</span></div>
         <div class="post-sub">${timeAgo(p.created_at)}</div>
@@ -623,10 +685,13 @@ function renderPost(p) {
         <i class="${p.liked_by_me?'fa-solid':'fa-regular'} fa-heart"></i>
         <span>${p.like_count||0}</span>
       </button>
-      <button class="post-action"><i class="fa-regular fa-comment"></i> 0</button>
-      <button class="post-action" onclick="sharePost(${p.id})"><i class="fa-solid fa-share-nodes"></i> Share</button>
-      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
+      <button class="post-action" id="comments-btn-${p.id}" onclick="toggleComments(${p.id},this)">
+        <i class="fa-regular fa-comment"></i>
+        <span>${cc}</span>
+      </button>
+      <button class="post-action" onclick="sharePost(${p.id})"><i class="fa-solid fa-share-nodes"></i> Teilen</button>
     </div>
+    <div class="post-comments" id="comments-${p.id}" style="display:none"></div>
   </div>`;
 }
 
@@ -637,10 +702,10 @@ async function togglePostLike(postId, btn) {
   const span = btn.querySelector('span');
   icon.className = liked ? 'fa-regular fa-heart' : 'fa-solid fa-heart';
   span.textContent = parseInt(span.textContent) + (liked ? -1 : 1);
+  if (!liked) showToast('Waidmannsheil! 🦌');
   try {
     const r = await fetch('/api/likes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ post_id: postId }),
     });
     if (r.ok) {
@@ -649,11 +714,78 @@ async function togglePostLike(postId, btn) {
       icon.className = l ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
       span.textContent = count;
     }
-  } catch { /* optimistic — keep local state */ }
+  } catch {}
+}
+
+async function toggleComments(postId, btn) {
+  const section = document.getElementById('comments-' + postId);
+  if (section.style.display !== 'none') { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  section.innerHTML = `<div style="text-align:center;padding:18px;color:var(--muted)"><i class="fa-solid fa-spinner fa-spin"></i></div>`;
+  try {
+    const r = await fetch('/api/posts/' + postId);
+    if (!r.ok) { section.style.display = 'none'; return; }
+    const { comments } = await r.json();
+    renderComments(postId, comments);
+  } catch { section.style.display = 'none'; }
+}
+
+function renderComments(postId, comments) {
+  const section = document.getElementById('comments-' + postId);
+  const list = (comments || []).map(c => {
+    const isOwn = currentUser && c.author_id === currentUser.id;
+    return `<div class="comment" data-comment-id="${c.id}">
+      ${makeAvatar(c, 28)}
+      <div class="comment-bubble">
+        <div class="comment-meta">
+          <span class="comment-author">${esc(c.display_name||c.username)}</span>
+          <span class="comment-time">${timeAgo(c.created_at)}${isOwn
+            ? ` <button onclick="deleteComment(${postId},${c.id},this)" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:0 2px;font-size:.7rem;line-height:1"><i class="fa-solid fa-trash"></i></button>` : ''}</span>
+        </div>
+        <div class="comment-text">${esc(c.body)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  section.innerHTML = `
+    <div class="comment-list">${list || `<div style="text-align:center;color:var(--muted);font-size:.82rem;padding:8px 0">Noch keine Kommentare.</div>`}</div>
+    <div class="comment-input-row">
+      ${makeAvatar(currentUser || {username:'?',display_name:'?'}, 28)}
+      <input type="text" placeholder="Kommentar hinzufügen…" onkeydown="if(event.key==='Enter')addComment(${postId},this)">
+      <button class="comment-send" onclick="addComment(${postId},this.previousElementSibling)"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>`;
+}
+
+async function addComment(postId, input) {
+  const body = input.value.trim();
+  if (!body) return;
+  input.disabled = true;
+  try {
+    const r = await fetch('/api/posts/' + postId, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ body }),
+    });
+    if (!r.ok) { input.disabled = false; return; }
+    input.value = ''; input.disabled = false;
+    const r2 = await fetch('/api/posts/' + postId);
+    if (r2.ok) renderComments(postId, (await r2.json()).comments);
+    const btn = document.getElementById('comments-btn-' + postId);
+    if (btn) { const s = btn.querySelector('span'); s.textContent = parseInt(s.textContent) + 1; }
+  } catch { input.disabled = false; }
+}
+
+async function deleteComment(postId, commentId, trashBtn) {
+  if (!confirm('Kommentar löschen?')) return;
+  const r = await fetch(`/api/posts/${postId}?comment=${commentId}`, { method: 'DELETE' });
+  if (r.ok) {
+    const el = trashBtn.closest('[data-comment-id]');
+    if (el) el.remove();
+    const btn = document.getElementById('comments-btn-' + postId);
+    if (btn) { const s = btn.querySelector('span'); s.textContent = Math.max(0, parseInt(s.textContent) - 1); }
+  }
 }
 
 async function deletePost(postId) {
-  if (!confirm('Delete this post?')) return;
+  if (!confirm('Post löschen?')) return;
   const r = await fetch('/api/posts/' + postId, { method: 'DELETE' });
   if (r.ok) {
     const el = document.querySelector(`[data-post-id="${postId}"]`);
@@ -668,12 +800,10 @@ async function deletePost(postId) {
 function sharePost(postId) {
   const url = window.location.origin;
   if (navigator.share) navigator.share({ title: 'TrailMark', url });
-  else { navigator.clipboard?.writeText(url); alert('Link copied!'); }
+  else { navigator.clipboard?.writeText(url); alert('Link kopiert!'); }
 }
 
-// ─────────────────────────────────────────────
-// Post composer
-// ─────────────────────────────────────────────
+// ── Post composer ──
 let pendingImageData = null;
 
 async function openPostModal(focusImage = false) {
@@ -681,7 +811,7 @@ async function openPostModal(focusImage = false) {
   document.getElementById('post-error').style.display = 'none';
   removePostImage();
   const sel = document.getElementById('post-harvest-sel');
-  sel.innerHTML = '<option value="">Tag a harvest (optional)</option>';
+  sel.innerHTML = '<option value="">Abschuss markieren (optional)</option>';
   try {
     const r = await fetch('/api/harvests');
     if (r.ok) {
@@ -698,14 +828,9 @@ async function openPostModal(focusImage = false) {
   if (focusImage) setTimeout(() => document.getElementById('post-img-input').click(), 200);
   else setTimeout(() => document.getElementById('post-body-txt').focus(), 200);
 }
-function closePostModal() {
-  document.getElementById('post-modal').classList.remove('open');
-  pendingImageData = null;
-}
-
+function closePostModal() { document.getElementById('post-modal').classList.remove('open'); pendingImageData = null; }
 function handleImageSelect(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   compressImage(file).then(data => {
     pendingImageData = data;
     document.getElementById('post-img-preview-src').src = data;
@@ -718,151 +843,199 @@ function removePostImage() {
   document.getElementById('post-img-preview-src').src = '';
   document.getElementById('post-img-input').value = '';
 }
-
 async function submitPost() {
-  const body      = document.getElementById('post-body-txt').value.trim();
+  const body = document.getElementById('post-body-txt').value.trim();
   const harvestId = document.getElementById('post-harvest-sel').value;
-  const errEl     = document.getElementById('post-error');
+  const errEl = document.getElementById('post-error');
   errEl.style.display = 'none';
-
-  if (!body && !pendingImageData) {
-    errEl.textContent = 'Add some text or a photo first.';
-    errEl.style.display = 'block';
-    return;
-  }
-
+  if (!body && !pendingImageData) { errEl.textContent = 'Text oder Foto hinzufügen.'; errEl.style.display = 'block'; return; }
   const btn = document.getElementById('btn-submit-post');
   btn.disabled = true; btn.textContent = 'Posting…';
-
   try {
     let imageUrl = null;
     if (pendingImageData) {
-      const up = await fetch('/api/upload', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: pendingImageData }),
-      });
-      if (!up.ok) { errEl.textContent = 'Image upload failed.'; errEl.style.display = 'block'; return; }
+      const up = await fetch('/api/upload', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data:pendingImageData}) });
+      if (!up.ok) { errEl.textContent = 'Bild-Upload fehlgeschlagen.'; errEl.style.display = 'block'; return; }
       imageUrl = (await up.json()).url;
     }
-    const r = await fetch('/api/posts', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body: body || null, image_url: imageUrl, harvest_id: harvestId || null }),
-    });
-    if (!r.ok) { errEl.textContent = (await r.json()).error || 'Failed to post.'; errEl.style.display = 'block'; return; }
-    closePostModal();
-    loadFeed();
-  } catch {
-    errEl.textContent = 'Network error.'; errEl.style.display = 'block';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Post';
-  }
+    const r = await fetch('/api/posts', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({body:body||null,image_url:imageUrl,harvest_id:harvestId||null}) });
+    if (!r.ok) { errEl.textContent = (await r.json()).error || 'Fehler.'; errEl.style.display = 'block'; return; }
+    closePostModal(); loadFeed();
+  } catch { errEl.textContent = 'Netzwerkfehler.'; errEl.style.display = 'block'; }
+  finally { btn.disabled = false; btn.textContent = 'Post'; }
 }
-
 async function compressImage(file) {
   return new Promise(resolve => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
+    const img = new Image(), url = URL.createObjectURL(file);
     img.onload = () => {
-      const MAX = 1200;
-      let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) {
-        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
-        else        { w = Math.round(w * MAX / h); h = MAX; }
-      }
-      const c = document.createElement('canvas');
-      c.width = w; c.height = h;
-      c.getContext('2d').drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(url);
+      const MAX = 1200; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w >= h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h); URL.revokeObjectURL(url);
       resolve(c.toDataURL('image/jpeg', 0.82));
     };
     img.src = url;
   });
 }
 
-// ─────────────────────────────────────────────
-// User search
-// ─────────────────────────────────────────────
+// ── Profile editing ──
+let pendingAvatarUrl = null;
+
+function openEditProfile() {
+  if (!currentUser) return;
+  pendingAvatarUrl = null;
+  document.getElementById('ep-name').value     = currentUser.display_name || '';
+  document.getElementById('ep-location').value = currentUser.location || '';
+  document.getElementById('ep-bio').value       = currentUser.bio || '';
+  document.getElementById('ep-equipment').value = currentUser.equipment || '';
+  document.getElementById('ep-private').checked = currentUser.is_private || false;
+  const prev = document.getElementById('edit-av-preview');
+  prev.style.overflow = 'hidden';
+  if (currentUser.avatar_url) {
+    prev.innerHTML = `<img src="${esc(currentUser.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    prev.style.background = 'none';
+  } else {
+    prev.style.background = avatarColor(currentUser.username);
+    prev.innerHTML = `<span style="font-size:1.4rem;font-weight:700;color:#fff">${(currentUser.display_name||currentUser.username)[0].toUpperCase()}</span>`;
+  }
+  document.getElementById('ep-error').style.display = 'none';
+  document.getElementById('edit-profile-modal').classList.add('open');
+}
+async function handleAvatarSelect(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const prev = document.getElementById('edit-av-preview');
+  prev.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:var(--muted)"></i>';
+  try {
+    const data = await compressImage(file);
+    const up = await fetch('/api/upload', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data,type:'profile'}) });
+    if (!up.ok) throw new Error();
+    pendingAvatarUrl = (await up.json()).url;
+    prev.innerHTML = `<img src="${pendingAvatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } catch { prev.innerHTML = '<i class="fa-solid fa-camera"></i>'; alert('Foto-Upload fehlgeschlagen.'); }
+}
+async function saveProfile() {
+  const btn = document.getElementById('btn-save-profile');
+  const errEl = document.getElementById('ep-error');
+  btn.disabled = true; btn.textContent = 'Speichern…'; errEl.style.display = 'none';
+  const data = {
+    display_name: document.getElementById('ep-name').value.trim() || null,
+    location:     document.getElementById('ep-location').value.trim() || null,
+    bio:          document.getElementById('ep-bio').value.trim() || null,
+    equipment:    document.getElementById('ep-equipment').value.trim() || null,
+    avatar_url:   pendingAvatarUrl || currentUser.avatar_url || null,
+    is_private:   document.getElementById('ep-private').checked,
+  };
+  try {
+    const r = await fetch('/api/auth/me', { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+    if (!r.ok) { errEl.textContent = 'Speichern fehlgeschlagen.'; errEl.style.display = 'block'; return; }
+    currentUser = (await r.json()).user;
+    applyUserToUI(currentUser);
+    document.getElementById('edit-profile-modal').classList.remove('open');
+  } catch { errEl.textContent = 'Netzwerkfehler.'; errEl.style.display = 'block'; }
+  finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Speichern'; }
+}
+
+// ── User list (followers / following) ──
+async function showUserList(type, username) {
+  const sheet = document.getElementById('list-sheet');
+  document.getElementById('list-sheet-title').textContent = type === 'followers' ? 'Followers' : 'Following';
+  document.getElementById('list-sheet-loading').style.display = 'block';
+  document.getElementById('list-sheet-content').style.display = 'none';
+  sheet.classList.add('open');
+  try {
+    const r = await fetch(`/api/users/${username}?view=${type}`);
+    if (!r.ok) { sheet.classList.remove('open'); return; }
+    const { users } = await r.json();
+    const content = document.getElementById('list-sheet-content');
+    if (!users.length) {
+      content.innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-users"></i><strong>Noch keine ${type === 'followers' ? 'Follower' : 'Following'}</strong></div>`;
+    } else {
+      content.innerHTML = users.map(u => `
+        <div class="user-row" onclick="document.getElementById('list-sheet').classList.remove('open');viewProfile('${esc(u.username)}')">
+          ${makeAvatar(u, 44)}
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:.9rem">${esc(u.display_name||u.username)}</div>
+            <div style="font-size:.74rem;color:var(--muted)">@${esc(u.username)}${u.location?' · '+esc(u.location):''}</div>
+          </div>
+          ${currentUser && u.id !== currentUser.id ? `
+            <button class="btn ${u.is_following?'btn-outline':'btn-primary'}" style="padding:7px 14px;font-size:.78rem;flex-shrink:0"
+                    onclick="event.stopPropagation();toggleFollow(${u.id},this)">
+              ${u.is_following?'Following':'Follow'}
+            </button>` : ''}
+        </div>`).join('');
+    }
+    document.getElementById('list-sheet-loading').style.display = 'none';
+    content.style.display = 'block';
+  } catch { sheet.classList.remove('open'); }
+}
+
+// ── User search ──
 let _st;
 function debounceSearch(q) {
   clearTimeout(_st);
   if (q.trim().length < 2) {
-    document.getElementById('search-results').innerHTML = `
-      <div class="feed-state" style="padding:40px 24px">
-        <i class="fa-solid fa-magnifying-glass"></i><strong>Find Hunters</strong>
-        Type a name or username to search.
-      </div>`;
+    document.getElementById('search-results').innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-magnifying-glass"></i><strong>Jäger finden</strong>Name oder Benutzername eingeben.</div>`;
     return;
   }
   _st = setTimeout(() => searchUsers(q.trim()), 300);
 }
-
 async function searchUsers(q) {
   const container = document.getElementById('search-results');
   container.innerHTML = `<div class="feed-state" style="padding:32px"><i class="fa-solid fa-spinner fa-spin"></i></div>`;
   const r = await fetch('/api/users/search?q=' + encodeURIComponent(q));
   if (!r.ok) return;
   const { users } = await r.json();
-  if (!users.length) {
-    container.innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-user-slash"></i><strong>No users found</strong></div>`;
-    return;
-  }
+  if (!users.length) { container.innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-user-slash"></i><strong>Kein Ergebnis</strong></div>`; return; }
   container.innerHTML = users.map(u => `
     <div class="user-row" onclick="viewProfile('${esc(u.username)}');hideSearch()">
       ${makeAvatar(u, 44)}
       <div style="flex:1;min-width:0">
         <div style="font-weight:600;font-size:.9rem">${esc(u.display_name||u.username)}</div>
         <div style="font-size:.74rem;color:var(--muted)">@${esc(u.username)}${u.location?' · '+esc(u.location):''}</div>
-        <div style="font-size:.72rem;color:var(--muted);margin-top:1px">${u.followers_count} follower${u.followers_count!==1?'s':''}</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:1px">${u.followers_count} Follower${u.followers_count!==1?'s':''}</div>
       </div>
-      <button class="btn ${u.is_following?'btn-outline':'btn-primary'}"
-              style="padding:7px 14px;font-size:.78rem;flex-shrink:0"
+      <button class="btn ${u.is_following?'btn-outline':'btn-primary'}" style="padding:7px 14px;font-size:.78rem;flex-shrink:0"
               onclick="event.stopPropagation();toggleFollow(${u.id},this)">
         ${u.is_following?'Following':'Follow'}
       </button>
     </div>`).join('');
 }
-
 async function toggleFollow(targetId, btn) {
   btn.disabled = true;
-  const r = await fetch('/api/follows', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ target_id: targetId }),
-  });
+  const r = await fetch('/api/follows', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target_id:targetId}) });
   btn.disabled = false;
   if (!r.ok) return;
   const { following } = await r.json();
   btn.textContent = following ? 'Following' : 'Follow';
-  btn.className   = `btn ${following ? 'btn-outline' : 'btn-primary'}`;
+  btn.className = `btn ${following?'btn-outline':'btn-primary'}`;
   btn.style.cssText = 'padding:7px 14px;font-size:.78rem;flex-shrink:0';
-  if (following) loadFeed(); // refresh after new follow
+  if (following) loadFeed();
 }
-
-function showSearch() {
-  document.getElementById('search-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('search-input').focus(), 100);
-}
+function showSearch() { document.getElementById('search-overlay').classList.add('open'); setTimeout(()=>document.getElementById('search-input').focus(),100); }
 function hideSearch() {
   document.getElementById('search-overlay').classList.remove('open');
   document.getElementById('search-input').value = '';
-  document.getElementById('search-results').innerHTML = `
-    <div class="feed-state" style="padding:40px 24px">
-      <i class="fa-solid fa-magnifying-glass"></i><strong>Find Hunters</strong>
-      Type a name or username to search.
-    </div>`;
+  document.getElementById('search-results').innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-magnifying-glass"></i><strong>Jäger finden</strong>Name oder Benutzername eingeben.</div>`;
 }
 
-// ─────────────────────────────────────────────
-// User profile sheet
-// ─────────────────────────────────────────────
+// ── User profile sheet ──
+let sheetUsername = null;
+
 async function viewProfile(username) {
+  sheetUsername = username;
   const sheet = document.getElementById('profile-sheet');
   document.getElementById('sheet-loading').style.display = 'block';
   document.getElementById('sheet-content').style.display = 'none';
+  document.getElementById('sheet-posts-wrap').style.display = 'none';
   sheet.classList.add('open');
   try {
-    const r = await fetch('/api/users/' + username);
-    if (!r.ok) { sheet.classList.remove('open'); return; }
-    const { user: u } = await r.json();
+    const [rp, rpp] = await Promise.all([
+      fetch('/api/users/' + username),
+      fetch(`/api/users/${username}?view=posts`),
+    ]);
+    if (!rp.ok) { sheet.classList.remove('open'); return; }
+    const { user: u } = await rp.json();
+
     document.getElementById('sheet-avatar').innerHTML   = makeAvatar(u, 54);
     document.getElementById('sheet-name').textContent   = u.display_name || u.username;
     document.getElementById('sheet-handle').textContent = '@' + u.username + (u.location ? ' · ' + u.location : '');
@@ -870,139 +1043,114 @@ async function viewProfile(username) {
     document.getElementById('sheet-followers').textContent = u.followers_count;
     document.getElementById('sheet-following').textContent = u.following_count;
     document.getElementById('sheet-harvests').textContent  = u.harvest_count;
+    const lockBadge = document.getElementById('sheet-lock-badge');
+    if (lockBadge) lockBadge.style.display = u.is_private ? 'inline-flex' : 'none';
+    document.getElementById('sheet-stat-followers').onclick = () => { sheet.classList.remove('open'); showUserList('followers', u.username); };
+    document.getElementById('sheet-stat-following').onclick = () => { sheet.classList.remove('open'); showUserList('following', u.username); };
+
     const fb = document.getElementById('sheet-follow-btn');
     if (currentUser && u.id === currentUser.id) {
       fb.style.display = 'none';
     } else {
       fb.style.display = '';
-      fb.className = `btn ${u.is_following ? 'btn-outline' : 'btn-primary'}`;
-      fb.style.cssText = 'padding:7px 16px;font-size:.82px';
+      fb.className = `btn ${u.is_following?'btn-outline':'btn-primary'}`;
+      fb.style.cssText = 'padding:7px 16px;font-size:.82rem';
       fb.textContent = u.is_following ? 'Following' : 'Follow';
       fb.onclick = async () => {
         fb.disabled = true;
-        const r2 = await fetch('/api/follows', {
-          method: 'POST', headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ target_id: u.id }),
-        });
+        const r2 = await fetch('/api/follows', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target_id:u.id}) });
         fb.disabled = false;
         if (!r2.ok) return;
         const { following } = await r2.json();
-        fb.className = `btn ${following ? 'btn-outline' : 'btn-primary'}`;
+        fb.className = `btn ${following?'btn-outline':'btn-primary'}`;
         fb.textContent = following ? 'Following' : 'Follow';
-        document.getElementById('sheet-followers').textContent =
-          parseInt(document.getElementById('sheet-followers').textContent) + (following ? 1 : -1);
-        if (following) loadFeed();
+        document.getElementById('sheet-followers').textContent = parseInt(document.getElementById('sheet-followers').textContent) + (following?1:-1);
+        if (following) { loadFeed(); viewProfile(sheetUsername); }
       };
     }
+
     document.getElementById('sheet-loading').style.display = 'none';
     document.getElementById('sheet-content').style.display = 'block';
+
+    const postsWrap = document.getElementById('sheet-posts-wrap');
+    const postsList = document.getElementById('sheet-posts-list');
+    postsWrap.style.display = 'block';
+    if (rpp.ok) {
+      const { posts, private: isPrivate } = await rpp.json();
+      if (isPrivate && !posts) {
+        postsList.innerHTML = `<div class="feed-state" style="padding:32px 24px"><i class="fa-solid fa-lock"></i><strong>Privates Konto</strong>Folge diesem Jäger um Posts zu sehen.</div>`;
+      } else if (!posts || posts.length === 0) {
+        postsList.innerHTML = `<div class="feed-state" style="padding:32px 24px"><i class="fa-solid fa-camera"></i><strong>Noch keine Posts</strong></div>`;
+      } else {
+        postsList.innerHTML = posts.map(renderPost).join('');
+      }
+    }
   } catch { sheet.classList.remove('open'); }
 }
 
-// close sheets/modals on overlay tap
-['log-modal','post-modal','profile-sheet'].forEach(id => {
-  document.getElementById(id).addEventListener('click', e => {
-    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
-  });
-});
-
-// ─────────────────────────────────────────────
-// Harvest log
-// ─────────────────────────────────────────────
-const ICONS = {'Bull Elk':'🦌','Cow Elk':'🦌','Mule Deer Buck':'🦌','Whitetail Buck':'🦌',
-  'Pronghorn':'🐐','Black Bear':'🐻','Bison':'🐂','Coyote':'🐺','Other':'🎯'};
-
+// ── Harvest log ──
+const ICONS = {
+  'Rehbock':'🦌','Ricke':'🦌','Hirsch':'🦌','Kahlwild':'🦌',
+  'Gamsbock':'🐐','Gams':'🐐','Steinbock':'🐐',
+  'Wildschwein':'🐗','Fuchs':'🦊','Dachs':'🦡',
+  'Feldhase':'🐇','Fasan':'🦃','Rebhuhn':'🦃','Andere':'🎯'
+};
 let allHarvests = [];
-
-function filterLog() {
-  const f = document.getElementById('log-filter').value;
-  renderHarvestList(f ? allHarvests.filter(h => h.species === f) : allHarvests);
-}
-
+function filterLog() { const f=document.getElementById('log-filter').value; renderHarvestList(f?allHarvests.filter(h=>h.species===f):allHarvests); }
 async function loadHarvests() {
   try {
-    const r = await fetch('/api/harvests');
-    if (!r.ok) return;
+    const r = await fetch('/api/harvests'); if (!r.ok) return;
     const { harvests } = await r.json();
-    allHarvests = harvests;
-    renderHarvestList(harvests);
-    const dists = harvests.map(h => h.distance_yards).filter(Boolean);
-    const avg = dists.length ? Math.round(dists.reduce((a,b)=>a+b,0)/dists.length) : '—';
-    const max = dists.length ? Math.max(...dists) : '—';
+    allHarvests = harvests; renderHarvestList(harvests);
+    const dists = harvests.map(h=>h.distance_yards).filter(Boolean);
     document.getElementById('stat-harvests').textContent = harvests.length;
-    document.getElementById('stat-avg-dist').textContent = dists.length ? avg : '—';
-    document.getElementById('stat-longest').textContent  = dists.length ? max : '—';
+    document.getElementById('stat-avg-dist').textContent = dists.length ? Math.round(dists.reduce((a,b)=>a+b,0)/dists.length) : '—';
+    document.getElementById('stat-longest').textContent  = dists.length ? Math.max(...dists) : '—';
     document.getElementById('profile-harvests').textContent = harvests.length;
-  } catch (e) { console.error('loadHarvests', e); }
+  } catch(e) { console.error('loadHarvests',e); }
 }
-
 function renderHarvestList(harvests) {
   const list = document.getElementById('log-list');
-  if (!harvests.length) {
-    list.innerHTML = `<div class="feed-state" style="padding:40px 20px">
-      <i class="fa-solid fa-book-open"></i>
-      <strong>No harvests yet</strong>
-      Tap + to log your first hunt.
-    </div>`;
-    return;
-  }
-  list.innerHTML = harvests.map(h => {
-    const date = h.date ? fmt(h.date) : '—';
-    return `<div class="log-entry">
-      <div class="log-entry-icon">${ICONS[h.species]||'🎯'}</div>
-      <div class="log-entry-body">
-        <div class="log-entry-title">${esc(h.species)}</div>
-        <div class="log-entry-meta">
-          <span><i class="fa-regular fa-calendar"></i> ${date}</span>
-          ${h.distance_yards?`<span><i class="fa-solid fa-ruler-horizontal"></i> ${h.distance_yards} yds</span>`:''}
-          ${h.cartridge?`<span><i class="fa-solid fa-crosshairs"></i> ${esc(h.cartridge)}</span>`:''}
-        </div>
-        <div class="log-tags">
-          ${h.location?`<span class="pill pill-amber" style="font-size:.7rem">${esc(h.location)}</span>`:''}
-          ${h.is_public
-            ? '<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-globe"></i> Public</span>'
-            : '<span class="pill" style="font-size:.7rem;background:rgba(0,0,0,.2);border:1px solid var(--border)"><i class="fa-solid fa-lock"></i> Private</span>'}
-        </div>
+  if (!harvests.length) { list.innerHTML=`<div class="feed-state" style="padding:40px 20px"><i class="fa-solid fa-book-open"></i><strong>Noch kein Abschuss</strong>Tippe + um den ersten einzutragen.</div>`; return; }
+  list.innerHTML = harvests.map(h => `<div class="log-entry">
+    <div class="log-entry-icon">${ICONS[h.species]||'🎯'}</div>
+    <div class="log-entry-body">
+      <div class="log-entry-title">${esc(h.species)}</div>
+      <div class="log-entry-meta">
+        <span><i class="fa-regular fa-calendar"></i> ${h.date?fmt(h.date):'—'}</span>
+        ${h.distance_yards?`<span><i class="fa-solid fa-ruler-horizontal"></i> ${h.distance_yards} m</span>`:''}
+        ${h.cartridge?`<span><i class="fa-solid fa-crosshairs"></i> ${esc(h.cartridge)}</span>`:''}
       </div>
-      <button class="icon-btn" style="align-self:flex-start" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i></button>
-    </div>`;
-  }).join('');
+      <div class="log-tags">
+        ${h.location?`<span class="pill pill-amber" style="font-size:.7rem">${esc(h.location)}</span>`:''}
+        ${h.is_public?'<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-globe"></i> Öffentlich</span>':'<span class="pill" style="font-size:.7rem;background:rgba(0,0,0,.2);border:1px solid var(--border)"><i class="fa-solid fa-lock"></i> Privat</span>'}
+      </div>
+    </div>
+    <button class="icon-btn" style="align-self:flex-start" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i></button>
+  </div>`).join('');
 }
-
 function openLogModal()  { document.getElementById('log-modal').classList.add('open'); }
 function closeLogModal() { document.getElementById('log-modal').classList.remove('open'); }
-
 async function saveLogEntry() {
-  const species  = document.getElementById('m-species').value;
-  const date     = document.getElementById('m-date').value;
-  const dist     = document.getElementById('m-dist').value;
-  const cart     = document.getElementById('m-cart').value;
-  const wind_mph = document.getElementById('m-mwind').value;
-  const loc      = document.getElementById('m-loc').value;
-  const notes    = document.getElementById('m-notes').value;
-  const is_public = document.getElementById('m-share').checked;
-
   const btn = document.querySelector('#log-modal .btn-amber');
-  btn.disabled = true; btn.textContent = 'Saving…';
-
+  btn.disabled = true; btn.textContent = 'Speichern…';
   try {
-    const r = await fetch('/api/harvests', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ species, date: date||null, distance_yards: dist||null,
-        cartridge: cart, wind_mph: wind_mph||null, location: loc, notes, is_public }),
-    });
-    if (!r.ok) { alert('Save failed.'); return; }
+    const r = await fetch('/api/harvests', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+      species:document.getElementById('m-species').value, date:document.getElementById('m-date').value||null,
+      distance_yards:document.getElementById('m-dist').value||null, cartridge:document.getElementById('m-cart').value,
+      wind_mph:document.getElementById('m-mwind').value||null, location:document.getElementById('m-loc').value,
+      notes:document.getElementById('m-notes').value, is_public:document.getElementById('m-share').checked
+    })});
+    if (!r.ok) { alert('Speichern fehlgeschlagen.'); return; }
     closeLogModal();
-    ['m-date','m-dist','m-loc','m-notes','m-mwind'].forEach(id => document.getElementById(id).value='');
+    ['m-date','m-dist','m-loc','m-notes','m-mwind'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('m-share').checked = true;
     await loadHarvests();
-  } catch { alert('Network error.'); }
-  finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Entry'; }
+  } catch { alert('Netzwerkfehler.'); }
+  finally { btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-check"></i> Eintragen'; }
 }
 
-// ─────────────────────────────────────────────
-// Ballistics
-// ─────────────────────────────────────────────
+// ── Ballistics (metric I/O, imperial internal) ──
 const CARTS = {
   '308win':{ name:'.308 Win 168gr',  bc:0.475, mv:2650, wt:168 },
   '3006':  { name:'.30-06 165gr',    bc:0.435, mv:2800, wt:165 },
@@ -1015,59 +1163,48 @@ const CARTS = {
 function velAt(v0,bc,r){ return v0*Math.pow(1-0.015/bc,r/100); }
 function tofAt(v0,bc,r){ const N=200,dr=r/N; let t=0; for(let i=0;i<N;i++) t+=(dr*3)/velAt(v0,bc,(i+.5)*dr); return t; }
 function runBallistics() {
-  const key=document.getElementById('b-cart').value, zero=+document.getElementById('b-zero').value||100,
-        wind=+document.getElementById('b-wind').value||0, temp=+document.getElementById('b-temp').value||59,
-        alt=+document.getElementById('b-alt').value||0, c=CARTS[key];
-  const bcEff=c.bc*Math.exp((alt+(59-temp)*120)/145000), mv=c.mv;
-  const tofZ=tofAt(mv,bcEff,zero), theta=(1.5-(-0.5*32.174*tofZ*tofZ*12))/zero;
+  const key=document.getElementById('b-cart').value, c=CARTS[key];
+  const zero_m=+document.getElementById('b-zero').value||100, wind_kph=+document.getElementById('b-wind').value||0,
+        temp_c=+document.getElementById('b-temp').value||10, alt_m=+document.getElementById('b-alt').value||600;
+  const zero_yd=zero_m/0.9144, wind_mph=wind_kph/1.60934, temp_f=temp_c*9/5+32, alt_ft=alt_m*3.28084;
+  const bcEff=c.bc*Math.exp((alt_ft+(59-temp_f)*120)/145000), mv=c.mv;
+  const tofZ=tofAt(mv,bcEff,zero_yd), theta=(1.5-(-0.5*32.174*tofZ*tofZ*12))/zero_yd;
   let rows='',wl='';
-  [100,200,300,400,500,600,700,800].forEach(r=>{
-    const v=velAt(mv,bcEff,r),t=tofAt(mv,bcEff,r),
-          drop=-1.5+theta*r+(-0.5*32.174*t*t*12),moa=drop/(r/100*1.047),
-          wd=wind*1.467*(t-(r*3)/mv)*12,ke=(c.wt*v*v)/450400,dc=drop>=0?'drop-pos':'drop-neg';
-    rows+=`<tr><td><strong>${r}</strong></td><td>${Math.round(v)}</td><td>${Math.round(ke)}</td>
-      <td class="${dc}">${drop>=0?'+':''}${drop.toFixed(1)}"</td>
-      <td class="${dc}">${moa>=0?'+':''}${moa.toFixed(1)}</td>
-      <td>${wd>0?'+':''}${wd.toFixed(1)}"</td></tr>`;
-    wl+=`<div><span style="color:var(--muted);min-width:60px;display:inline-block">${r} yds:</span> <strong>${wd>0?'+':''}${wd.toFixed(1)}"</strong> <span style="color:var(--muted);font-size:.78rem">(${(wd/(r/100*1.047)).toFixed(1)} MOA)</span></div>`;
+  [100,200,300,400,500,600,700,800].forEach(r_m=>{
+    const r_yd=r_m/0.9144, v_fps=velAt(mv,bcEff,r_yd), t=tofAt(mv,bcEff,r_yd);
+    const drop_in=-1.5+theta*r_yd+(-0.5*32.174*t*t*12), drop_cm=drop_in*2.54;
+    const moa=drop_in/(r_yd/100*1.047), wd_cm=wind_mph*1.467*(t-(r_yd*3)/mv)*12*2.54;
+    const ke_j=(c.wt*v_fps*v_fps)/450400*1.35582, v_ms=v_fps*0.3048;
+    const dc=drop_cm>=0?'drop-pos':'drop-neg';
+    rows+=`<tr><td><strong>${r_m}</strong></td><td>${Math.round(v_ms)}</td><td>${Math.round(ke_j)}</td><td class="${dc}">${drop_cm>=0?'+':''}${drop_cm.toFixed(1)}</td><td class="${dc}">${moa>=0?'+':''}${moa.toFixed(1)}</td><td>${wd_cm>0?'+':''}${wd_cm.toFixed(1)}</td></tr>`;
+    wl+=`<div><span style="color:var(--muted);min-width:72px;display:inline-block">${r_m} m:</span> <strong>${wd_cm>0?'+':''}${wd_cm.toFixed(1)} cm</strong> <span style="color:var(--muted);font-size:.78rem">(${(wd_cm/2.54/(r_yd/100*1.047)).toFixed(1)} MOA)</span></div>`;
   });
   document.getElementById('traj-body').innerHTML=rows;
-  document.getElementById('balli-sub').textContent=`· ${c.name} · Zero: ${zero} yds`;
-  document.getElementById('wind-guide').innerHTML=`<p style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${wind} mph full-value crosswind · ${c.name}</p>${wl}`;
+  document.getElementById('balli-sub').textContent=`· ${c.name} · Nulldistanz: ${zero_m} m`;
+  document.getElementById('wind-guide').innerHTML=`<p style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${wind_kph} km/h Querwind · ${c.name}</p>${wl}`;
   document.getElementById('balli-results').style.display='block';
 }
 
-// ─────────────────────────────────────────────
-// Utils
-// ─────────────────────────────────────────────
-function esc(s){
-  if(!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function timeAgo(d){
-  const sec=Math.floor((Date.now()-new Date(d))/1000);
-  if(sec<60) return 'just now';
-  if(sec<3600) return Math.floor(sec/60)+'m ago';
-  if(sec<86400) return Math.floor(sec/3600)+'h ago';
-  if(sec<604800) return Math.floor(sec/86400)+'d ago';
-  return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-}
-function fmt(d){
-  return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-}
-function avatarColor(u){
-  const c=['#3d6b4f','#6b4f3d','#4f3d6b','#3d4f6b','#6b3d4f','#4f6b3d'];
-  let h=0; for(const ch of(u||'')) h=(h*31+ch.charCodeAt(0))&0xffffffff;
-  return c[Math.abs(h)%c.length];
-}
-function makeAvatar(u,sz){
-  const l=((u.display_name||u.username||'?')[0]).toUpperCase();
-  return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${avatarColor(u.username)};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.round(sz*.42)}px;color:#fff;flex-shrink:0">${l}</div>`;
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tid); t._tid = setTimeout(()=>t.classList.remove('show'), 2400);
 }
 
-// ─────────────────────────────────────────────
-// Boot
-// ─────────────────────────────────────────────
+// ── Utils ──
+function esc(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function timeAgo(d){ const sec=Math.floor((Date.now()-new Date(d))/1000); if(sec<60)return'gerade eben'; if(sec<3600)return Math.floor(sec/60)+'min'; if(sec<86400)return Math.floor(sec/3600)+'h'; if(sec<604800)return Math.floor(sec/86400)+'d'; return new Date(d).toLocaleDateString('de-AT',{day:'numeric',month:'short'}); }
+function fmt(d){ return new Date(d).toLocaleDateString('de-AT',{day:'numeric',month:'short',year:'numeric'}); }
+function avatarColor(u){ const c=['#3d6b4f','#6b4f3d','#4f3d6b','#3d4f6b','#6b3d4f','#4f6b3d']; let h=0; for(const ch of(u||''))h=(h*31+ch.charCodeAt(0))&0xffffffff; return c[Math.abs(h)%c.length]; }
+function makeAvatar(u,sz){ if(u.avatar_url)return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;overflow:hidden;flex-shrink:0"><img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover"></div>`; const l=((u.display_name||u.username||'?')[0]).toUpperCase(); return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${avatarColor(u.username)};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.round(sz*.42)}px;color:#fff;flex-shrink:0">${l}</div>`; }
+
+// ── Modal close on overlay tap ──
+['log-modal','post-modal','profile-sheet','edit-profile-modal','list-sheet'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{ if(e.target===e.currentTarget)e.currentTarget.classList.remove('open'); });
+});
+
+// ── Boot ──
 runBallistics();
 initApp();
 </script>

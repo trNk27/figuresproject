@@ -16,12 +16,13 @@ module.exports = async function handler(req, res) {
       SELECT
         p.id, p.body, p.image_url, p.created_at,
         u.id   AS author_id,
-        u.username, u.display_name,
+        u.username, u.display_name, u.avatar_url,
         h.id   AS harvest_id,
         h.species, h.distance_yards, h.cartridge,
         h.location AS harvest_location,
-        (SELECT COUNT(*)::int FROM likes  WHERE post_id  = p.id)                              AS like_count,
-        (SELECT COUNT(*)::int FROM likes  WHERE post_id  = p.id AND user_id = ${userId}) > 0  AS liked_by_me
+        (SELECT COUNT(*)::int FROM likes    WHERE post_id = p.id)                             AS like_count,
+        (SELECT COUNT(*)::int FROM comments WHERE post_id = p.id)                             AS comment_count,
+        (SELECT COUNT(*)::int FROM likes    WHERE post_id = p.id AND user_id = ${userId}) > 0 AS liked_by_me
       FROM posts p
       JOIN  users    u ON p.user_id    = u.id
       LEFT JOIN harvests h ON p.harvest_id = h.id
