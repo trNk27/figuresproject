@@ -169,7 +169,7 @@
   <div class="logo"><i class="fa-solid fa-crosshairs"></i> TrailMark</div>
   <div class="head-right">
     <button class="icon-btn badge"><i class="fa-regular fa-bell"></i></button>
-    <button class="icon-btn"><i class="fa-regular fa-paper-plane"></i></button>
+    <button class="icon-btn" onclick="logout()" title="Sign out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
   </div>
 </header>
 
@@ -505,13 +505,13 @@
         <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem"><i class="fa-solid fa-share-nodes"></i></button>
       </div>
     </div>
-    <div class="profile-name">Jake Mercer</div>
-    <div class="profile-handle">@jake_mercer · Hamilton, Montana</div>
-    <div class="profile-bio">Elk & mule deer hunter. 20+ years behind the trigger. Public land advocate. Remington 700 guy 🎯 Always scouting, always learning.</div>
+    <div class="profile-name" id="profile-name">—</div>
+    <div class="profile-handle" id="profile-handle">—</div>
+    <div class="profile-bio" id="profile-bio">Loading…</div>
     <div class="profile-stats">
       <div class="profile-stat"><div class="profile-stat-val">847</div><div class="profile-stat-lbl">Followers</div></div>
       <div class="profile-stat"><div class="profile-stat-val">234</div><div class="profile-stat-lbl">Following</div></div>
-      <div class="profile-stat"><div class="profile-stat-val">62</div><div class="profile-stat-lbl">Harvests</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="profile-harvests">—</div><div class="profile-stat-lbl">Harvests</div></div>
       <div class="profile-stat"><div class="profile-stat-val">7</div><div class="profile-stat-lbl">Seasons</div></div>
     </div>
   </div>
@@ -610,7 +610,35 @@
 </div>
 
 <script>
-// Navigation
+// ── Auth ──
+let currentUser = null;
+
+async function initApp() {
+  try {
+    const r = await fetch('/api/auth/me');
+    if (!r.ok) { window.location.href = '/login.html'; return; }
+    currentUser = (await r.json()).user;
+    applyUserToUI(currentUser);
+    loadHarvests();
+  } catch {
+    window.location.href = '/login.html';
+  }
+}
+
+function applyUserToUI(user) {
+  document.getElementById('profile-name').textContent = user.display_name || user.username;
+  document.getElementById('profile-handle').textContent =
+    '@' + user.username + (user.location ? ' · ' + user.location : '');
+  document.getElementById('profile-bio').textContent =
+    user.bio || 'No bio yet — edit your profile to add one.';
+}
+
+async function logout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/login.html';
+}
+
+// ── Navigation ──
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const p = btn.dataset.page;
@@ -622,7 +650,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   });
 });
 
-// Like toggle
+// ── Like toggle ──
 function toggleLike(btn, base) {
   btn.classList.toggle('liked');
   const span = btn.querySelector('span');
@@ -631,7 +659,7 @@ function toggleLike(btn, base) {
   btn.querySelector('i').className = btn.classList.contains('liked') ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
 }
 
-// Ballistics
+// ── Ballistics ──
 const CARTS = {
   '308win': { name:'.308 Win 168gr', bc:0.475, mv:2650, wt:168 },
   '3006':   { name:'.30-06 165gr',   bc:0.435, mv:2800, wt:165 },
@@ -642,9 +670,7 @@ const CARTS = {
   '338':    { name:'.338 Lapua 300gr',bc:0.618,mv:2650, wt:300 },
 };
 
-function velAt(v0, bc, r) {
-  return v0 * Math.pow(1 - 0.015 / bc, r / 100);
-}
+function velAt(v0, bc, r) { return v0 * Math.pow(1 - 0.015 / bc, r / 100); }
 
 function tofAt(v0, bc, r) {
   const N = 200, dr = r / N;
@@ -660,35 +686,26 @@ function runBallistics() {
   const temp = +document.getElementById('b-temp').value || 59;
   const alt  = +document.getElementById('b-alt').value  || 0;
   const c = CARTS[key];
-  const da = alt + (59 - temp) * 120;
-  const bcEff = c.bc * Math.exp(da / 145000);
+  const bcEff = c.bc * Math.exp((alt + (59 - temp) * 120) / 145000);
   const mv = c.mv;
-
   const tofZ = tofAt(mv, bcEff, zero);
-  const dropZ = -0.5 * 32.174 * tofZ * tofZ * 12;
-  const theta = (1.5 - dropZ) / zero;
+  const theta = (1.5 - (-0.5 * 32.174 * tofZ * tofZ * 12)) / zero;
 
-  const RANGES = [100, 200, 300, 400, 500, 600, 700, 800];
   let rows = '', windLines = '';
-
-  RANGES.forEach(r => {
+  [100,200,300,400,500,600,700,800].forEach(r => {
     const v = velAt(mv, bcEff, r);
     const t = tofAt(mv, bcEff, r);
     const drop = -1.5 + theta * r + (-0.5 * 32.174 * t * t * 12);
     const moa  = drop / (r / 100 * 1.047);
-    const lag  = t - (r * 3) / mv;
-    const wd   = wind * 1.467 * lag * 12;
+    const wd   = wind * 1.467 * (t - (r * 3) / mv) * 12;
     const ke   = (c.wt * v * v) / 450400;
     const dc   = drop >= 0 ? 'drop-pos' : 'drop-neg';
     rows += `<tr>
-      <td><strong>${r}</strong></td>
-      <td>${Math.round(v)}</td>
-      <td>${Math.round(ke)}</td>
-      <td class="${dc}">${drop >= 0 ? '+' : ''}${drop.toFixed(1)}"</td>
-      <td class="${dc}">${moa >= 0 ? '+' : ''}${moa.toFixed(1)}</td>
-      <td>${wd > 0 ? '+' : ''}${wd.toFixed(1)}"</td>
-    </tr>`;
-    windLines += `<div><span style="color:var(--muted);min-width:60px;display:inline-block">${r} yds:</span> <strong>${wd > 0 ? '+' : ''}${wd.toFixed(1)}"</strong> &nbsp;<span style="color:var(--muted);font-size:.78rem">(${(wd / (r / 100 * 1.047)).toFixed(1)} MOA)</span></div>`;
+      <td><strong>${r}</strong></td><td>${Math.round(v)}</td><td>${Math.round(ke)}</td>
+      <td class="${dc}">${drop >= 0?'+':''}${drop.toFixed(1)}"</td>
+      <td class="${dc}">${moa >= 0?'+':''}${moa.toFixed(1)}</td>
+      <td>${wd > 0?'+':''}${wd.toFixed(1)}"</td></tr>`;
+    windLines += `<div><span style="color:var(--muted);min-width:60px;display:inline-block">${r} yds:</span> <strong>${wd>0?'+':''}${wd.toFixed(1)}"</strong> &nbsp;<span style="color:var(--muted);font-size:.78rem">(${(wd/(r/100*1.047)).toFixed(1)} MOA)</span></div>`;
   });
 
   document.getElementById('traj-body').innerHTML = rows;
@@ -698,45 +715,96 @@ function runBallistics() {
   document.getElementById('balli-results').style.display = 'block';
 }
 
-// Log Modal
-function openLogModal() { document.getElementById('log-modal').classList.add('open'); }
-function closeLogModal() { document.getElementById('log-modal').classList.remove('open'); }
+// ── Harvest Log ──
+const ICONS = {'Bull Elk':'🦌','Cow Elk':'🦌','Mule Deer Buck':'🦌','Whitetail Buck':'🦌',
+  'Pronghorn':'🐐','Black Bear':'🐻','Bison':'🐂','Coyote':'🐺','Other':'🎯'};
 
-function saveLogEntry() {
-  const species = document.getElementById('m-species').value;
-  const dist = document.getElementById('m-dist').value || '?';
-  const cart = document.getElementById('m-cart').value;
-  const loc  = document.getElementById('m-loc').value || 'Unknown';
-  const date = document.getElementById('m-date').value || 'Today';
-  const share = document.getElementById('m-share').checked;
-  const icons = {'Bull Elk':'🦌','Cow Elk':'🦌','Mule Deer Buck':'🦌','Whitetail Buck':'🦌',
-    'Pronghorn':'🐐','Black Bear':'🐻','Bison':'🐂','Coyote':'🐺','Other':'🎯'};
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-  entry.innerHTML = `
-    <div class="log-entry-icon">${icons[species]||'🎯'}</div>
+function harvestToHTML(h) {
+  const date = h.date ? new Date(h.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+  return `
+    <div class="log-entry-icon">${ICONS[h.species]||'🎯'}</div>
     <div class="log-entry-body">
-      <div class="log-entry-title">${species}</div>
+      <div class="log-entry-title">${h.species}</div>
       <div class="log-entry-meta">
         <span><i class="fa-regular fa-calendar"></i> ${date}</span>
-        <span><i class="fa-solid fa-ruler-horizontal"></i> ${dist} yds</span>
-        <span><i class="fa-solid fa-crosshairs"></i> ${cart}</span>
+        ${h.distance_yards ? `<span><i class="fa-solid fa-ruler-horizontal"></i> ${h.distance_yards} yds</span>` : ''}
+        ${h.cartridge ? `<span><i class="fa-solid fa-crosshairs"></i> ${h.cartridge}</span>` : ''}
       </div>
       <div class="log-tags">
-        <span class="pill pill-amber" style="font-size:.7rem">${loc}</span>
-        ${share ? '<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-share-nodes"></i> Shared</span>' : ''}
+        ${h.location ? `<span class="pill pill-amber" style="font-size:.7rem">${h.location}</span>` : ''}
+        ${h.is_public ? '<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-share-nodes"></i> Public</span>' : '<span class="pill" style="font-size:.7rem;background:rgba(0,0,0,.2);border:1px solid var(--border)"><i class="fa-solid fa-lock"></i> Private</span>'}
       </div>
     </div>
     <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>`;
-  document.getElementById('log-list').prepend(entry);
-  closeLogModal();
-  ['m-date','m-dist','m-loc','m-notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('m-share').checked = false;
+}
+
+async function loadHarvests() {
+  try {
+    const r = await fetch('/api/harvests');
+    if (!r.ok) return;
+    const { harvests } = await r.json();
+    const list = document.getElementById('log-list');
+    list.innerHTML = '';
+    if (harvests.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--muted)"><i class="fa-solid fa-book-open" style="font-size:2rem;display:block;margin-bottom:12px;color:var(--border)"></i>No harvests yet — tap + to log your first one.</div>';
+    } else {
+      harvests.forEach(h => {
+        const el = document.createElement('div');
+        el.className = 'log-entry';
+        el.innerHTML = harvestToHTML(h);
+        list.appendChild(el);
+      });
+    }
+    const countEl = document.getElementById('profile-harvests');
+    if (countEl) countEl.textContent = harvests.length;
+    document.querySelector('.log-stat-val').textContent = harvests.length;
+  } catch (err) {
+    console.error('loadHarvests', err);
+  }
+}
+
+function openLogModal() { document.getElementById('log-modal').classList.add('open'); }
+function closeLogModal() { document.getElementById('log-modal').classList.remove('open'); }
+
+async function saveLogEntry() {
+  const species  = document.getElementById('m-species').value;
+  const date     = document.getElementById('m-date').value;
+  const dist     = document.getElementById('m-dist').value;
+  const cart     = document.getElementById('m-cart').value;
+  const wind_mph = document.getElementById('m-mwind').value;
+  const loc      = document.getElementById('m-loc').value;
+  const notes    = document.getElementById('m-notes').value;
+  const is_public = document.getElementById('m-share').checked;
+
+  const btn = document.querySelector('#log-modal .btn-amber');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const r = await fetch('/api/harvests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ species, date: date || null, distance_yards: dist || null,
+        cartridge: cart, wind_mph: wind_mph || null, location: loc, notes, is_public }),
+    });
+    if (!r.ok) { alert('Save failed — please try again.'); return; }
+    closeLogModal();
+    ['m-date','m-dist','m-loc','m-notes','m-mwind'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('m-share').checked = false;
+    await loadHarvests();
+  } catch {
+    alert('Network error — please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Entry';
+  }
 }
 
 document.getElementById('log-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeLogModal(); });
 
+// ── Boot ──
 runBallistics();
+initApp();
 </script>
 </body>
 </html>
