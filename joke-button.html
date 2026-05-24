@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Joke Button</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
+      gap: 40px;
+    }
+
+    h1 {
+      color: #eee;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    #joke-btn {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ff4444, #aa0000);
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 0 #660000, 0 12px 20px rgba(0,0,0,0.5);
+      transition: transform 0.1s, box-shadow 0.1s;
+      user-select: none;
+    }
+
+    #joke-btn:hover {
+      background: radial-gradient(circle at 35% 35%, #ff6666, #cc0000);
+    }
+
+    #joke-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #660000, 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    #joke-box {
+      max-width: 500px;
+      min-height: 80px;
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 12px;
+      padding: 24px 32px;
+      color: #eee;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    #joke-box.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #punchline {
+      margin-top: 12px;
+      color: #e94560;
+      font-weight: bold;
+      font-size: 1.15rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Press for a Joke</h1>
+
+  <button id="joke-btn">Press Me!</button>
+
+  <div id="joke-box">
+    <div id="setup"></div>
+    <div id="punchline"></div>
+  </div>
+
+  <script>
+    const jokes = [
+      { setup: "Why don't scientists trust atoms?", punchline: "Because they make up everything!" },
+      { setup: "Why did the scarecrow win an award?", punchline: "Because he was outstanding in his field!" },
+      { setup: "I told my wife she was drawing her eyebrows too high.", punchline: "She looked surprised." },
+      { setup: "Why can't you give Elsa a balloon?", punchline: "Because she'll let it go." },
+      { setup: "What do you call a fake noodle?", punchline: "An impasta!" },
+      { setup: "Why did the bicycle fall over?", punchline: "Because it was two-tired!" },
+      { setup: "What do you call cheese that isn't yours?", punchline: "Nacho cheese!" },
+      { setup: "Why do cows wear bells?", punchline: "Because their horns don't work!" },
+      { setup: "I used to hate facial hair...", punchline: "But then it grew on me." },
+      { setup: "What do you call a sleeping dinosaur?", punchline: "A dino-snore!" },
+      { setup: "Why did the math book look so sad?", punchline: "Because it had too many problems." },
+      { setup: "What did the ocean say to the beach?", punchline: "Nothing, it just waved." },
+    ];
+
+    let lastIndex = -1;
+
+    document.getElementById('joke-btn').addEventListener('click', () => {
+      let index;
+      do { index = Math.floor(Math.random() * jokes.length); } while (index === lastIndex);
+      lastIndex = index;
+
+      const { setup, punchline } = jokes[index];
+      const box = document.getElementById('joke-box');
+
+      box.classList.remove('visible');
+
+      setTimeout(() => {
+        document.getElementById('setup').textContent = setup;
+        document.getElementById('punchline').textContent = punchline;
+        box.classList.add('visible');
+      }, 200);
+    });
+  </script>
+
+</body>
+</html>
