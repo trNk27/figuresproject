@@ -3,132 +3,740 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Random Joke Button</title>
+  <title>TrailMark</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #0e1210;
+      --surface: #151c17;
+      --surface2: #1c2620;
+      --border: #263029;
+      --green: #3d6b4f;
+      --green-l: #4e8963;
+      --amber: #c9943a;
+      --amber-l: #e0a840;
+      --text: #dfe8e0;
+      --muted: #7a9180;
+      --red: #c44536;
+      --nav: 62px;
+      --head: 54px;
     }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #1a1a2e;
-      font-family: 'Segoe UI', sans-serif;
-      gap: 40px;
-    }
-
-    h1 {
-      color: #eee;
-      font-size: 2rem;
-      letter-spacing: 1px;
-    }
-
-    #joke-btn {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #ff4444, #aa0000);
-      border: none;
-      cursor: pointer;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: white;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      box-shadow: 0 8px 0 #660000, 0 12px 20px rgba(0,0,0,0.5);
-      transition: transform 0.1s, box-shadow 0.1s;
-      user-select: none;
-    }
-
-    #joke-btn:hover {
-      background: radial-gradient(circle at 35% 35%, #ff6666, #cc0000);
-    }
-
-    #joke-btn:active {
-      transform: translateY(6px);
-      box-shadow: 0 2px 0 #660000, 0 4px 10px rgba(0,0,0,0.4);
-    }
-
-    #joke-box {
-      max-width: 500px;
-      min-height: 80px;
-      background: #16213e;
-      border: 1px solid #0f3460;
-      border-radius: 12px;
-      padding: 24px 32px;
-      color: #eee;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
-    #joke-box.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #punchline {
-      margin-top: 12px;
-      color: #e94560;
-      font-weight: bold;
-      font-size: 1.15rem;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+    .app-head{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--head);background:rgba(14,18,16,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100}
+    .logo{font-size:1.25rem;font-weight:700;color:var(--amber);letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+    .logo i{color:var(--green-l)}
+    .head-right{display:flex;gap:4px}
+    .icon-btn{background:none;border:none;color:var(--muted);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;transition:color .2s,background .2s}
+    .icon-btn:hover{color:var(--text);background:var(--surface2)}
+    .badge{position:relative}
+    .badge::after{content:'';position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--amber);border-radius:50%;border:2px solid var(--bg)}
+    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--nav);background:rgba(14,18,16,.97);backdrop-filter:blur(8px);border-top:1px solid var(--border);display:flex;z-index:100}
+    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.62rem;font-weight:500;letter-spacing:.3px;text-transform:uppercase;transition:color .2s;padding-bottom:2px}
+    .nav-btn i{font-size:1.15rem;transition:color .2s,transform .2s}
+    .nav-btn.active{color:var(--amber-l)}
+    .nav-btn.active i{transform:scale(1.1)}
+    .page{display:none;padding:calc(var(--head) + 12px) 0 calc(var(--nav) + 12px);min-height:100vh}
+    .page.active{display:block}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin:0 12px 12px}
+    .section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:8px 16px 6px}
+    .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+    .pill-green{background:rgba(61,107,79,.25);color:#7ecf9a;border:1px solid rgba(61,107,79,.4)}
+    .pill-amber{background:rgba(201,148,58,.2);color:var(--amber-l);border:1px solid rgba(201,148,58,.3)}
+    .pill-red{background:rgba(196,69,54,.2);color:#e8776a;border:1px solid rgba(196,69,54,.3)}
+    .pill-blue{background:rgba(58,130,201,.2);color:#7ab8e8;border:1px solid rgba(58,130,201,.3)}
+    .divider{height:1px;background:var(--border);margin:12px 0}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .2s}
+    .btn-primary{background:var(--green);color:#fff}
+    .btn-primary:hover{background:var(--green-l)}
+    .btn-outline{background:none;border:1px solid var(--border);color:var(--text)}
+    .btn-outline:hover{border-color:var(--muted);background:var(--surface2)}
+    .btn-amber{background:var(--amber);color:#fff}
+    .btn-amber:hover{background:var(--amber-l)}
+    /* Feed */
+    .stories{display:flex;gap:10px;padding:8px 12px 4px;overflow-x:auto;scrollbar-width:none}
+    .stories::-webkit-scrollbar{display:none}
+    .story{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;cursor:pointer}
+    .story-ring{width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--green-l),var(--amber))}
+    .story-ring.you{background:linear-gradient(135deg,#444,#666)}
+    .story-avatar{width:100%;height:100%;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:2px solid var(--bg)}
+    .story-label{font-size:.65rem;color:var(--muted);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+    .post{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:8px}
+    .post-head{display:flex;align-items:center;gap:10px;padding:12px 14px 8px}
+    .post-avatar{width:38px;height:38px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .post-meta{flex:1}
+    .post-name{font-size:.9rem;font-weight:600}
+    .post-sub{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-top:1px}
+    .post-sub i{font-size:.6rem}
+    .post-img{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
+    .post-img-label{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.7);padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
+    .post-body{padding:10px 14px 6px}
+    .post-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+    .post-caption{font-size:.85rem;line-height:1.5}
+    .post-actions{display:flex;border-top:1px solid var(--border);padding:2px 0}
+    .post-action{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;font-weight:500;transition:color .2s}
+    .post-action:hover{color:var(--text)}
+    .post-action.liked{color:#e8776a}
+    /* Ballistics */
+    .balli-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .form-group{display:flex;flex-direction:column;gap:5px}
+    .form-group.full{grid-column:1/-1}
+    label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    select,input[type=number],input[type=text],textarea{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:.88rem;width:100%;outline:none;transition:border-color .2s;-webkit-appearance:none}
+    select:focus,input:focus,textarea:focus{border-color:var(--green-l)}
+    select option{background:#1c2620}
+    .traj-table{width:100%;border-collapse:collapse;font-size:.78rem}
+    .traj-table th{color:var(--muted);font-weight:600;text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);font-size:.68rem;text-transform:uppercase;letter-spacing:.4px}
+    .traj-table th:first-child,.traj-table td:first-child{text-align:left}
+    .traj-table td{padding:7px 8px;border-bottom:1px solid rgba(38,48,41,.5);text-align:right;font-variant-numeric:tabular-nums}
+    .traj-table tr:last-child td{border-bottom:none}
+    .drop-pos{color:#7ecf9a}
+    .drop-neg{color:#e8776a}
+    /* Conditions */
+    .weather-hero{background:linear-gradient(135deg,#0d2418,#1a3526);border:1px solid var(--border);border-radius:14px;padding:20px;margin:0 12px 12px;position:relative;overflow:hidden}
+    .weather-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(61,107,79,.15);border-radius:50%}
+    .wh-temp{font-size:3.5rem;font-weight:300;letter-spacing:-2px;line-height:1}
+    .wh-cond{font-size:.95rem;color:var(--muted);margin-top:4px}
+    .wh-loc{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:2px}
+    .wh-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+    .wh-stat{background:rgba(0,0,0,.25);border-radius:8px;padding:8px 12px;flex:1;min-width:80px}
+    .wh-stat-val{font-size:1.05rem;font-weight:600}
+    .wh-stat-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+    .hunt-score{background:linear-gradient(135deg,#1a3020,#243826);border:1px solid rgba(78,137,99,.3);border-radius:14px;padding:18px;margin:0 12px 12px;display:flex;align-items:center;gap:16px}
+    .score-ring{width:72px;height:72px;flex-shrink:0;position:relative}
+    .score-ring svg{transform:rotate(-90deg)}
+    .score-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.3rem;font-weight:700;color:var(--amber-l)}
+    .score-info h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+    .score-info p{font-size:.8rem;color:var(--muted);line-height:1.4}
+    .wind-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin:0 12px 12px;display:flex;align-items:center;gap:16px}
+    .wind-compass{width:90px;height:90px;flex-shrink:0}
+    .wind-compass svg{width:100%;height:100%}
+    .forecast{display:flex;gap:8px;padding:0 12px 12px;overflow-x:auto;scrollbar-width:none}
+    .forecast::-webkit-scrollbar{display:none}
+    .fc-day{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;flex-shrink:0;min-width:70px;text-align:center}
+    .fc-day-name{font-size:.68rem;color:var(--muted);text-transform:uppercase;font-weight:600}
+    .fc-icon{font-size:1.3rem;margin:6px 0}
+    .fc-hi{font-size:.9rem;font-weight:600}
+    .fc-lo{font-size:.78rem;color:var(--muted)}
+    /* Log */
+    .log-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 12px 12px}
+    .log-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+    .log-stat-val{font-size:1.4rem;font-weight:700;color:var(--amber-l)}
+    .log-stat-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+    .log-entry{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 12px 10px;display:flex;gap:12px;align-items:flex-start}
+    .log-entry-icon{width:44px;height:44px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .log-entry-body{flex:1}
+    .log-entry-title{font-size:.9rem;font-weight:600;margin-bottom:3px}
+    .log-entry-meta{font-size:.75rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+    .log-entry-meta span{display:flex;align-items:center;gap:4px}
+    .log-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+    .fab{position:fixed;bottom:calc(var(--nav) + 16px);right:max(16px, calc(50% - 224px));width:52px;height:52px;border-radius:50%;background:var(--amber);border:none;color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(201,148,58,.4);transition:all .2s;z-index:90}
+    .fab:hover{background:var(--amber-l);transform:scale(1.07)}
+    /* Profile */
+    .profile-cover{height:130px;background:linear-gradient(135deg,#0d2418,#1e3d2a,#2a4d1a);position:relative;overflow:hidden}
+    .profile-cover::after{content:'🌲🦌🌲🌲🦅🌲';position:absolute;bottom:-10px;font-size:2rem;opacity:.3;letter-spacing:8px;width:100%;text-align:center}
+    .profile-head{padding:0 16px 16px}
+    .profile-av{width:76px;height:76px;border-radius:50%;background:var(--surface2);border:3px solid var(--bg);margin-top:-38px;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;z-index:1}
+    .profile-name{font-size:1.2rem;font-weight:700;margin-top:8px}
+    .profile-handle{font-size:.82rem;color:var(--muted)}
+    .profile-bio{font-size:.84rem;line-height:1.4;margin-top:8px}
+    .profile-stats{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:14px}
+    .profile-stat{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+    .profile-stat:last-child{border-right:none}
+    .profile-stat-val{font-size:1.1rem;font-weight:700;color:var(--amber-l)}
+    .profile-stat-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+    .gear-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+    .gear-item:last-child{border-bottom:none}
+    .gear-icon{width:38px;height:38px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .gear-info{flex:1}
+    .gear-name{font-size:.88rem;font-weight:600}
+    .gear-sub{font-size:.73rem;color:var(--muted);margin-top:2px}
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:flex-end;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:var(--surface);border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
+    .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+    .modal-title{font-size:1rem;font-weight:700;margin-bottom:16px}
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .modal-grid .full{grid-column:1/-1}
+    .modal-actions{display:flex;gap:10px;margin-top:16px}
+    .modal-actions .btn{flex:1;justify-content:center}
   </style>
 </head>
 <body>
 
-  <h1>Press for a Joke</h1>
+<header class="app-head">
+  <div class="logo"><i class="fa-solid fa-crosshairs"></i> TrailMark</div>
+  <div class="head-right">
+    <button class="icon-btn badge"><i class="fa-regular fa-bell"></i></button>
+    <button class="icon-btn"><i class="fa-regular fa-paper-plane"></i></button>
+  </div>
+</header>
 
-  <button id="joke-btn">Press Me!</button>
+<main>
 
-  <div id="joke-box">
-    <div id="setup"></div>
-    <div id="punchline"></div>
+<!-- FEED -->
+<div id="page-feed" class="page active">
+  <div class="stories">
+    <div class="story">
+      <div class="story-ring you"><div class="story-avatar">🧑</div></div>
+      <span class="story-label">You</span>
+    </div>
+    <div class="story"><div class="story-ring"><div class="story-avatar">👩</div></div><span class="story-label">Sarah M</span></div>
+    <div class="story"><div class="story-ring"><div class="story-avatar">👨‍🦱</div></div><span class="story-label">Tom H</span></div>
+    <div class="story"><div class="story-ring"><div class="story-avatar">🧔</div></div><span class="story-label">Buck L</span></div>
+    <div class="story"><div class="story-ring"><div class="story-avatar">👱‍♀️</div></div><span class="story-label">Amy D</span></div>
+    <div class="story"><div class="story-ring"><div class="story-avatar">🧓</div></div><span class="story-label">Earl V</span></div>
   </div>
 
-  <script>
-    const jokes = [
-      { setup: "Why don't scientists trust atoms?", punchline: "Because they make up everything!" },
-      { setup: "Why did the scarecrow win an award?", punchline: "Because he was outstanding in his field!" },
-      { setup: "I told my wife she was drawing her eyebrows too high.", punchline: "She looked surprised." },
-      { setup: "Why can't you give Elsa a balloon?", punchline: "Because she'll let it go." },
-      { setup: "What do you call a fake noodle?", punchline: "An impasta!" },
-      { setup: "Why did the bicycle fall over?", punchline: "Because it was two-tired!" },
-      { setup: "What do you call cheese that isn't yours?", punchline: "Nacho cheese!" },
-      { setup: "Why do cows wear bells?", punchline: "Because their horns don't work!" },
-      { setup: "I used to hate facial hair...", punchline: "But then it grew on me." },
-      { setup: "What do you call a sleeping dinosaur?", punchline: "A dino-snore!" },
-      { setup: "Why did the math book look so sad?", punchline: "Because it had too many problems." },
-      { setup: "What did the ocean say to the beach?", punchline: "Nothing, it just waved." },
-    ];
+  <div class="post">
+    <div class="post-head">
+      <div class="post-avatar">🧑</div>
+      <div class="post-meta">
+        <div class="post-name">Jake Mercer <span style="color:var(--muted);font-weight:400;font-size:.78rem">@jake_mercer</span></div>
+        <div class="post-sub"><i class="fa-solid fa-location-dot"></i> Bitterroot Valley, MT &nbsp;·&nbsp; 3h ago</div>
+      </div>
+      <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
+    </div>
+    <div class="post-img" style="background:linear-gradient(160deg,#0d2010,#1a3a15,#2d4e20)">
+      <span style="font-size:5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))">🦌</span>
+      <div class="post-img-label"><i class="fa-solid fa-ruler-horizontal"></i> 347 yds &nbsp;·&nbsp; 6×6 Bull Elk</div>
+    </div>
+    <div class="post-body">
+      <div class="post-stats">
+        <span class="pill pill-amber"><i class="fa-solid fa-crosshairs"></i> .300 Win Mag</span>
+        <span class="pill pill-green"><i class="fa-solid fa-mountain"></i> 5,840 ft</span>
+        <span class="pill pill-blue"><i class="fa-solid fa-thermometer-half"></i> 31°F</span>
+      </div>
+      <div class="post-caption">Finally got him after 4 days of glassing. Wind was perfect at 6 mph from the NW. One shot, DRT. Tagged out for the season 🎯</div>
+    </div>
+    <div class="post-actions">
+      <button class="post-action liked" onclick="toggleLike(this,247)"><i class="fa-solid fa-heart"></i> <span>247</span></button>
+      <button class="post-action"><i class="fa-regular fa-comment"></i> 34</button>
+      <button class="post-action"><i class="fa-solid fa-share-nodes"></i> Share</button>
+      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
+    </div>
+  </div>
 
-    let lastIndex = -1;
+  <div class="post">
+    <div class="post-head">
+      <div class="post-avatar">👩</div>
+      <div class="post-meta">
+        <div class="post-name">Sarah Mitchell <span style="color:var(--muted);font-weight:400;font-size:.78rem">@sarah_mt_hunter</span></div>
+        <div class="post-sub"><i class="fa-solid fa-location-dot"></i> Missoula, MT &nbsp;·&nbsp; 6h ago</div>
+      </div>
+      <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
+    </div>
+    <div style="padding:0 14px 10px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:8px"><i class="fa-solid fa-cloud-sun"></i> Shared Conditions — Garnet Range</div>
+        <div style="display:flex;gap:16px;font-size:.85rem">
+          <div><span style="color:var(--amber-l);font-weight:700">34°F</span><br><span style="color:var(--muted);font-size:.72rem">Temp</span></div>
+          <div><span style="color:var(--amber-l);font-weight:700">4 mph SW</span><br><span style="color:var(--muted);font-size:.72rem">Wind</span></div>
+          <div><span style="color:var(--amber-l);font-weight:700">Overcast</span><br><span style="color:var(--muted);font-size:.72rem">Sky</span></div>
+          <div><span style="color:#7ecf9a;font-weight:700">94/100</span><br><span style="color:var(--muted);font-size:.72rem">Hunt Score</span></div>
+        </div>
+      </div>
+      <p style="font-size:.85rem;margin-top:10px;line-height:1.5">Insane morning out there. Spotted a 180" mule deer buck at first light. Didn't take the shot — he's getting one more year 👀</p>
+    </div>
+    <div class="post-actions">
+      <button class="post-action" onclick="toggleLike(this,89)"><i class="fa-regular fa-heart"></i> <span>89</span></button>
+      <button class="post-action"><i class="fa-regular fa-comment"></i> 21</button>
+      <button class="post-action"><i class="fa-solid fa-share-nodes"></i> Share</button>
+      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
+    </div>
+  </div>
 
-    document.getElementById('joke-btn').addEventListener('click', () => {
-      let index;
-      do { index = Math.floor(Math.random() * jokes.length); } while (index === lastIndex);
-      lastIndex = index;
+  <div class="post">
+    <div class="post-head">
+      <div class="post-avatar">🧔</div>
+      <div class="post-meta">
+        <div class="post-name">Buck Larson <span style="color:var(--muted);font-weight:400;font-size:.78rem">@buck_larson</span></div>
+        <div class="post-sub"><i class="fa-solid fa-location-dot"></i> Dillon, MT &nbsp;·&nbsp; 1d ago</div>
+      </div>
+      <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
+    </div>
+    <div class="post-img" style="background:linear-gradient(160deg,#1a1000,#2d1e00,#3d2a00)">
+      <span style="font-size:5rem">🐂</span>
+      <div class="post-img-label"><i class="fa-solid fa-ruler-horizontal"></i> 512 yds &nbsp;·&nbsp; Bison</div>
+    </div>
+    <div class="post-body">
+      <div class="post-stats">
+        <span class="pill pill-amber"><i class="fa-solid fa-crosshairs"></i> .338 Lapua</span>
+        <span class="pill pill-green"><i class="fa-solid fa-wind"></i> 18 mph cross</span>
+      </div>
+      <div class="post-caption">Long cross-wind shot on a bison hunt in Wyoming. Used TrailMark's wind calc to dial in 11.4" of correction. Worked perfectly!</div>
+    </div>
+    <div class="post-actions">
+      <button class="post-action" onclick="toggleLike(this,312)"><i class="fa-regular fa-heart"></i> <span>312</span></button>
+      <button class="post-action"><i class="fa-regular fa-comment"></i> 58</button>
+      <button class="post-action"><i class="fa-solid fa-share-nodes"></i> Share</button>
+      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
+    </div>
+  </div>
+  <div style="height:8px"></div>
+</div>
 
-      const { setup, punchline } = jokes[index];
-      const box = document.getElementById('joke-box');
+<!-- BALLISTICS -->
+<div id="page-ballistics" class="page">
+  <div class="section-title">Ballistics Calculator</div>
+  <div class="card">
+    <div class="balli-form">
+      <div class="form-group full">
+        <label>Cartridge / Load</label>
+        <select id="b-cart">
+          <option value="308win">.308 Win 168gr SMK (BC 0.475)</option>
+          <option value="3006">.30-06 Sprg 165gr (BC 0.435)</option>
+          <option value="65cm" selected>6.5 Creedmoor 140gr (BC 0.535)</option>
+          <option value="300wm">.300 Win Mag 180gr (BC 0.507)</option>
+          <option value="243">.243 Win 95gr (BC 0.379)</option>
+          <option value="7mm">7mm Rem Mag 162gr (BC 0.572)</option>
+          <option value="338">.338 Lapua 300gr (BC 0.618)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Zero Range (yds)</label><input type="number" id="b-zero" value="100" min="50" max="300" step="25"></div>
+      <div class="form-group"><label>Wind Speed (mph)</label><input type="number" id="b-wind" value="10" min="0" max="50"></div>
+      <div class="form-group"><label>Temperature (°F)</label><input type="number" id="b-temp" value="40" min="-40" max="110"></div>
+      <div class="form-group"><label>Altitude (ft)</label><input type="number" id="b-alt" value="4500" min="0" max="14000" step="500"></div>
+      <div class="form-group full" style="margin-top:4px">
+        <button class="btn btn-amber" style="width:100%;justify-content:center" onclick="runBallistics()">
+          <i class="fa-solid fa-calculator"></i> Calculate Trajectory
+        </button>
+      </div>
+    </div>
+  </div>
 
-      box.classList.remove('visible');
+  <div id="balli-results" style="display:none">
+    <div class="section-title">Trajectory Table <span id="balli-sub" style="color:var(--text);font-weight:400;text-transform:none;letter-spacing:0;font-size:.78rem"></span></div>
+    <div class="card" style="padding:12px 8px">
+      <table class="traj-table">
+        <thead>
+          <tr>
+            <th>Range</th><th>Vel fps</th><th>ft·lbs</th><th>Drop"</th><th>MOA</th><th>Wind"</th>
+          </tr>
+        </thead>
+        <tbody id="traj-body"></tbody>
+      </table>
+    </div>
+    <div class="section-title">Wind Drift Guide</div>
+    <div class="card"><div id="wind-guide" style="font-size:.84rem;line-height:1.9"></div></div>
+    <div class="card" style="display:flex;gap:10px">
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="alert('Copied to clipboard!')"><i class="fa-regular fa-copy"></i> Copy</button>
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="alert('Posted to your feed!')"><i class="fa-solid fa-share-nodes"></i> Post to Feed</button>
+    </div>
+  </div>
+</div>
 
-      setTimeout(() => {
-        document.getElementById('setup').textContent = setup;
-        document.getElementById('punchline').textContent = punchline;
-        box.classList.add('visible');
-      }, 200);
-    });
-  </script>
+<!-- CONDITIONS -->
+<div id="page-conditions" class="page">
+  <div style="padding:8px 12px 0">
+    <div class="hunt-score">
+      <div class="score-ring">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="30" fill="none" stroke="var(--border)" stroke-width="5"/>
+          <circle cx="36" cy="36" r="30" fill="none" stroke="var(--amber)" stroke-width="5"
+            stroke-dasharray="188.5" stroke-dashoffset="23" stroke-linecap="round"/>
+        </svg>
+        <div class="score-num">88</div>
+      </div>
+      <div class="score-info">
+        <h3>Excellent Hunting Conditions</h3>
+        <p>Cool temps, low wind &amp; stable pressure. Peak whitetail movement expected at dusk.</p>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Good Temp</span>
+          <span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-check"></i> Calm Wind</span>
+          <span class="pill pill-amber" style="font-size:.7rem"><i class="fa-solid fa-arrow-down"></i> Pressure ↓</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="weather-hero">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div class="wh-temp">38°F</div>
+        <div class="wh-cond">Partly Cloudy · Feels like 31°F</div>
+        <div class="wh-loc"><i class="fa-solid fa-location-dot"></i> Hamilton, MT · Updated 4 min ago</div>
+      </div>
+      <div style="font-size:3rem;line-height:1">⛅</div>
+    </div>
+    <div class="wh-row">
+      <div class="wh-stat"><div class="wh-stat-val">72%</div><div class="wh-stat-lbl">Humidity</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">30.18"</div><div class="wh-stat-lbl">Pressure</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">10 mi</div><div class="wh-stat-lbl">Visibility</div></div>
+      <div class="wh-stat"><div class="wh-stat-val">🌔 68%</div><div class="wh-stat-lbl">Moon</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">Wind</div>
+  <div class="wind-card">
+    <div class="wind-compass">
+      <svg viewBox="0 0 90 90">
+        <circle cx="45" cy="45" r="42" fill="var(--surface2)" stroke="var(--border)" stroke-width="1.5"/>
+        <text x="45" y="14" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">N</text>
+        <text x="45" y="82" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">S</text>
+        <text x="10" y="49" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">W</text>
+        <text x="80" y="49" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="600">E</text>
+        <g transform="translate(45,45) rotate(-22.5)">
+          <polygon points="0,-28 5,-10 0,-16 -5,-10" fill="var(--amber)" opacity=".9"/>
+          <polygon points="0,28 5,10 0,16 -5,10" fill="var(--muted)" opacity=".6"/>
+        </g>
+        <circle cx="45" cy="45" r="4" fill="var(--bg)"/>
+      </svg>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:1.6rem;font-weight:700">8 mph <span style="font-size:.85rem;color:var(--muted);font-weight:400">NNW</span></div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Gusts up to 14 mph</div>
+      <div class="divider" style="margin:10px 0"></div>
+      <div style="font-size:.82rem;line-height:1.9">
+        <div><span style="color:var(--muted)">Crosswind component:</span> <strong>7.4 mph</strong></div>
+        <div><span style="color:var(--muted)">Headwind component:</span> <strong>3.1 mph</strong></div>
+        <div><span style="color:var(--muted)">.308 drift @ 300 yds:</span> <strong style="color:var(--amber-l)">3.2"</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">5-Day Forecast</div>
+  <div class="forecast">
+    <div class="fc-day" style="background:var(--surface2);border-color:var(--amber)">
+      <div class="fc-day-name">Today</div><div class="fc-icon">⛅</div><div class="fc-hi">42°</div><div class="fc-lo">29°</div>
+    </div>
+    <div class="fc-day"><div class="fc-day-name">Sat</div><div class="fc-icon">☀️</div><div class="fc-hi">48°</div><div class="fc-lo">31°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Sun</div><div class="fc-icon">🌧️</div><div class="fc-hi">37°</div><div class="fc-lo">28°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Mon</div><div class="fc-icon">❄️</div><div class="fc-hi">31°</div><div class="fc-lo">18°</div></div>
+    <div class="fc-day"><div class="fc-day-name">Tue</div><div class="fc-icon">🌨️</div><div class="fc-hi">28°</div><div class="fc-lo">14°</div></div>
+  </div>
+
+  <div class="card" style="display:flex;gap:10px;margin-top:4px">
+    <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="alert('Conditions copied!')"><i class="fa-regular fa-copy"></i> Copy</button>
+    <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="alert('Shared to feed!')"><i class="fa-solid fa-share-nodes"></i> Share Conditions</button>
+  </div>
+</div>
+
+<!-- LOG -->
+<div id="page-log" class="page">
+  <div class="log-stats">
+    <div class="log-stat"><div class="log-stat-val">12</div><div class="log-stat-lbl">Harvests</div></div>
+    <div class="log-stat"><div class="log-stat-val">294</div><div class="log-stat-lbl">Avg Yards</div></div>
+    <div class="log-stat"><div class="log-stat-val">83%</div><div class="log-stat-lbl">1-Shot Rate</div></div>
+  </div>
+
+  <div style="padding:0 12px 8px;display:flex;justify-content:space-between;align-items:center">
+    <span class="section-title" style="padding:0">Recent Harvests</span>
+    <select style="width:auto;padding:6px 10px;font-size:.78rem">
+      <option>All Species</option><option>Elk</option><option>Deer</option><option>Antelope</option>
+    </select>
+  </div>
+
+  <div id="log-list">
+    <div class="log-entry">
+      <div class="log-entry-icon">🦌</div>
+      <div class="log-entry-body">
+        <div class="log-entry-title">6×6 Bull Elk — 710 lbs</div>
+        <div class="log-entry-meta">
+          <span><i class="fa-regular fa-calendar"></i> Nov 15, 2024</span>
+          <span><i class="fa-solid fa-ruler-horizontal"></i> 347 yds</span>
+          <span><i class="fa-solid fa-crosshairs"></i> .300 Win Mag</span>
+        </div>
+        <div class="log-tags">
+          <span class="pill pill-green" style="font-size:.7rem">DRT</span>
+          <span class="pill pill-amber" style="font-size:.7rem">Bitterroot Valley, MT</span>
+          <span class="pill pill-blue" style="font-size:.7rem">Public Land</span>
+        </div>
+      </div>
+      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
+    </div>
+    <div class="log-entry">
+      <div class="log-entry-icon">🦌</div>
+      <div class="log-entry-body">
+        <div class="log-entry-title">4×4 Mule Deer Buck — 185 lbs</div>
+        <div class="log-entry-meta">
+          <span><i class="fa-regular fa-calendar"></i> Oct 22, 2024</span>
+          <span><i class="fa-solid fa-ruler-horizontal"></i> 180 yds</span>
+          <span><i class="fa-solid fa-crosshairs"></i> .308 Win</span>
+        </div>
+        <div class="log-tags">
+          <span class="pill pill-green" style="font-size:.7rem">DRT</span>
+          <span class="pill pill-amber" style="font-size:.7rem">Glacier Nat. Forest</span>
+        </div>
+      </div>
+      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
+    </div>
+    <div class="log-entry">
+      <div class="log-entry-icon">🐐</div>
+      <div class="log-entry-body">
+        <div class="log-entry-title">Pronghorn Antelope — 110 lbs</div>
+        <div class="log-entry-meta">
+          <span><i class="fa-regular fa-calendar"></i> Sep 8, 2024</span>
+          <span><i class="fa-solid fa-ruler-horizontal"></i> 412 yds</span>
+          <span><i class="fa-solid fa-crosshairs"></i> 6.5 Creedmoor</span>
+        </div>
+        <div class="log-tags">
+          <span class="pill pill-green" style="font-size:.7rem">DRT</span>
+          <span class="pill pill-amber" style="font-size:.7rem">Powder River, WY</span>
+        </div>
+      </div>
+      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
+    </div>
+    <div class="log-entry">
+      <div class="log-entry-icon">🐺</div>
+      <div class="log-entry-body">
+        <div class="log-entry-title">Coyote — Pest Control</div>
+        <div class="log-entry-meta">
+          <span><i class="fa-regular fa-calendar"></i> Aug 3, 2024</span>
+          <span><i class="fa-solid fa-ruler-horizontal"></i> 255 yds</span>
+          <span><i class="fa-solid fa-crosshairs"></i> .243 Win</span>
+        </div>
+        <div class="log-tags"><span class="pill pill-amber" style="font-size:.7rem">Private Ranch</span></div>
+      </div>
+      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="page-profile" class="page" style="padding-top:var(--head)">
+  <div class="profile-cover"></div>
+  <div class="profile-head">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div class="profile-av">🧑</div>
+      <div style="display:flex;gap:8px;padding-top:8px">
+        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem"><i class="fa-solid fa-pen"></i> Edit</button>
+        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem"><i class="fa-solid fa-share-nodes"></i></button>
+      </div>
+    </div>
+    <div class="profile-name">Jake Mercer</div>
+    <div class="profile-handle">@jake_mercer · Hamilton, Montana</div>
+    <div class="profile-bio">Elk & mule deer hunter. 20+ years behind the trigger. Public land advocate. Remington 700 guy 🎯 Always scouting, always learning.</div>
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="profile-stat-val">847</div><div class="profile-stat-lbl">Followers</div></div>
+      <div class="profile-stat"><div class="profile-stat-val">234</div><div class="profile-stat-lbl">Following</div></div>
+      <div class="profile-stat"><div class="profile-stat-val">62</div><div class="profile-stat-lbl">Harvests</div></div>
+      <div class="profile-stat"><div class="profile-stat-val">7</div><div class="profile-stat-lbl">Seasons</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">Achievements</div>
+  <div style="display:flex;gap:8px;padding:0 12px 12px;overflow-x:auto;scrollbar-width:none">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
+      <div style="font-size:1.8rem">🏆</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Grand Slam</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
+      <div style="font-size:1.8rem">🎯</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">500yd Club</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
+      <div style="font-size:1.8rem">🦌</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Bull Elk ×5</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
+      <div style="font-size:1.8rem">🌄</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Public Land</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
+      <div style="font-size:1.8rem">💨</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Wind Reader</div>
+    </div>
+  </div>
+
+  <div class="section-title">My Gear</div>
+  <div class="card">
+    <div class="gear-item">
+      <div class="gear-icon">🔫</div>
+      <div class="gear-info"><div class="gear-name">Remington 700 BDL</div><div class="gear-sub">.300 Win Mag · Leupold VX-5HD 3-15×44</div></div>
+      <span class="pill pill-amber" style="font-size:.7rem">Primary</span>
+    </div>
+    <div class="gear-item">
+      <div class="gear-icon">🔫</div>
+      <div class="gear-info"><div class="gear-name">Ruger American</div><div class="gear-sub">6.5 Creedmoor · Vortex Viper PST 4-16×50</div></div>
+      <span class="pill pill-blue" style="font-size:.7rem">Backup</span>
+    </div>
+    <div class="gear-item">
+      <div class="gear-icon">🔭</div>
+      <div class="gear-info"><div class="gear-name">Swarovski EL 10×42</div><div class="gear-sub">Primary glassing optic</div></div>
+    </div>
+    <div class="gear-item">
+      <div class="gear-icon">📏</div>
+      <div class="gear-info"><div class="gear-name">Leica Rangemaster 2800.COM</div><div class="gear-sub">Laser rangefinder · Bluetooth ballistics sync</div></div>
+    </div>
+  </div>
+  <div style="height:8px"></div>
+</div>
+
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="feed"><i class="fa-solid fa-house"></i><span>Feed</span></button>
+  <button class="nav-btn" data-page="ballistics"><i class="fa-solid fa-bullseye"></i><span>Ballistics</span></button>
+  <button class="nav-btn" data-page="conditions"><i class="fa-solid fa-wind"></i><span>Conditions</span></button>
+  <button class="nav-btn" data-page="log"><i class="fa-solid fa-book-open"></i><span>Log</span></button>
+  <button class="nav-btn" data-page="profile"><i class="fa-regular fa-user"></i><span>Profile</span></button>
+</nav>
+
+<button class="fab" id="log-fab" style="display:none" onclick="openLogModal()">
+  <i class="fa-solid fa-plus"></i>
+</button>
+
+<!-- ADD LOG MODAL -->
+<div class="modal-overlay" id="log-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title"><i class="fa-solid fa-plus" style="color:var(--amber)"></i> Log New Harvest</div>
+    <div class="modal-grid">
+      <div class="form-group full"><label>Species</label>
+        <select id="m-species">
+          <option>Bull Elk</option><option>Cow Elk</option><option>Mule Deer Buck</option>
+          <option>Whitetail Buck</option><option>Pronghorn</option><option>Black Bear</option>
+          <option>Bison</option><option>Coyote</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Date</label><input type="text" id="m-date" placeholder="Nov 15, 2024"></div>
+      <div class="form-group"><label>Distance (yds)</label><input type="number" id="m-dist" placeholder="250"></div>
+      <div class="form-group"><label>Cartridge</label>
+        <select id="m-cart">
+          <option>.308 Win</option><option>.30-06</option><option>6.5 Creedmoor</option>
+          <option>.300 Win Mag</option><option>.243 Win</option><option>7mm Rem Mag</option><option>.338 Lapua</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Wind (mph)</label><input type="number" id="m-mwind" placeholder="8"></div>
+      <div class="form-group full"><label>Location</label><input type="text" id="m-loc" placeholder="Bitterroot Valley, MT"></div>
+      <div class="form-group full"><label>Notes</label><textarea id="m-notes" rows="2" placeholder="Shot details, conditions..."></textarea></div>
+      <div class="form-group full" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="m-share" style="width:auto;accent-color:var(--amber)">
+        <label for="m-share" style="text-transform:none;letter-spacing:0;font-size:.84rem;color:var(--text);cursor:pointer">Share to feed</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeLogModal()">Cancel</button>
+      <button class="btn btn-amber" onclick="saveLogEntry()"><i class="fa-solid fa-check"></i> Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Navigation
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const p = btn.dataset.page;
+    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + p).classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('log-fab').style.display = p === 'log' ? 'flex' : 'none';
+  });
+});
+
+// Like toggle
+function toggleLike(btn, base) {
+  btn.classList.toggle('liked');
+  const span = btn.querySelector('span');
+  const n = parseInt(span.textContent);
+  span.textContent = btn.classList.contains('liked') ? n + 1 : n - 1;
+  btn.querySelector('i').className = btn.classList.contains('liked') ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+}
+
+// Ballistics
+const CARTS = {
+  '308win': { name:'.308 Win 168gr', bc:0.475, mv:2650, wt:168 },
+  '3006':   { name:'.30-06 165gr',   bc:0.435, mv:2800, wt:165 },
+  '65cm':   { name:'6.5 CM 140gr',   bc:0.535, mv:2710, wt:140 },
+  '300wm':  { name:'.300 WM 180gr',  bc:0.507, mv:2960, wt:180 },
+  '243':    { name:'.243 Win 95gr',  bc:0.379, mv:3025, wt:95  },
+  '7mm':    { name:'7mm RM 162gr',   bc:0.572, mv:2950, wt:162 },
+  '338':    { name:'.338 Lapua 300gr',bc:0.618,mv:2650, wt:300 },
+};
+
+function velAt(v0, bc, r) {
+  return v0 * Math.pow(1 - 0.015 / bc, r / 100);
+}
+
+function tofAt(v0, bc, r) {
+  const N = 200, dr = r / N;
+  let t = 0;
+  for (let i = 0; i < N; i++) t += (dr * 3) / velAt(v0, bc, (i + .5) * dr);
+  return t;
+}
+
+function runBallistics() {
+  const key  = document.getElementById('b-cart').value;
+  const zero = +document.getElementById('b-zero').value || 100;
+  const wind = +document.getElementById('b-wind').value || 0;
+  const temp = +document.getElementById('b-temp').value || 59;
+  const alt  = +document.getElementById('b-alt').value  || 0;
+  const c = CARTS[key];
+  const da = alt + (59 - temp) * 120;
+  const bcEff = c.bc * Math.exp(da / 145000);
+  const mv = c.mv;
+
+  const tofZ = tofAt(mv, bcEff, zero);
+  const dropZ = -0.5 * 32.174 * tofZ * tofZ * 12;
+  const theta = (1.5 - dropZ) / zero;
+
+  const RANGES = [100, 200, 300, 400, 500, 600, 700, 800];
+  let rows = '', windLines = '';
+
+  RANGES.forEach(r => {
+    const v = velAt(mv, bcEff, r);
+    const t = tofAt(mv, bcEff, r);
+    const drop = -1.5 + theta * r + (-0.5 * 32.174 * t * t * 12);
+    const moa  = drop / (r / 100 * 1.047);
+    const lag  = t - (r * 3) / mv;
+    const wd   = wind * 1.467 * lag * 12;
+    const ke   = (c.wt * v * v) / 450400;
+    const dc   = drop >= 0 ? 'drop-pos' : 'drop-neg';
+    rows += `<tr>
+      <td><strong>${r}</strong></td>
+      <td>${Math.round(v)}</td>
+      <td>${Math.round(ke)}</td>
+      <td class="${dc}">${drop >= 0 ? '+' : ''}${drop.toFixed(1)}"</td>
+      <td class="${dc}">${moa >= 0 ? '+' : ''}${moa.toFixed(1)}</td>
+      <td>${wd > 0 ? '+' : ''}${wd.toFixed(1)}"</td>
+    </tr>`;
+    windLines += `<div><span style="color:var(--muted);min-width:60px;display:inline-block">${r} yds:</span> <strong>${wd > 0 ? '+' : ''}${wd.toFixed(1)}"</strong> &nbsp;<span style="color:var(--muted);font-size:.78rem">(${(wd / (r / 100 * 1.047)).toFixed(1)} MOA)</span></div>`;
+  });
+
+  document.getElementById('traj-body').innerHTML = rows;
+  document.getElementById('balli-sub').textContent = `· ${c.name} · Zero: ${zero} yds`;
+  document.getElementById('wind-guide').innerHTML =
+    `<p style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${wind} mph full-value crosswind · ${c.name}</p>${windLines}`;
+  document.getElementById('balli-results').style.display = 'block';
+}
+
+// Log Modal
+function openLogModal() { document.getElementById('log-modal').classList.add('open'); }
+function closeLogModal() { document.getElementById('log-modal').classList.remove('open'); }
+
+function saveLogEntry() {
+  const species = document.getElementById('m-species').value;
+  const dist = document.getElementById('m-dist').value || '?';
+  const cart = document.getElementById('m-cart').value;
+  const loc  = document.getElementById('m-loc').value || 'Unknown';
+  const date = document.getElementById('m-date').value || 'Today';
+  const share = document.getElementById('m-share').checked;
+  const icons = {'Bull Elk':'🦌','Cow Elk':'🦌','Mule Deer Buck':'🦌','Whitetail Buck':'🦌',
+    'Pronghorn':'🐐','Black Bear':'🐻','Bison':'🐂','Coyote':'🐺','Other':'🎯'};
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `
+    <div class="log-entry-icon">${icons[species]||'🎯'}</div>
+    <div class="log-entry-body">
+      <div class="log-entry-title">${species}</div>
+      <div class="log-entry-meta">
+        <span><i class="fa-regular fa-calendar"></i> ${date}</span>
+        <span><i class="fa-solid fa-ruler-horizontal"></i> ${dist} yds</span>
+        <span><i class="fa-solid fa-crosshairs"></i> ${cart}</span>
+      </div>
+      <div class="log-tags">
+        <span class="pill pill-amber" style="font-size:.7rem">${loc}</span>
+        ${share ? '<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-share-nodes"></i> Shared</span>' : ''}
+      </div>
+    </div>
+    <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>`;
+  document.getElementById('log-list').prepend(entry);
+  closeLogModal();
+  ['m-date','m-dist','m-loc','m-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-share').checked = false;
+}
+
+document.getElementById('log-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeLogModal(); });
+
+runBallistics();
+</script>
 </body>
 </html>
