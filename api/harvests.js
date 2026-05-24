@@ -43,5 +43,15 @@ module.exports = async function handler(req, res) {
     return res.status(201).json({ harvest });
   }
 
+  if (req.method === 'DELETE') {
+    const id = parseInt(req.query.id);
+    if (!id) return res.status(400).json({ error: 'id required' });
+    const result = await sql`
+      DELETE FROM harvests WHERE id = ${id} AND user_id = ${userId} RETURNING id
+    `;
+    if (!result.length) return res.status(404).json({ error: 'Not found or not yours' });
+    return res.json({ ok: true });
+  }
+
   return res.status(405).json({ error: 'Method not allowed' });
 };

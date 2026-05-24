@@ -172,6 +172,24 @@
     .sheet-stat:not(:last-child):hover{background:var(--surface2)}
     .sheet-stat-val{font-size:1rem;font-weight:700;color:var(--amber-l)}
     .sheet-stat-lbl{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column;padding:20px;cursor:zoom-out}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:100%;max-height:82vh;object-fit:contain;border-radius:8px}
+    /* Game overlay */
+    .game-overlay{position:fixed;inset:0;background:#0b1a10;z-index:400;display:none;flex-direction:column;max-width:480px;left:50%;transform:translateX(-50%)}
+    .game-overlay.open{display:flex}
+    .game-hud{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(0,0,0,.45);border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
+    .ghv{font-size:1.45rem;font-weight:800;line-height:1}
+    .ghl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+    /* Jagdkalender */
+    .jagd-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border)}
+    .jagd-row:last-child{border-bottom:none}
+    .jagd-months{display:flex;gap:2px;margin-left:auto;flex-shrink:0}
+    .jagd-m{width:19px;height:19px;border-radius:3px;font-size:.52rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+    .jagd-m.on{background:rgba(61,107,79,.4);color:#7ecf9a}
+    .jagd-m.now{background:var(--amber);color:#1a1005}
+    .jagd-m.off{background:var(--surface2);color:var(--border)}
     @media(max-width:380px){.wh-temp{font-size:2.8rem}}
   </style>
 </head>
@@ -328,6 +346,22 @@
   <div class="card" style="display:flex;gap:10px;margin-top:4px">
     <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Bedingungen teilen</button>
   </div>
+
+  <div style="padding:0 12px 0;display:flex;align-items:center;gap:10px;margin-top:4px">
+    <div class="section-title" style="padding:8px 0 6px;flex:1">Live-Wetter (GPS)</div>
+    <button class="btn btn-primary" style="padding:7px 16px;font-size:.8rem" onclick="loadRealWeather()">
+      <i class="fa-solid fa-location-crosshairs"></i> Laden
+    </button>
+    <span id="weather-gps-status" style="font-size:.74rem;color:var(--muted)"></span>
+  </div>
+  <div id="weather-live-card"></div>
+
+  <div style="display:flex;align-items:center;padding:0 16px">
+    <div class="section-title" style="padding:8px 0 6px;flex:1">Jagdzeiten Österreich</div>
+    <span id="jagd-month-lbl" style="font-size:.74rem;color:var(--muted)"></span>
+  </div>
+  <div class="card" style="padding:0" id="jagd-calendar"></div>
+  <div style="height:8px"></div>
 </div>
 
 <!-- ═══ LOG ═══ -->
@@ -381,6 +415,15 @@
         <div class="profile-stat-lbl">Abschüsse</div>
       </div>
     </div>
+  </div>
+  <div class="section-title">Wildschießstand</div>
+  <div class="card" style="display:flex;align-items:center;gap:16px;padding:18px 20px;margin-bottom:4px">
+    <div style="font-size:2.8rem;line-height:1;flex-shrink:0">🎯</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700;font-size:.95rem;margin-bottom:4px">Minispiel</div>
+      <div style="font-size:.78rem;color:var(--muted)" id="game-best-txt">Noch kein Highscore</div>
+    </div>
+    <button class="btn btn-amber" style="padding:9px 20px;flex-shrink:0" onclick="openGame()">Spielen</button>
   </div>
   <div class="section-title">Meine Ausrüstung</div>
   <div id="gear-section"></div>
@@ -562,6 +605,54 @@
   </div>
 </div>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+  <div style="color:rgba(255,255,255,.35);font-size:.74rem;margin-top:12px">Tippen zum Schließen</div>
+</div>
+
+<!-- ═══ GAME OVERLAY ═══ -->
+<div class="game-overlay" id="game-overlay">
+  <div class="game-hud">
+    <div style="text-align:center">
+      <div class="ghv" id="g-score" style="color:#e0a840">0</div>
+      <div class="ghl">Punkte</div>
+    </div>
+    <div style="text-align:center">
+      <div class="ghv" id="g-timer" style="color:var(--text)">45</div>
+      <div class="ghl">Sekunden</div>
+    </div>
+    <div style="text-align:center">
+      <div class="ghv" id="g-combo" style="color:var(--muted)">1x</div>
+      <div class="ghl">Kombo</div>
+    </div>
+    <button class="icon-btn" onclick="closeGame()" style="margin-left:4px"><i class="fa-solid fa-times"></i></button>
+  </div>
+  <div id="game-start-screen" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:40px;text-align:center">
+    <div style="font-size:3.5rem;line-height:1">🎯</div>
+    <div>
+      <div style="font-size:1.7rem;font-weight:800;margin-bottom:10px">Wildschießstand</div>
+      <div style="font-size:.88rem;color:var(--muted);max-width:280px;line-height:1.55;margin:0 auto">Tippe die Scheiben so schnell wie möglich! Aufeinanderfolgende Treffer erhöhen den Kombo-Multiplikator.</div>
+    </div>
+    <div id="g-best-display" style="font-size:.9rem;color:#e0a840;min-height:1.2em"></div>
+    <button class="btn btn-amber" style="padding:14px 40px;font-size:1.05rem;font-weight:800;border-radius:50px" onclick="startGame()">
+      <i class="fa-solid fa-crosshairs"></i> Feuer!
+    </button>
+  </div>
+  <canvas id="game-canvas" style="display:none;flex:1;touch-action:none" onclick="onGameTap(event)" ontouchstart="onGameTap(event)"></canvas>
+  <div id="game-over-screen" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center">
+    <div style="font-size:2.5rem">🏆</div>
+    <div style="font-size:1.2rem;font-weight:700;color:var(--muted)">Ergebnis</div>
+    <div style="font-size:3.5rem;font-weight:800;color:#e0a840" id="g-final-score">0</div>
+    <div id="g-new-best" style="color:#7ecf9a;font-weight:700;font-size:1rem;display:none">🎉 Neuer Rekord!</div>
+    <div style="font-size:.82rem;color:var(--muted)" id="g-best-score-end"></div>
+    <div style="display:flex;gap:12px;margin-top:6px">
+      <button class="btn btn-amber" style="padding:11px 24px" onclick="startGame()"><i class="fa-solid fa-redo"></i> Nochmal</button>
+      <button class="btn btn-outline" style="padding:11px 24px" onclick="shareGameScore()"><i class="fa-solid fa-share-nodes"></i> Teilen</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── Auth & boot ──
 let currentUser = null;
@@ -574,6 +665,8 @@ async function initApp() {
     applyUserToUI(currentUser);
     loadFeed();
     loadHarvests();
+    renderJagdkalender();
+    updateGameBestText();
     document.getElementById('stat-btn-followers').onclick = () => showUserList('followers', currentUser.username);
     document.getElementById('stat-btn-following').onclick = () => showUserList('following', currentUser.username);
   } catch { window.location.href = '/login.html'; }
@@ -655,7 +748,7 @@ function renderPost(p) {
   const isOwn = currentUser && p.author_id === currentUser.id;
   const av = makeAvatar(p, 38);
   const img = p.image_url
-    ? `<div><img src="${esc(p.image_url)}" style="width:100%;max-height:480px;object-fit:cover;display:block" loading="lazy"></div>` : '';
+    ? `<div onclick="openLightbox('${esc(p.image_url)}')" style="cursor:zoom-in"><img src="${esc(p.image_url)}" style="width:100%;max-height:480px;object-fit:cover;display:block" loading="lazy"></div>` : '';
   const tag = p.harvest_id ? `
     <div class="harvest-tag">
       <div class="harvest-tag-lbl"><i class="fa-solid fa-crosshairs"></i> Tagged Harvest</div>
@@ -1126,7 +1219,10 @@ function renderHarvestList(harvests) {
         ${h.is_public?'<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-globe"></i> Öffentlich</span>':'<span class="pill" style="font-size:.7rem;background:rgba(0,0,0,.2);border:1px solid var(--border)"><i class="fa-solid fa-lock"></i> Privat</span>'}
       </div>
     </div>
-    <button class="icon-btn" style="align-self:flex-start" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i></button>
+    <div style="display:flex;flex-direction:column;gap:4px;align-self:flex-start">
+      <button class="icon-btn" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i></button>
+      <button class="icon-btn" style="color:var(--red)" onclick="deleteHarvest(${h.id},this)"><i class="fa-solid fa-trash" style="font-size:.76rem"></i></button>
+    </div>
   </div>`).join('');
 }
 function openLogModal()  { document.getElementById('log-modal').classList.add('open'); }
@@ -1198,6 +1294,294 @@ function timeAgo(d){ const sec=Math.floor((Date.now()-new Date(d))/1000); if(sec
 function fmt(d){ return new Date(d).toLocaleDateString('de-AT',{day:'numeric',month:'short',year:'numeric'}); }
 function avatarColor(u){ const c=['#3d6b4f','#6b4f3d','#4f3d6b','#3d4f6b','#6b3d4f','#4f6b3d']; let h=0; for(const ch of(u||''))h=(h*31+ch.charCodeAt(0))&0xffffffff; return c[Math.abs(h)%c.length]; }
 function makeAvatar(u,sz){ if(u.avatar_url)return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;overflow:hidden;flex-shrink:0"><img src="${esc(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover"></div>`; const l=((u.display_name||u.username||'?')[0]).toUpperCase(); return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${avatarColor(u.username)};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.round(sz*.42)}px;color:#fff;flex-shrink:0">${l}</div>`; }
+
+// ── Lightbox ──
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── Harvest delete ──
+async function deleteHarvest(id, btn) {
+  if (!confirm('Abschuss löschen?')) return;
+  btn.disabled = true;
+  const r = await fetch('/api/harvests?id=' + id, { method: 'DELETE' });
+  if (r.ok) {
+    const el = btn.closest('.log-entry');
+    if (el) el.remove();
+    allHarvests = allHarvests.filter(h => h.id !== id);
+    const dists = allHarvests.map(h => h.distance_yards).filter(Boolean);
+    document.getElementById('stat-harvests').textContent = allHarvests.length;
+    document.getElementById('stat-avg-dist').textContent = dists.length ? Math.round(dists.reduce((a,b)=>a+b,0)/dists.length) : '—';
+    document.getElementById('stat-longest').textContent  = dists.length ? Math.max(...dists) : '—';
+    document.getElementById('profile-harvests').textContent = allHarvests.length;
+  } else { btn.disabled = false; }
+}
+
+// ── Real weather via Open-Meteo ──
+async function loadRealWeather() {
+  const status = document.getElementById('weather-gps-status');
+  const card   = document.getElementById('weather-live-card');
+  status.textContent = 'Standort ermitteln…';
+  if (!navigator.geolocation) { status.textContent = 'GPS nicht verfügbar'; return; }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const { latitude: lat, longitude: lon } = pos.coords;
+    status.textContent = 'Wird geladen…';
+    try {
+      const [wr, gr] = await Promise.all([
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&temperature_unit=celsius`),
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=de`)
+      ]);
+      const wData = await wr.json();
+      const gData = await gr.json();
+      const c = wData.current;
+      const city  = gData.address?.city || gData.address?.town || gData.address?.village || gData.address?.county || '';
+      const state = gData.address?.state || '';
+      const locStr = [city, state].filter(Boolean).join(', ') || `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+      const wIcon = weatherCodeIcon(c.weather_code);
+      const windDir = degToCompass(c.wind_direction_10m);
+      card.innerHTML = `
+        <div class="weather-hero" style="margin:0 12px 12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div class="wh-temp">${Math.round(c.temperature_2m)}°C</div>
+              <div class="wh-cond">${weatherCodeDesc(c.weather_code)} · Gefühlt ${Math.round(c.apparent_temperature)}°C</div>
+              <div class="wh-loc"><i class="fa-solid fa-location-dot"></i> ${esc(locStr)} · Live</div>
+            </div>
+            <div style="font-size:3rem;line-height:1">${wIcon}</div>
+          </div>
+          <div class="wh-row">
+            <div class="wh-stat"><div class="wh-stat-val">${c.relative_humidity_2m}%</div><div class="wh-stat-lbl">Luftfeuchte</div></div>
+            <div class="wh-stat"><div class="wh-stat-val">${Math.round(c.surface_pressure)} hPa</div><div class="wh-stat-lbl">Luftdruck</div></div>
+            <div class="wh-stat"><div class="wh-stat-val">${Math.round(c.wind_speed_10m)} km/h ${windDir}</div><div class="wh-stat-lbl">Wind</div></div>
+          </div>
+        </div>`;
+      status.textContent = '';
+    } catch { status.textContent = 'Fehler beim Laden.'; }
+  }, () => { status.textContent = 'GPS verweigert.'; });
+}
+function weatherCodeIcon(c) {
+  if (c===0) return '☀️'; if (c<=2) return '🌤️'; if (c===3) return '☁️';
+  if (c<=48) return '🌫️'; if (c<=55) return '🌦️'; if (c<=67) return '🌧️';
+  if (c<=77) return '❄️'; if (c<=82) return '🌦️'; if (c<=86) return '🌨️'; return '⛈️';
+}
+function weatherCodeDesc(c) {
+  const m={0:'Klarer Himmel',1:'Überwiegend klar',2:'Teils bewölkt',3:'Bedeckt',45:'Nebel',48:'Raureif',51:'Nieselregen',53:'Nieselregen',55:'Starker Nieselregen',61:'Leichter Regen',63:'Regen',65:'Starker Regen',71:'Leichter Schneefall',73:'Schneefall',75:'Starker Schneefall',80:'Regenschauer',81:'Regenschauer',82:'Starke Schauer',85:'Schneeschauer',86:'Starke Schneeschauer',95:'Gewitter'};
+  return m[c] || 'Bewölkt';
+}
+function degToCompass(d) {
+  const dirs=['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  return dirs[Math.round(d/22.5)%16];
+}
+
+// ── Jagdkalender ──
+function renderJagdkalender() {
+  const now = new Date().getMonth() + 1;
+  const SEASONS = [
+    {s:'Rehbock',    icon:'🦌', m:[5,6,7,8,9,10]},
+    {s:'Ricke',      icon:'🦌', m:[9,10,11,12,1,2]},
+    {s:'Hirsch',     icon:'🦌', m:[9,10,11]},
+    {s:'Kahlwild',   icon:'🦌', m:[8,9,10,11,12,1]},
+    {s:'Gamsbock',   icon:'🐐', m:[8,9,10,11,12]},
+    {s:'Gams',       icon:'🐐', m:[10,11,12]},
+    {s:'Wildschwein',icon:'🐗', m:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    {s:'Fuchs',      icon:'🦊', m:[10,11,12,1,2,3]},
+    {s:'Feldhase',   icon:'🐇', m:[10,11,12]},
+    {s:'Fasan',      icon:'🦃', m:[10,11,12,1]},
+  ];
+  const mLabels=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const mNames =['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  const el = document.getElementById('jagd-month-lbl');
+  if (el) el.textContent = mNames[now-1];
+  const cal = document.getElementById('jagd-calendar');
+  if (!cal) return;
+  cal.innerHTML = SEASONS.map(s => {
+    const open = s.m.includes(now);
+    const pills = mLabels.map((lbl,i) => {
+      const mo = i+1, cls = mo===now ? 'now' : s.m.includes(mo) ? 'on' : 'off';
+      return `<div class="jagd-m ${cls}" title="${mNames[i]}">${lbl}</div>`;
+    }).join('');
+    return `<div class="jagd-row">
+      <span style="font-size:1.1rem;flex-shrink:0">${s.icon}</span>
+      <span style="font-size:.82rem;min-width:88px">${s.s}</span>
+      ${open
+        ? '<span class="pill pill-green" style="font-size:.63rem;padding:2px 7px;flex-shrink:0">Offen</span>'
+        : '<span style="font-size:.7rem;color:var(--muted);flex-shrink:0">Zu</span>'}
+      <div class="jagd-months">${pills}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Wildschießstand (Minigame) ──
+let gameState = 'idle';
+let gameScore = 0, gameCombo = 1, gameTimerSecs = 45;
+let gameTargets = [], gameParticles = [], gameMisses = [];
+let gameRAF = null, gameTimerInterval = null, gameLastSpawn = 0;
+const GAME_SECS = 45, TARGET_LIFE = 2400, TARGET_R = 38;
+
+function openGame() {
+  const best = localStorage.getItem('tm_schussrekord');
+  document.getElementById('g-best-display').textContent = best ? 'Rekord: ' + best + ' Punkte' : '';
+  document.getElementById('game-start-screen').style.display = 'flex';
+  document.getElementById('game-canvas').style.display = 'none';
+  document.getElementById('game-over-screen').style.display = 'none';
+  document.getElementById('game-overlay').classList.add('open');
+}
+function closeGame() {
+  cancelAnimationFrame(gameRAF); clearInterval(gameTimerInterval);
+  document.getElementById('game-overlay').classList.remove('open');
+  gameState = 'idle';
+}
+function updateGameBestText() {
+  const best = localStorage.getItem('tm_schussrekord');
+  const el = document.getElementById('game-best-txt');
+  if (el) el.textContent = best ? 'Rekord: ' + best + ' Punkte' : 'Noch kein Highscore';
+}
+function startGame() {
+  document.getElementById('game-start-screen').style.display = 'none';
+  document.getElementById('game-over-screen').style.display = 'none';
+  const canvas = document.getElementById('game-canvas');
+  canvas.style.display = 'block';
+  canvas.width  = Math.min(480, window.innerWidth);
+  canvas.height = window.innerHeight - 68;
+  gameScore = 0; gameCombo = 1; gameTimerSecs = GAME_SECS;
+  gameTargets = []; gameParticles = []; gameMisses = []; gameLastSpawn = 0;
+  gameState = 'playing';
+  document.getElementById('g-score').textContent = '0';
+  document.getElementById('g-timer').textContent = GAME_SECS;
+  document.getElementById('g-timer').style.color = 'var(--dfe8e0,#dfe8e0)';
+  document.getElementById('g-combo').textContent = '1x';
+  document.getElementById('g-combo').style.color = '#7a9180';
+  clearInterval(gameTimerInterval);
+  gameTimerInterval = setInterval(() => {
+    gameTimerSecs--;
+    const tel = document.getElementById('g-timer');
+    tel.textContent = gameTimerSecs;
+    tel.style.color = gameTimerSecs <= 10 ? '#c44536' : '#dfe8e0';
+    if (gameTimerSecs <= 0) endGame();
+  }, 1000);
+  cancelAnimationFrame(gameRAF);
+  gameRAF = requestAnimationFrame(gameLoop);
+}
+function gameLoop(ts) {
+  if (gameState !== 'playing') return;
+  const canvas = document.getElementById('game-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  // Background
+  const bg = ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#0b1a10'); bg.addColorStop(1,'#162b1e');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+  // Tree silhouettes
+  const treeData = [[.08,.88,20,62],[.18,.92,14,42],[.28,.84,22,70],[.38,.9,15,44],[.5,.86,24,72],[.6,.91,16,48],[.7,.85,21,65],[.82,.9,15,45],[.92,.87,19,58],[.97,.93,12,36],[.03,.93,11,34],[.44,.92,13,40]];
+  ctx.fillStyle='#0d2218';
+  treeData.forEach(([xf,yf,w,h]) => {
+    const x=W*xf, y=H*yf;
+    ctx.beginPath(); ctx.moveTo(x,y-h); ctx.lineTo(x-w,y); ctx.lineTo(x+w,y); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x,y-h*.6); ctx.lineTo(x-w*.72,y-h*.22); ctx.lineTo(x+w*.72,y-h*.22); ctx.closePath(); ctx.fill();
+  });
+  ctx.fillStyle='#0a180d'; ctx.fillRect(0,H*.91,W,H*.09);
+  // Spawn targets (max 3)
+  const alive = gameTargets.filter(t=>!t.done);
+  if (alive.length < 3 && ts - gameLastSpawn > 550 + Math.random()*350) {
+    const mg = TARGET_R+24;
+    gameTargets.push({ x:mg+Math.random()*(W-mg*2), y:mg+Math.random()*(H*.72-mg*2), born:ts, hit:false, done:false, hitTs:0 });
+    gameLastSpawn = ts;
+  }
+  // Draw targets
+  gameTargets.forEach(t => {
+    if (t.done) return;
+    const prog = (ts - t.born) / TARGET_LIFE;
+    if (prog >= 1) { t.done = true; gameCombo = 1; updateComboDisplay(); return; }
+    const scale = prog < .12 ? prog/.12 : prog < .75 ? 1 : 1-(prog-.75)/.25;
+    const r = TARGET_R * scale;
+    const alpha = t.hit ? Math.max(0, 1-(ts-t.hitTs)/280) : 1;
+    if (t.hit && alpha <= 0) { t.done = true; return; }
+    ctx.save(); ctx.globalAlpha = alpha;
+    // Concentric rings: white-black-white-black-amber
+    [{f:'#f0ece4',r:1},{f:'#1a1a1a',r:.78},{f:'#f0ece4',r:.58},{f:'#1a1a1a',r:.38},{f:'#c9943a',r:.18}].forEach(ring => {
+      ctx.beginPath(); ctx.arc(t.x,t.y,r*ring.r,0,Math.PI*2);
+      ctx.fillStyle=ring.f; ctx.fill();
+      ctx.strokeStyle='rgba(0,0,0,.2)'; ctx.lineWidth=0.5; ctx.stroke();
+    });
+    if (t.hit) {
+      ctx.beginPath(); ctx.arc(t.x,t.y,r+(ts-t.hitTs)*.1,0,Math.PI*2);
+      ctx.strokeStyle='#7ecf9a'; ctx.lineWidth=3; ctx.globalAlpha=alpha*.7; ctx.stroke();
+    }
+    ctx.restore();
+  });
+  // Particles
+  gameParticles = gameParticles.filter(p=>ts-p.born<800);
+  gameParticles.forEach(p => {
+    const age=(ts-p.born)/800;
+    ctx.globalAlpha=1-age; ctx.fillStyle=p.color;
+    ctx.font=`bold ${p.sz}px "Segoe UI",sans-serif`; ctx.textAlign='center';
+    ctx.fillText(p.txt, p.x, p.y-age*46); ctx.globalAlpha=1;
+  });
+  // Miss flashes
+  gameMisses = gameMisses.filter(m=>ts-m.born<380);
+  gameMisses.forEach(m => {
+    const age=(ts-m.born)/380; ctx.globalAlpha=(1-age)*.75;
+    ctx.fillStyle='#e8776a'; ctx.font='bold 24px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('✕',m.x,m.y); ctx.globalAlpha=1;
+  });
+  gameRAF = requestAnimationFrame(gameLoop);
+}
+function updateComboDisplay() {
+  const el = document.getElementById('g-combo');
+  el.textContent = gameCombo+'x';
+  el.style.color = gameCombo>=4?'#c9943a':gameCombo>=2?'#7ecf9a':'#7a9180';
+}
+function onGameTap(e) {
+  if (gameState !== 'playing') return;
+  e.preventDefault();
+  const canvas = document.getElementById('game-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const cx = e.touches ? e.touches[0].clientX : e.clientX;
+  const cy = e.touches ? e.touches[0].clientY : e.clientY;
+  const x = (cx-rect.left)*(canvas.width/rect.width);
+  const y = (cy-rect.top)*(canvas.height/rect.height);
+  let hit = false;
+  for (let i=gameTargets.length-1; i>=0; i--) {
+    const t = gameTargets[i];
+    if (t.done||t.hit) continue;
+    const prog=(performance.now()-t.born)/TARGET_LIFE;
+    const scale=prog<.12?prog/.12:prog<.75?1:1-(prog-.75)/.25;
+    if (Math.hypot(x-t.x,y-t.y) <= TARGET_R*scale) {
+      t.hit=true; t.hitTs=performance.now();
+      gameCombo=Math.min(gameCombo+1,5);
+      const pts=10*gameCombo; gameScore+=pts;
+      document.getElementById('g-score').textContent=gameScore;
+      updateComboDisplay();
+      gameParticles.push({x:t.x,y:t.y-TARGET_R*.8,txt:'+'+pts,born:performance.now(),color:gameCombo>=3?'#e0a840':'#7ecf9a',sz:15+gameCombo*2});
+      if (gameCombo===3) showToast('Kombo! 🎯');
+      hit=true; break;
+    }
+  }
+  if (!hit) {
+    gameCombo=1; updateComboDisplay();
+    gameMisses.push({x,y,born:performance.now()});
+  }
+}
+function endGame() {
+  gameState='over'; clearInterval(gameTimerInterval); cancelAnimationFrame(gameRAF);
+  document.getElementById('game-canvas').style.display='none';
+  const best=parseInt(localStorage.getItem('tm_schussrekord')||'0');
+  const isNew=gameScore>best;
+  if (isNew) localStorage.setItem('tm_schussrekord',gameScore);
+  document.getElementById('g-final-score').textContent=gameScore;
+  document.getElementById('g-new-best').style.display=isNew?'block':'none';
+  document.getElementById('g-best-score-end').textContent='Bestes Ergebnis: '+Math.max(best,gameScore)+' Punkte';
+  document.getElementById('game-over-screen').style.display='flex';
+  updateGameBestText();
+}
+function shareGameScore() {
+  const score=document.getElementById('g-final-score').textContent;
+  const text=`Ich habe ${score} Punkte im Wildschießstand auf TrailMark erzielt! 🎯`;
+  if (navigator.share) navigator.share({title:'TrailMark Schießstand',text});
+  else navigator.clipboard?.writeText(text).then(()=>showToast('Text kopiert!'));
+}
 
 // ── Modal close on overlay tap ──
 ['log-modal','post-modal','profile-sheet','edit-profile-modal','list-sheet'].forEach(id=>{
