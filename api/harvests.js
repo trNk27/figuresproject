@@ -22,11 +22,11 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { species, date, distance_yards, cartridge, wind_mph, location, notes, is_public, hit_x, hit_y, escape_distance_meters } = req.body || {};
+    const { species, date, distance_yards, cartridge, wind_mph, location, notes, is_public } = req.body || {};
     if (!species) return res.status(400).json({ error: 'species is required' });
 
     const [harvest] = await sql`
-      INSERT INTO harvests (user_id, species, date, distance_yards, cartridge, wind_mph, location, notes, is_public, hit_x, hit_y, escape_distance_meters)
+      INSERT INTO harvests (user_id, species, date, distance_yards, cartridge, wind_mph, location, notes, is_public)
       VALUES (
         ${userId},
         ${species},
@@ -36,10 +36,7 @@ module.exports = async function handler(req, res) {
         ${wind_mph ? parseInt(wind_mph) : null},
         ${location || null},
         ${notes || null},
-        ${is_public !== false},
-        ${hit_x ? parseFloat(hit_x) : null},
-        ${hit_y ? parseFloat(hit_y) : null},
-        ${escape_distance_meters ? parseInt(escape_distance_meters) : null}
+        ${is_public !== false}
       )
       RETURNING *
     `;

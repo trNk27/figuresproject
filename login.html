@@ -5,67 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TrailMark — Sign In</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <script src="lib/mock-api.js"></script>
   <style>
     :root {
-      --bg: hsl(145, 16%, 8%);
-      --surface: hsla(145, 12%, 13%, 0.72);
-      --surface2: hsla(145, 12%, 18%, 0.85);
-      --border: hsla(145, 12%, 22%, 0.45);
-      --green: hsl(145, 40%, 30%);
-      --green-l: hsl(145, 45%, 45%);
-      --amber: hsl(38, 72%, 52%);
-      --amber-l: hsl(38, 75%, 60%);
-      --text: hsl(145, 15%, 90%);
-      --muted: hsl(145, 10%, 62%);
+      --bg: #0e1210;
+      --surface: #151c17;
+      --surface2: #1c2620;
+      --border: #263029;
+      --green: #3d6b4f;
+      --green-l: #4e8963;
+      --amber: #c9943a;
+      --amber-l: #e0a840;
+      --text: #dfe8e0;
+      --muted: #7a9180;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 24px 16px;
-      position: relative;
     }
     .logo {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.2rem;
-      font-weight: 800;
+      font-size: 1.8rem;
+      font-weight: 700;
       color: var(--amber);
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 6px;
+      gap: 10px;
+      margin-bottom: 8px;
     }
-    .logo i {
-      color: var(--green-l);
-      filter: drop-shadow(0 0 10px var(--green-l));
-    }
-    .tagline {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: .88rem;
-      color: var(--muted);
-      margin-bottom: 36px;
-      letter-spacing: 0.5px;
-    }
+    .logo i { color: var(--green-l); }
+    .tagline { font-size: .85rem; color: var(--muted); margin-bottom: 32px; }
     .card {
       background: var(--surface);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 28px;
+      border-radius: 16px;
+      padding: 28px 24px;
       width: 100%;
       max-width: 380px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
     .tabs {
       display: flex;

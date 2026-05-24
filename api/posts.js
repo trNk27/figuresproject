@@ -20,7 +20,6 @@ module.exports = async function handler(req, res) {
         h.id   AS harvest_id,
         h.species, h.distance_yards, h.cartridge,
         h.location AS harvest_location,
-        h.hit_x, h.hit_y, h.escape_distance_meters,
         (SELECT COUNT(*)::int FROM likes    WHERE post_id = p.id)                             AS like_count,
         (SELECT COUNT(*)::int FROM comments WHERE post_id = p.id)                             AS comment_count,
         (SELECT COUNT(*)::int FROM likes    WHERE post_id = p.id AND user_id = ${userId}) > 0 AS liked_by_me
