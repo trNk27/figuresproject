@@ -6,44 +6,31 @@
   <title>TrailMark</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    :root {
-      --bg: #0e1210;
-      --surface: #151c17;
-      --surface2: #1c2620;
-      --border: #263029;
-      --green: #3d6b4f;
-      --green-l: #4e8963;
-      --amber: #c9943a;
-      --amber-l: #e0a840;
-      --text: #dfe8e0;
-      --muted: #7a9180;
-      --red: #c44536;
-      --nav: 62px;
-      --head: 54px;
-    }
+    :root{--bg:#0e1210;--surface:#151c17;--surface2:#1c2620;--border:#263029;--green:#3d6b4f;--green-l:#4e8963;--amber:#c9943a;--amber-l:#e0a840;--text:#dfe8e0;--muted:#7a9180;--red:#c44536;--nav:62px;--head:54px}
     *{margin:0;padding:0;box-sizing:border-box}
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
-    .app-head{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--head);background:rgba(14,18,16,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100}
+    /* Header */
+    .app-head{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--head);background:rgba(14,18,16,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100}
     .logo{font-size:1.25rem;font-weight:700;color:var(--amber);letter-spacing:.5px;display:flex;align-items:center;gap:8px}
     .logo i{color:var(--green-l)}
     .head-right{display:flex;gap:4px}
     .icon-btn{background:none;border:none;color:var(--muted);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;transition:color .2s,background .2s}
     .icon-btn:hover{color:var(--text);background:var(--surface2)}
-    .badge{position:relative}
-    .badge::after{content:'';position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--amber);border-radius:50%;border:2px solid var(--bg)}
+    /* Nav */
     .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--nav);background:rgba(14,18,16,.97);backdrop-filter:blur(8px);border-top:1px solid var(--border);display:flex;z-index:100}
     .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.62rem;font-weight:500;letter-spacing:.3px;text-transform:uppercase;transition:color .2s;padding-bottom:2px}
-    .nav-btn i{font-size:1.15rem;transition:color .2s,transform .2s}
+    .nav-btn i{font-size:1.15rem;transition:transform .2s}
     .nav-btn.active{color:var(--amber-l)}
     .nav-btn.active i{transform:scale(1.1)}
-    .page{display:none;padding:calc(var(--head) + 12px) 0 calc(var(--nav) + 12px);min-height:100vh}
+    /* Pages */
+    .page{display:none;padding:calc(var(--head) + 10px) 0 calc(var(--nav) + 12px);min-height:100vh}
     .page.active{display:block}
+    /* Cards / shared */
     .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin:0 12px 12px}
     .section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:8px 16px 6px}
     .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
     .pill-green{background:rgba(61,107,79,.25);color:#7ecf9a;border:1px solid rgba(61,107,79,.4)}
     .pill-amber{background:rgba(201,148,58,.2);color:var(--amber-l);border:1px solid rgba(201,148,58,.3)}
-    .pill-red{background:rgba(196,69,54,.2);color:#e8776a;border:1px solid rgba(196,69,54,.3)}
     .pill-blue{background:rgba(58,130,201,.2);color:#7ab8e8;border:1px solid rgba(58,130,201,.3)}
     .divider{height:1px;background:var(--border);margin:12px 0}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .2s}
@@ -53,36 +40,36 @@
     .btn-outline:hover{border-color:var(--muted);background:var(--surface2)}
     .btn-amber{background:var(--amber);color:#fff}
     .btn-amber:hover{background:var(--amber-l)}
+    .btn:disabled{opacity:.55;cursor:default}
     /* Feed */
-    .stories{display:flex;gap:10px;padding:8px 12px 4px;overflow-x:auto;scrollbar-width:none}
-    .stories::-webkit-scrollbar{display:none}
-    .story{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;cursor:pointer}
-    .story-ring{width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--green-l),var(--amber))}
-    .story-ring.you{background:linear-gradient(135deg,#444,#666)}
-    .story-avatar{width:100%;height:100%;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:2px solid var(--bg)}
-    .story-label{font-size:.65rem;color:var(--muted);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+    .compose-bar{display:flex;align-items:center;gap:10px;padding:10px 12px 8px;border-bottom:1px solid var(--border);margin-bottom:4px}
+    .compose-prompt{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:10px 16px;color:var(--muted);font-size:.88rem;cursor:pointer;transition:border-color .2s}
+    .compose-prompt:hover{border-color:var(--muted)}
     .post{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:8px}
     .post-head{display:flex;align-items:center;gap:10px;padding:12px 14px 8px}
     .post-avatar{width:38px;height:38px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-    .post-meta{flex:1}
-    .post-name{font-size:.9rem;font-weight:600}
+    .post-meta{flex:1;min-width:0}
+    .post-name{font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .post-sub{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-top:1px}
-    .post-sub i{font-size:.6rem}
-    .post-img{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
-    .post-img-label{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.7);padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
-    .post-body{padding:10px 14px 6px}
-    .post-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-    .post-caption{font-size:.85rem;line-height:1.5}
+    .post-body{padding:8px 14px 6px}
+    .post-caption{font-size:.88rem;line-height:1.55;white-space:pre-wrap;word-break:break-word}
     .post-actions{display:flex;border-top:1px solid var(--border);padding:2px 0}
     .post-action{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;font-weight:500;transition:color .2s}
     .post-action:hover{color:var(--text)}
     .post-action.liked{color:#e8776a}
+    .harvest-tag{margin:6px 14px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+    .harvest-tag-lbl{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .harvest-tag-title{font-size:.88rem;font-weight:600}
+    .harvest-tag-meta{font-size:.74rem;color:var(--muted);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+    .feed-state{text-align:center;padding:52px 28px;color:var(--muted)}
+    .feed-state i{font-size:2.5rem;display:block;margin-bottom:14px;color:var(--border)}
+    .feed-state strong{color:var(--text);display:block;margin-bottom:6px}
     /* Ballistics */
     .balli-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .form-group{display:flex;flex-direction:column;gap:5px}
     .form-group.full{grid-column:1/-1}
     label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-    select,input[type=number],input[type=text],textarea{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:.88rem;width:100%;outline:none;transition:border-color .2s;-webkit-appearance:none}
+    select,input[type=number],input[type=text],input[type=email],input[type=password],input[type=date],textarea{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:.88rem;width:100%;outline:none;transition:border-color .2s;-webkit-appearance:none}
     select:focus,input:focus,textarea:focus{border-color:var(--green-l)}
     select option{background:#1c2620}
     .traj-table{width:100%;border-collapse:collapse;font-size:.78rem}
@@ -130,7 +117,7 @@
     .log-entry-meta{font-size:.75rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
     .log-entry-meta span{display:flex;align-items:center;gap:4px}
     .log-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-    .fab{position:fixed;bottom:calc(var(--nav) + 16px);right:max(16px, calc(50% - 224px));width:52px;height:52px;border-radius:50%;background:var(--amber);border:none;color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(201,148,58,.4);transition:all .2s;z-index:90}
+    .fab{position:fixed;bottom:calc(var(--nav) + 16px);right:max(16px,calc(50% - 224px));width:52px;height:52px;border-radius:50%;background:var(--amber);border:none;color:#fff;font-size:1.3rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(201,148,58,.4);transition:all .2s;z-index:90}
     .fab:hover{background:var(--amber-l);transform:scale(1.07)}
     /* Profile */
     .profile-cover{height:130px;background:linear-gradient(135deg,#0d2418,#1e3d2a,#2a4d1a);position:relative;overflow:hidden}
@@ -151,133 +138,76 @@
     .gear-info{flex:1}
     .gear-name{font-size:.88rem;font-weight:600}
     .gear-sub{font-size:.73rem;color:var(--muted);margin-top:2px}
-    /* Modal */
+    /* Modals */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{background:var(--surface);border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
+    .modal{background:var(--surface);border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto}
     .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
-    .modal-title{font-size:1rem;font-weight:700;margin-bottom:16px}
+    .modal-title{font-size:1rem;font-weight:700;margin-bottom:14px}
     .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .modal-grid .full{grid-column:1/-1}
     .modal-actions{display:flex;gap:10px;margin-top:16px}
     .modal-actions .btn{flex:1;justify-content:center}
+    /* Image preview */
+    .img-preview-wrap{position:relative;margin-top:10px;border-radius:10px;overflow:hidden;display:none}
+    .img-preview-wrap img{width:100%;max-height:220px;object-fit:cover;display:block}
+    .img-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+    /* Search overlay */
+    .search-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);display:none;flex-direction:column;max-width:480px;left:50%;transform:translateX(-50%)}
+    .search-overlay.open{display:flex}
+    .search-head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .search-head input{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:9px 16px;font-size:.9rem;outline:none}
+    .search-head input:focus{border-color:var(--green-l)}
+    .search-results{flex:1;overflow-y:auto}
+    .user-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+    .user-row:hover{background:var(--surface)}
+    /* User profile sheet */
+    .sheet-stats{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:12px}
+    .sheet-stat{flex:1;padding:10px 8px;text-align:center;border-right:1px solid var(--border)}
+    .sheet-stat:last-child{border-right:none}
+    .sheet-stat-val{font-size:1rem;font-weight:700;color:var(--amber-l)}
+    .sheet-stat-lbl{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+    @media(max-width:380px){.wh-temp{font-size:2.8rem}}
   </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="app-head">
   <div class="logo"><i class="fa-solid fa-crosshairs"></i> TrailMark</div>
   <div class="head-right">
-    <button class="icon-btn badge"><i class="fa-regular fa-bell"></i></button>
+    <button class="icon-btn" onclick="showSearch()" title="Find hunters"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button class="icon-btn" onclick="logout()" title="Sign out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
   </div>
 </header>
 
 <main>
 
-<!-- FEED -->
+<!-- ═══ FEED ═══ -->
 <div id="page-feed" class="page active">
-  <div class="stories">
-    <div class="story">
-      <div class="story-ring you"><div class="story-avatar">🧑</div></div>
-      <span class="story-label">You</span>
-    </div>
-    <div class="story"><div class="story-ring"><div class="story-avatar">👩</div></div><span class="story-label">Sarah M</span></div>
-    <div class="story"><div class="story-ring"><div class="story-avatar">👨‍🦱</div></div><span class="story-label">Tom H</span></div>
-    <div class="story"><div class="story-ring"><div class="story-avatar">🧔</div></div><span class="story-label">Buck L</span></div>
-    <div class="story"><div class="story-ring"><div class="story-avatar">👱‍♀️</div></div><span class="story-label">Amy D</span></div>
-    <div class="story"><div class="story-ring"><div class="story-avatar">🧓</div></div><span class="story-label">Earl V</span></div>
+  <div class="compose-bar">
+    <div id="compose-avatar-mini" style="flex-shrink:0"></div>
+    <div class="compose-prompt" onclick="openPostModal()">What happened out there?</div>
+    <button class="icon-btn" onclick="openPostModal(true)" title="Add photo"><i class="fa-regular fa-image"></i></button>
   </div>
 
-  <div class="post">
-    <div class="post-head">
-      <div class="post-avatar">🧑</div>
-      <div class="post-meta">
-        <div class="post-name">Jake Mercer <span style="color:var(--muted);font-weight:400;font-size:.78rem">@jake_mercer</span></div>
-        <div class="post-sub"><i class="fa-solid fa-location-dot"></i> Bitterroot Valley, MT &nbsp;·&nbsp; 3h ago</div>
-      </div>
-      <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
-    </div>
-    <div class="post-img" style="background:linear-gradient(160deg,#0d2010,#1a3a15,#2d4e20)">
-      <span style="font-size:5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))">🦌</span>
-      <div class="post-img-label"><i class="fa-solid fa-ruler-horizontal"></i> 347 yds &nbsp;·&nbsp; 6×6 Bull Elk</div>
-    </div>
-    <div class="post-body">
-      <div class="post-stats">
-        <span class="pill pill-amber"><i class="fa-solid fa-crosshairs"></i> .300 Win Mag</span>
-        <span class="pill pill-green"><i class="fa-solid fa-mountain"></i> 5,840 ft</span>
-        <span class="pill pill-blue"><i class="fa-solid fa-thermometer-half"></i> 31°F</span>
-      </div>
-      <div class="post-caption">Finally got him after 4 days of glassing. Wind was perfect at 6 mph from the NW. One shot, DRT. Tagged out for the season 🎯</div>
-    </div>
-    <div class="post-actions">
-      <button class="post-action liked" onclick="toggleLike(this,247)"><i class="fa-solid fa-heart"></i> <span>247</span></button>
-      <button class="post-action"><i class="fa-regular fa-comment"></i> 34</button>
-      <button class="post-action"><i class="fa-solid fa-share-nodes"></i> Share</button>
-      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
+  <div id="feed-loading" class="feed-state">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    Loading your feed…
+  </div>
+  <div id="feed-empty" class="feed-state" style="display:none">
+    <i class="fa-solid fa-users"></i>
+    <strong>Your feed is empty</strong>
+    Follow other hunters to see their posts here, or be the first to post.
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showSearch()"><i class="fa-solid fa-user-plus"></i> Find Hunters</button>
+      <button class="btn btn-outline" onclick="openPostModal()"><i class="fa-solid fa-pen"></i> Create Post</button>
     </div>
   </div>
-
-  <div class="post">
-    <div class="post-head">
-      <div class="post-avatar">👩</div>
-      <div class="post-meta">
-        <div class="post-name">Sarah Mitchell <span style="color:var(--muted);font-weight:400;font-size:.78rem">@sarah_mt_hunter</span></div>
-        <div class="post-sub"><i class="fa-solid fa-location-dot"></i> Missoula, MT &nbsp;·&nbsp; 6h ago</div>
-      </div>
-      <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
-    </div>
-    <div style="padding:0 14px 10px">
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px">
-        <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:8px"><i class="fa-solid fa-cloud-sun"></i> Shared Conditions — Garnet Range</div>
-        <div style="display:flex;gap:16px;font-size:.85rem">
-          <div><span style="color:var(--amber-l);font-weight:700">34°F</span><br><span style="color:var(--muted);font-size:.72rem">Temp</span></div>
-          <div><span style="color:var(--amber-l);font-weight:700">4 mph SW</span><br><span style="color:var(--muted);font-size:.72rem">Wind</span></div>
-          <div><span style="color:var(--amber-l);font-weight:700">Overcast</span><br><span style="color:var(--muted);font-size:.72rem">Sky</span></div>
-          <div><span style="color:#7ecf9a;font-weight:700">94/100</span><br><span style="color:var(--muted);font-size:.72rem">Hunt Score</span></div>
-        </div>
-      </div>
-      <p style="font-size:.85rem;margin-top:10px;line-height:1.5">Insane morning out there. Spotted a 180" mule deer buck at first light. Didn't take the shot — he's getting one more year 👀</p>
-    </div>
-    <div class="post-actions">
-      <button class="post-action" onclick="toggleLike(this,89)"><i class="fa-regular fa-heart"></i> <span>89</span></button>
-      <button class="post-action"><i class="fa-regular fa-comment"></i> 21</button>
-      <button class="post-action"><i class="fa-solid fa-share-nodes"></i> Share</button>
-      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
-    </div>
-  </div>
-
-  <div class="post">
-    <div class="post-head">
-      <div class="post-avatar">🧔</div>
-      <div class="post-meta">
-        <div class="post-name">Buck Larson <span style="color:var(--muted);font-weight:400;font-size:.78rem">@buck_larson</span></div>
-        <div class="post-sub"><i class="fa-solid fa-location-dot"></i> Dillon, MT &nbsp;·&nbsp; 1d ago</div>
-      </div>
-      <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
-    </div>
-    <div class="post-img" style="background:linear-gradient(160deg,#1a1000,#2d1e00,#3d2a00)">
-      <span style="font-size:5rem">🐂</span>
-      <div class="post-img-label"><i class="fa-solid fa-ruler-horizontal"></i> 512 yds &nbsp;·&nbsp; Bison</div>
-    </div>
-    <div class="post-body">
-      <div class="post-stats">
-        <span class="pill pill-amber"><i class="fa-solid fa-crosshairs"></i> .338 Lapua</span>
-        <span class="pill pill-green"><i class="fa-solid fa-wind"></i> 18 mph cross</span>
-      </div>
-      <div class="post-caption">Long cross-wind shot on a bison hunt in Wyoming. Used TrailMark's wind calc to dial in 11.4" of correction. Worked perfectly!</div>
-    </div>
-    <div class="post-actions">
-      <button class="post-action" onclick="toggleLike(this,312)"><i class="fa-regular fa-heart"></i> <span>312</span></button>
-      <button class="post-action"><i class="fa-regular fa-comment"></i> 58</button>
-      <button class="post-action"><i class="fa-solid fa-share-nodes"></i> Share</button>
-      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
-    </div>
-  </div>
-  <div style="height:8px"></div>
+  <div id="feed-posts"></div>
 </div>
 
-<!-- BALLISTICS -->
+<!-- ═══ BALLISTICS ═══ -->
 <div id="page-ballistics" class="page">
   <div class="section-title">Ballistics Calculator</div>
   <div class="card">
@@ -305,29 +235,23 @@
       </div>
     </div>
   </div>
-
   <div id="balli-results" style="display:none">
     <div class="section-title">Trajectory Table <span id="balli-sub" style="color:var(--text);font-weight:400;text-transform:none;letter-spacing:0;font-size:.78rem"></span></div>
     <div class="card" style="padding:12px 8px">
       <table class="traj-table">
-        <thead>
-          <tr>
-            <th>Range</th><th>Vel fps</th><th>ft·lbs</th><th>Drop"</th><th>MOA</th><th>Wind"</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Range</th><th>Vel fps</th><th>ft·lbs</th><th>Drop"</th><th>MOA</th><th>Wind"</th></tr></thead>
         <tbody id="traj-body"></tbody>
       </table>
     </div>
     <div class="section-title">Wind Drift Guide</div>
     <div class="card"><div id="wind-guide" style="font-size:.84rem;line-height:1.9"></div></div>
     <div class="card" style="display:flex;gap:10px">
-      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="alert('Copied to clipboard!')"><i class="fa-regular fa-copy"></i> Copy</button>
-      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="alert('Posted to your feed!')"><i class="fa-solid fa-share-nodes"></i> Post to Feed</button>
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Post Results</button>
     </div>
   </div>
 </div>
 
-<!-- CONDITIONS -->
+<!-- ═══ CONDITIONS ═══ -->
 <div id="page-conditions" class="page">
   <div style="padding:8px 12px 0">
     <div class="hunt-score">
@@ -350,7 +274,6 @@
       </div>
     </div>
   </div>
-
   <div class="weather-hero">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div>
@@ -367,7 +290,6 @@
       <div class="wh-stat"><div class="wh-stat-val">🌔 68%</div><div class="wh-stat-lbl">Moon</div></div>
     </div>
   </div>
-
   <div class="section-title">Wind</div>
   <div class="wind-card">
     <div class="wind-compass">
@@ -389,152 +311,64 @@
       <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Gusts up to 14 mph</div>
       <div class="divider" style="margin:10px 0"></div>
       <div style="font-size:.82rem;line-height:1.9">
-        <div><span style="color:var(--muted)">Crosswind component:</span> <strong>7.4 mph</strong></div>
-        <div><span style="color:var(--muted)">Headwind component:</span> <strong>3.1 mph</strong></div>
-        <div><span style="color:var(--muted)">.308 drift @ 300 yds:</span> <strong style="color:var(--amber-l)">3.2"</strong></div>
+        <div><span style="color:var(--muted)">Crosswind:</span> <strong>7.4 mph</strong></div>
+        <div><span style="color:var(--muted)">Headwind:</span> <strong>3.1 mph</strong></div>
+        <div><span style="color:var(--muted)">.308 @ 300 yds:</span> <strong style="color:var(--amber-l)">3.2"</strong></div>
       </div>
     </div>
   </div>
-
   <div class="section-title">5-Day Forecast</div>
   <div class="forecast">
-    <div class="fc-day" style="background:var(--surface2);border-color:var(--amber)">
-      <div class="fc-day-name">Today</div><div class="fc-icon">⛅</div><div class="fc-hi">42°</div><div class="fc-lo">29°</div>
-    </div>
+    <div class="fc-day" style="background:var(--surface2);border-color:var(--amber)"><div class="fc-day-name">Today</div><div class="fc-icon">⛅</div><div class="fc-hi">42°</div><div class="fc-lo">29°</div></div>
     <div class="fc-day"><div class="fc-day-name">Sat</div><div class="fc-icon">☀️</div><div class="fc-hi">48°</div><div class="fc-lo">31°</div></div>
     <div class="fc-day"><div class="fc-day-name">Sun</div><div class="fc-icon">🌧️</div><div class="fc-hi">37°</div><div class="fc-lo">28°</div></div>
     <div class="fc-day"><div class="fc-day-name">Mon</div><div class="fc-icon">❄️</div><div class="fc-hi">31°</div><div class="fc-lo">18°</div></div>
     <div class="fc-day"><div class="fc-day-name">Tue</div><div class="fc-icon">🌨️</div><div class="fc-hi">28°</div><div class="fc-lo">14°</div></div>
   </div>
-
   <div class="card" style="display:flex;gap:10px;margin-top:4px">
-    <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="alert('Conditions copied!')"><i class="fa-regular fa-copy"></i> Copy</button>
-    <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="alert('Shared to feed!')"><i class="fa-solid fa-share-nodes"></i> Share Conditions</button>
+    <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i> Share Conditions</button>
   </div>
 </div>
 
-<!-- LOG -->
+<!-- ═══ LOG ═══ -->
 <div id="page-log" class="page">
   <div class="log-stats">
-    <div class="log-stat"><div class="log-stat-val">12</div><div class="log-stat-lbl">Harvests</div></div>
-    <div class="log-stat"><div class="log-stat-val">294</div><div class="log-stat-lbl">Avg Yards</div></div>
-    <div class="log-stat"><div class="log-stat-val">83%</div><div class="log-stat-lbl">1-Shot Rate</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-harvests">—</div><div class="log-stat-lbl">Harvests</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-avg-dist">—</div><div class="log-stat-lbl">Avg Yards</div></div>
+    <div class="log-stat"><div class="log-stat-val" id="stat-longest">—</div><div class="log-stat-lbl">Longest Shot</div></div>
   </div>
-
   <div style="padding:0 12px 8px;display:flex;justify-content:space-between;align-items:center">
-    <span class="section-title" style="padding:0">Recent Harvests</span>
-    <select style="width:auto;padding:6px 10px;font-size:.78rem">
-      <option>All Species</option><option>Elk</option><option>Deer</option><option>Antelope</option>
+    <span class="section-title" style="padding:0">Harvest Log</span>
+    <select id="log-filter" style="width:auto;padding:6px 10px;font-size:.78rem" onchange="filterLog()">
+      <option value="">All Species</option>
+      <option>Bull Elk</option><option>Cow Elk</option><option>Mule Deer Buck</option>
+      <option>Whitetail Buck</option><option>Pronghorn</option><option>Black Bear</option>
+      <option>Bison</option><option>Coyote</option>
     </select>
   </div>
-
-  <div id="log-list">
-    <div class="log-entry">
-      <div class="log-entry-icon">🦌</div>
-      <div class="log-entry-body">
-        <div class="log-entry-title">6×6 Bull Elk — 710 lbs</div>
-        <div class="log-entry-meta">
-          <span><i class="fa-regular fa-calendar"></i> Nov 15, 2024</span>
-          <span><i class="fa-solid fa-ruler-horizontal"></i> 347 yds</span>
-          <span><i class="fa-solid fa-crosshairs"></i> .300 Win Mag</span>
-        </div>
-        <div class="log-tags">
-          <span class="pill pill-green" style="font-size:.7rem">DRT</span>
-          <span class="pill pill-amber" style="font-size:.7rem">Bitterroot Valley, MT</span>
-          <span class="pill pill-blue" style="font-size:.7rem">Public Land</span>
-        </div>
-      </div>
-      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
-    </div>
-    <div class="log-entry">
-      <div class="log-entry-icon">🦌</div>
-      <div class="log-entry-body">
-        <div class="log-entry-title">4×4 Mule Deer Buck — 185 lbs</div>
-        <div class="log-entry-meta">
-          <span><i class="fa-regular fa-calendar"></i> Oct 22, 2024</span>
-          <span><i class="fa-solid fa-ruler-horizontal"></i> 180 yds</span>
-          <span><i class="fa-solid fa-crosshairs"></i> .308 Win</span>
-        </div>
-        <div class="log-tags">
-          <span class="pill pill-green" style="font-size:.7rem">DRT</span>
-          <span class="pill pill-amber" style="font-size:.7rem">Glacier Nat. Forest</span>
-        </div>
-      </div>
-      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
-    </div>
-    <div class="log-entry">
-      <div class="log-entry-icon">🐐</div>
-      <div class="log-entry-body">
-        <div class="log-entry-title">Pronghorn Antelope — 110 lbs</div>
-        <div class="log-entry-meta">
-          <span><i class="fa-regular fa-calendar"></i> Sep 8, 2024</span>
-          <span><i class="fa-solid fa-ruler-horizontal"></i> 412 yds</span>
-          <span><i class="fa-solid fa-crosshairs"></i> 6.5 Creedmoor</span>
-        </div>
-        <div class="log-tags">
-          <span class="pill pill-green" style="font-size:.7rem">DRT</span>
-          <span class="pill pill-amber" style="font-size:.7rem">Powder River, WY</span>
-        </div>
-      </div>
-      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
-    </div>
-    <div class="log-entry">
-      <div class="log-entry-icon">🐺</div>
-      <div class="log-entry-body">
-        <div class="log-entry-title">Coyote — Pest Control</div>
-        <div class="log-entry-meta">
-          <span><i class="fa-regular fa-calendar"></i> Aug 3, 2024</span>
-          <span><i class="fa-solid fa-ruler-horizontal"></i> 255 yds</span>
-          <span><i class="fa-solid fa-crosshairs"></i> .243 Win</span>
-        </div>
-        <div class="log-tags"><span class="pill pill-amber" style="font-size:.7rem">Private Ranch</span></div>
-      </div>
-      <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>
-    </div>
-  </div>
+  <div id="log-list"></div>
 </div>
 
-<!-- PROFILE -->
+<!-- ═══ PROFILE ═══ -->
 <div id="page-profile" class="page" style="padding-top:var(--head)">
   <div class="profile-cover"></div>
   <div class="profile-head">
     <div style="display:flex;justify-content:space-between;align-items:flex-end">
-      <div class="profile-av">🧑</div>
+      <div class="profile-av" id="profile-av-wrap" style="font-size:2rem">🧑</div>
       <div style="display:flex;gap:8px;padding-top:8px">
         <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem"><i class="fa-solid fa-pen"></i> Edit</button>
-        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="btn btn-outline" style="padding:7px 14px;font-size:.8rem" onclick="openPostModal()"><i class="fa-solid fa-pen-to-square"></i> Post</button>
       </div>
     </div>
     <div class="profile-name" id="profile-name">—</div>
     <div class="profile-handle" id="profile-handle">—</div>
-    <div class="profile-bio" id="profile-bio">Loading…</div>
+    <div class="profile-bio" id="profile-bio" style="color:var(--muted)">Loading…</div>
     <div class="profile-stats">
-      <div class="profile-stat"><div class="profile-stat-val">847</div><div class="profile-stat-lbl">Followers</div></div>
-      <div class="profile-stat"><div class="profile-stat-val">234</div><div class="profile-stat-lbl">Following</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="profile-followers">—</div><div class="profile-stat-lbl">Followers</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="profile-following">—</div><div class="profile-stat-lbl">Following</div></div>
       <div class="profile-stat"><div class="profile-stat-val" id="profile-harvests">—</div><div class="profile-stat-lbl">Harvests</div></div>
-      <div class="profile-stat"><div class="profile-stat-val">7</div><div class="profile-stat-lbl">Seasons</div></div>
     </div>
   </div>
-
-  <div class="section-title">Achievements</div>
-  <div style="display:flex;gap:8px;padding:0 12px 12px;overflow-x:auto;scrollbar-width:none">
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
-      <div style="font-size:1.8rem">🏆</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Grand Slam</div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
-      <div style="font-size:1.8rem">🎯</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">500yd Club</div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
-      <div style="font-size:1.8rem">🦌</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Bull Elk ×5</div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
-      <div style="font-size:1.8rem">🌄</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Public Land</div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px">
-      <div style="font-size:1.8rem">💨</div><div style="font-size:.65rem;color:var(--muted);margin-top:4px;text-transform:uppercase;font-weight:600">Wind Reader</div>
-    </div>
-  </div>
-
   <div class="section-title">My Gear</div>
   <div class="card">
     <div class="gear-item">
@@ -561,6 +395,7 @@
 
 </main>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-btn active" data-page="feed"><i class="fa-solid fa-house"></i><span>Feed</span></button>
   <button class="nav-btn" data-page="ballistics"><i class="fa-solid fa-bullseye"></i><span>Ballistics</span></button>
@@ -569,11 +404,10 @@
   <button class="nav-btn" data-page="profile"><i class="fa-regular fa-user"></i><span>Profile</span></button>
 </nav>
 
-<button class="fab" id="log-fab" style="display:none" onclick="openLogModal()">
-  <i class="fa-solid fa-plus"></i>
-</button>
+<!-- FAB -->
+<button class="fab" id="main-fab" onclick="fabAction()"><i class="fa-solid fa-plus"></i></button>
 
-<!-- ADD LOG MODAL -->
+<!-- ═══ MODAL: LOG HARVEST ═══ -->
 <div class="modal-overlay" id="log-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -586,7 +420,7 @@
           <option>Bison</option><option>Coyote</option><option>Other</option>
         </select>
       </div>
-      <div class="form-group"><label>Date</label><input type="text" id="m-date" placeholder="Nov 15, 2024"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="m-date"></div>
       <div class="form-group"><label>Distance (yds)</label><input type="number" id="m-dist" placeholder="250"></div>
       <div class="form-group"><label>Cartridge</label>
         <select id="m-cart">
@@ -596,10 +430,10 @@
       </div>
       <div class="form-group"><label>Wind (mph)</label><input type="number" id="m-mwind" placeholder="8"></div>
       <div class="form-group full"><label>Location</label><input type="text" id="m-loc" placeholder="Bitterroot Valley, MT"></div>
-      <div class="form-group full"><label>Notes</label><textarea id="m-notes" rows="2" placeholder="Shot details, conditions..."></textarea></div>
+      <div class="form-group full"><label>Notes</label><textarea id="m-notes" rows="2" placeholder="Shot details, conditions…"></textarea></div>
       <div class="form-group full" style="display:flex;align-items:center;gap:10px">
-        <input type="checkbox" id="m-share" style="width:auto;accent-color:var(--amber)">
-        <label for="m-share" style="text-transform:none;letter-spacing:0;font-size:.84rem;color:var(--text);cursor:pointer">Share to feed</label>
+        <input type="checkbox" id="m-share" style="width:auto;accent-color:var(--amber)" checked>
+        <label for="m-share" style="text-transform:none;letter-spacing:0;font-size:.84rem;color:var(--text);cursor:pointer">Make public</label>
       </div>
     </div>
     <div class="modal-actions">
@@ -609,8 +443,77 @@
   </div>
 </div>
 
+<!-- ═══ MODAL: CREATE POST ═══ -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="modal-title" style="margin:0">New Post</div>
+      <button class="btn btn-amber" id="btn-submit-post" onclick="submitPost()" style="padding:8px 18px">Post</button>
+    </div>
+    <textarea id="post-body-txt" rows="4" placeholder="What happened out there?" style="resize:none"></textarea>
+    <div class="img-preview-wrap" id="post-img-preview">
+      <img id="post-img-preview-src" src="" alt="">
+      <button class="img-remove" onclick="removePostImage()"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <input type="file" id="post-img-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+    <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:flex;gap:8px;align-items:center">
+      <button class="btn btn-outline" style="padding:8px 14px;font-size:.82rem" onclick="document.getElementById('post-img-input').click()">
+        <i class="fa-regular fa-image"></i> Photo
+      </button>
+      <select id="post-harvest-sel" style="flex:1;font-size:.82rem;padding:8px 10px">
+        <option value="">Tag a harvest (optional)</option>
+      </select>
+    </div>
+    <div id="post-error" style="color:#e8776a;font-size:.8rem;margin-top:8px;display:none"></div>
+  </div>
+</div>
+
+<!-- ═══ USER PROFILE SHEET ═══ -->
+<div class="modal-overlay" id="profile-sheet">
+  <div class="modal" style="max-height:70vh">
+    <div class="modal-handle"></div>
+    <div id="sheet-loading" style="text-align:center;padding:32px;color:var(--muted)">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i>
+    </div>
+    <div id="sheet-content" style="display:none">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+        <div id="sheet-avatar"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:1rem;font-weight:700" id="sheet-name"></div>
+          <div style="font-size:.78rem;color:var(--muted)" id="sheet-handle"></div>
+        </div>
+        <button id="sheet-follow-btn" class="btn btn-primary" style="padding:7px 16px;font-size:.82rem"></button>
+      </div>
+      <div id="sheet-bio" style="font-size:.84rem;color:var(--muted);margin-bottom:12px;line-height:1.4"></div>
+      <div class="sheet-stats">
+        <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-followers">—</div><div class="sheet-stat-lbl">Followers</div></div>
+        <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-following">—</div><div class="sheet-stat-lbl">Following</div></div>
+        <div class="sheet-stat"><div class="sheet-stat-val" id="sheet-harvests">—</div><div class="sheet-stat-lbl">Harvests</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SEARCH OVERLAY ═══ -->
+<div class="search-overlay" id="search-overlay">
+  <div class="search-head">
+    <button class="icon-btn" onclick="hideSearch()"><i class="fa-solid fa-arrow-left"></i></button>
+    <input type="text" id="search-input" placeholder="Search hunters by name or username…" oninput="debounceSearch(this.value)">
+  </div>
+  <div class="search-results" id="search-results">
+    <div class="feed-state" style="padding:40px 24px">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <strong>Find Hunters</strong>
+      Type a name or username to search.
+    </div>
+  </div>
+</div>
+
 <script>
-// ── Auth ──
+// ─────────────────────────────────────────────
+// Auth & boot
+// ─────────────────────────────────────────────
 let currentUser = null;
 
 async function initApp() {
@@ -619,18 +522,26 @@ async function initApp() {
     if (!r.ok) { window.location.href = '/login.html'; return; }
     currentUser = (await r.json()).user;
     applyUserToUI(currentUser);
+    loadFeed();
     loadHarvests();
   } catch {
     window.location.href = '/login.html';
   }
 }
 
-function applyUserToUI(user) {
-  document.getElementById('profile-name').textContent = user.display_name || user.username;
-  document.getElementById('profile-handle').textContent =
-    '@' + user.username + (user.location ? ' · ' + user.location : '');
-  document.getElementById('profile-bio').textContent =
-    user.bio || 'No bio yet — edit your profile to add one.';
+function applyUserToUI(u) {
+  document.getElementById('profile-name').textContent    = u.display_name || u.username;
+  document.getElementById('profile-handle').textContent  = '@' + u.username + (u.location ? ' · ' + u.location : '');
+  document.getElementById('profile-bio').textContent     = u.bio || 'No bio yet.';
+  document.getElementById('profile-bio').style.color     = u.bio ? 'var(--text)' : 'var(--muted)';
+  document.getElementById('profile-followers').textContent = u.followers_count ?? '0';
+  document.getElementById('profile-following').textContent = u.following_count  ?? '0';
+  const mini = document.getElementById('compose-avatar-mini');
+  if (mini) mini.innerHTML = makeAvatar(u, 36);
+  const av = document.getElementById('profile-av-wrap');
+  if (av) { av.style.fontSize = '1.6rem'; av.style.fontWeight = '700'; av.style.color = '#fff';
+            av.style.background = avatarColor(u.username);
+            av.textContent = (u.display_name || u.username)[0].toUpperCase(); }
 }
 
 async function logout() {
@@ -638,104 +549,374 @@ async function logout() {
   window.location.href = '/login.html';
 }
 
-// ── Navigation ──
+// ─────────────────────────────────────────────
+// Navigation
+// ─────────────────────────────────────────────
+let currentPage = 'feed';
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const p = btn.dataset.page;
-    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+    currentPage = btn.dataset.page;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + p).classList.add('active');
+    document.getElementById('page-' + currentPage).classList.add('active');
     btn.classList.add('active');
-    document.getElementById('log-fab').style.display = p === 'log' ? 'flex' : 'none';
+    const fab = document.getElementById('main-fab');
+    fab.style.display = (currentPage === 'feed' || currentPage === 'log') ? 'flex' : 'none';
+  });
+});
+function fabAction() {
+  if (currentPage === 'feed') openPostModal();
+  else if (currentPage === 'log') openLogModal();
+}
+
+// ─────────────────────────────────────────────
+// Feed
+// ─────────────────────────────────────────────
+async function loadFeed() {
+  const loading = document.getElementById('feed-loading');
+  const empty   = document.getElementById('feed-empty');
+  const list    = document.getElementById('feed-posts');
+  loading.style.display = 'block'; empty.style.display = 'none'; list.innerHTML = '';
+  try {
+    const r = await fetch('/api/posts');
+    if (!r.ok) { loading.style.display = 'none'; return; }
+    const { posts } = await r.json();
+    loading.style.display = 'none';
+    if (!posts || posts.length === 0) { empty.style.display = 'block'; return; }
+    list.innerHTML = posts.map(renderPost).join('');
+  } catch (e) {
+    loading.style.display = 'none';
+    console.error('loadFeed', e);
+  }
+}
+
+function renderPost(p) {
+  const isOwn = currentUser && p.author_id === currentUser.id;
+  const av = `<div style="width:38px;height:38px;border-radius:50%;background:${avatarColor(p.username)};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;cursor:pointer" onclick="viewProfile('${esc(p.username)}')">${(p.display_name||p.username)[0].toUpperCase()}</div>`;
+  const img = p.image_url
+    ? `<div><img src="${esc(p.image_url)}" style="width:100%;max-height:480px;object-fit:cover;display:block" loading="lazy"></div>` : '';
+  const tag = p.harvest_id ? `
+    <div class="harvest-tag">
+      <div class="harvest-tag-lbl"><i class="fa-solid fa-crosshairs"></i> Tagged Harvest</div>
+      <div class="harvest-tag-title">${esc(p.species||'—')}</div>
+      <div class="harvest-tag-meta">
+        ${p.distance_yards ? `<span>${p.distance_yards} yds</span>` : ''}
+        ${p.cartridge ? `<span>${esc(p.cartridge)}</span>` : ''}
+        ${p.harvest_location ? `<span>${esc(p.harvest_location)}</span>` : ''}
+      </div>
+    </div>` : '';
+  const body = p.body ? `<div class="post-body"><div class="post-caption">${esc(p.body)}</div></div>` : '';
+  return `<div class="post" data-post-id="${p.id}">
+    <div class="post-head">
+      ${av}
+      <div class="post-meta">
+        <div class="post-name">${esc(p.display_name||p.username)} <span style="color:var(--muted);font-weight:400;font-size:.78rem">@${esc(p.username)}</span></div>
+        <div class="post-sub">${timeAgo(p.created_at)}</div>
+      </div>
+      ${isOwn
+        ? `<button class="icon-btn" onclick="deletePost(${p.id})"><i class="fa-solid fa-trash" style="font-size:.82rem"></i></button>`
+        : `<button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>`}
+    </div>
+    ${img}${tag}${body}
+    <div class="post-actions">
+      <button class="post-action${p.liked_by_me?' liked':''}" onclick="togglePostLike(${p.id},this)">
+        <i class="${p.liked_by_me?'fa-solid':'fa-regular'} fa-heart"></i>
+        <span>${p.like_count||0}</span>
+      </button>
+      <button class="post-action"><i class="fa-regular fa-comment"></i> 0</button>
+      <button class="post-action" onclick="sharePost(${p.id})"><i class="fa-solid fa-share-nodes"></i> Share</button>
+      <button class="post-action"><i class="fa-regular fa-bookmark"></i></button>
+    </div>
+  </div>`;
+}
+
+async function togglePostLike(postId, btn) {
+  const liked = btn.classList.contains('liked');
+  btn.classList.toggle('liked');
+  const icon = btn.querySelector('i');
+  const span = btn.querySelector('span');
+  icon.className = liked ? 'fa-regular fa-heart' : 'fa-solid fa-heart';
+  span.textContent = parseInt(span.textContent) + (liked ? -1 : 1);
+  try {
+    const r = await fetch('/api/likes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ post_id: postId }),
+    });
+    if (r.ok) {
+      const { liked: l, count } = await r.json();
+      btn.classList.toggle('liked', l);
+      icon.className = l ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+      span.textContent = count;
+    }
+  } catch { /* optimistic — keep local state */ }
+}
+
+async function deletePost(postId) {
+  if (!confirm('Delete this post?')) return;
+  const r = await fetch('/api/posts/' + postId, { method: 'DELETE' });
+  if (r.ok) {
+    const el = document.querySelector(`[data-post-id="${postId}"]`);
+    if (el) el.remove();
+    if (!document.querySelector('.post')) {
+      document.getElementById('feed-posts').innerHTML = '';
+      document.getElementById('feed-empty').style.display = 'block';
+    }
+  }
+}
+
+function sharePost(postId) {
+  const url = window.location.origin;
+  if (navigator.share) navigator.share({ title: 'TrailMark', url });
+  else { navigator.clipboard?.writeText(url); alert('Link copied!'); }
+}
+
+// ─────────────────────────────────────────────
+// Post composer
+// ─────────────────────────────────────────────
+let pendingImageData = null;
+
+async function openPostModal(focusImage = false) {
+  document.getElementById('post-body-txt').value = '';
+  document.getElementById('post-error').style.display = 'none';
+  removePostImage();
+  const sel = document.getElementById('post-harvest-sel');
+  sel.innerHTML = '<option value="">Tag a harvest (optional)</option>';
+  try {
+    const r = await fetch('/api/harvests');
+    if (r.ok) {
+      const { harvests } = await r.json();
+      harvests.forEach(h => {
+        const o = document.createElement('option');
+        o.value = h.id;
+        o.textContent = h.species + (h.date ? ' · ' + fmt(h.date) : '') + (h.location ? ' · ' + h.location : '');
+        sel.appendChild(o);
+      });
+    }
+  } catch {}
+  document.getElementById('post-modal').classList.add('open');
+  if (focusImage) setTimeout(() => document.getElementById('post-img-input').click(), 200);
+  else setTimeout(() => document.getElementById('post-body-txt').focus(), 200);
+}
+function closePostModal() {
+  document.getElementById('post-modal').classList.remove('open');
+  pendingImageData = null;
+}
+
+function handleImageSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  compressImage(file).then(data => {
+    pendingImageData = data;
+    document.getElementById('post-img-preview-src').src = data;
+    document.getElementById('post-img-preview').style.display = 'block';
+  });
+}
+function removePostImage() {
+  pendingImageData = null;
+  document.getElementById('post-img-preview').style.display = 'none';
+  document.getElementById('post-img-preview-src').src = '';
+  document.getElementById('post-img-input').value = '';
+}
+
+async function submitPost() {
+  const body      = document.getElementById('post-body-txt').value.trim();
+  const harvestId = document.getElementById('post-harvest-sel').value;
+  const errEl     = document.getElementById('post-error');
+  errEl.style.display = 'none';
+
+  if (!body && !pendingImageData) {
+    errEl.textContent = 'Add some text or a photo first.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('btn-submit-post');
+  btn.disabled = true; btn.textContent = 'Posting…';
+
+  try {
+    let imageUrl = null;
+    if (pendingImageData) {
+      const up = await fetch('/api/upload', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: pendingImageData }),
+      });
+      if (!up.ok) { errEl.textContent = 'Image upload failed.'; errEl.style.display = 'block'; return; }
+      imageUrl = (await up.json()).url;
+    }
+    const r = await fetch('/api/posts', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body: body || null, image_url: imageUrl, harvest_id: harvestId || null }),
+    });
+    if (!r.ok) { errEl.textContent = (await r.json()).error || 'Failed to post.'; errEl.style.display = 'block'; return; }
+    closePostModal();
+    loadFeed();
+  } catch {
+    errEl.textContent = 'Network error.'; errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Post';
+  }
+}
+
+async function compressImage(file) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX = 1200;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+        else        { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = url;
+  });
+}
+
+// ─────────────────────────────────────────────
+// User search
+// ─────────────────────────────────────────────
+let _st;
+function debounceSearch(q) {
+  clearTimeout(_st);
+  if (q.trim().length < 2) {
+    document.getElementById('search-results').innerHTML = `
+      <div class="feed-state" style="padding:40px 24px">
+        <i class="fa-solid fa-magnifying-glass"></i><strong>Find Hunters</strong>
+        Type a name or username to search.
+      </div>`;
+    return;
+  }
+  _st = setTimeout(() => searchUsers(q.trim()), 300);
+}
+
+async function searchUsers(q) {
+  const container = document.getElementById('search-results');
+  container.innerHTML = `<div class="feed-state" style="padding:32px"><i class="fa-solid fa-spinner fa-spin"></i></div>`;
+  const r = await fetch('/api/users/search?q=' + encodeURIComponent(q));
+  if (!r.ok) return;
+  const { users } = await r.json();
+  if (!users.length) {
+    container.innerHTML = `<div class="feed-state" style="padding:40px 24px"><i class="fa-solid fa-user-slash"></i><strong>No users found</strong></div>`;
+    return;
+  }
+  container.innerHTML = users.map(u => `
+    <div class="user-row" onclick="viewProfile('${esc(u.username)}');hideSearch()">
+      ${makeAvatar(u, 44)}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:.9rem">${esc(u.display_name||u.username)}</div>
+        <div style="font-size:.74rem;color:var(--muted)">@${esc(u.username)}${u.location?' · '+esc(u.location):''}</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:1px">${u.followers_count} follower${u.followers_count!==1?'s':''}</div>
+      </div>
+      <button class="btn ${u.is_following?'btn-outline':'btn-primary'}"
+              style="padding:7px 14px;font-size:.78rem;flex-shrink:0"
+              onclick="event.stopPropagation();toggleFollow(${u.id},this)">
+        ${u.is_following?'Following':'Follow'}
+      </button>
+    </div>`).join('');
+}
+
+async function toggleFollow(targetId, btn) {
+  btn.disabled = true;
+  const r = await fetch('/api/follows', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ target_id: targetId }),
+  });
+  btn.disabled = false;
+  if (!r.ok) return;
+  const { following } = await r.json();
+  btn.textContent = following ? 'Following' : 'Follow';
+  btn.className   = `btn ${following ? 'btn-outline' : 'btn-primary'}`;
+  btn.style.cssText = 'padding:7px 14px;font-size:.78rem;flex-shrink:0';
+  if (following) loadFeed(); // refresh after new follow
+}
+
+function showSearch() {
+  document.getElementById('search-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('search-input').focus(), 100);
+}
+function hideSearch() {
+  document.getElementById('search-overlay').classList.remove('open');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = `
+    <div class="feed-state" style="padding:40px 24px">
+      <i class="fa-solid fa-magnifying-glass"></i><strong>Find Hunters</strong>
+      Type a name or username to search.
+    </div>`;
+}
+
+// ─────────────────────────────────────────────
+// User profile sheet
+// ─────────────────────────────────────────────
+async function viewProfile(username) {
+  const sheet = document.getElementById('profile-sheet');
+  document.getElementById('sheet-loading').style.display = 'block';
+  document.getElementById('sheet-content').style.display = 'none';
+  sheet.classList.add('open');
+  try {
+    const r = await fetch('/api/users/' + username);
+    if (!r.ok) { sheet.classList.remove('open'); return; }
+    const { user: u } = await r.json();
+    document.getElementById('sheet-avatar').innerHTML   = makeAvatar(u, 54);
+    document.getElementById('sheet-name').textContent   = u.display_name || u.username;
+    document.getElementById('sheet-handle').textContent = '@' + u.username + (u.location ? ' · ' + u.location : '');
+    document.getElementById('sheet-bio').textContent    = u.bio || '';
+    document.getElementById('sheet-followers').textContent = u.followers_count;
+    document.getElementById('sheet-following').textContent = u.following_count;
+    document.getElementById('sheet-harvests').textContent  = u.harvest_count;
+    const fb = document.getElementById('sheet-follow-btn');
+    if (currentUser && u.id === currentUser.id) {
+      fb.style.display = 'none';
+    } else {
+      fb.style.display = '';
+      fb.className = `btn ${u.is_following ? 'btn-outline' : 'btn-primary'}`;
+      fb.style.cssText = 'padding:7px 16px;font-size:.82px';
+      fb.textContent = u.is_following ? 'Following' : 'Follow';
+      fb.onclick = async () => {
+        fb.disabled = true;
+        const r2 = await fetch('/api/follows', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ target_id: u.id }),
+        });
+        fb.disabled = false;
+        if (!r2.ok) return;
+        const { following } = await r2.json();
+        fb.className = `btn ${following ? 'btn-outline' : 'btn-primary'}`;
+        fb.textContent = following ? 'Following' : 'Follow';
+        document.getElementById('sheet-followers').textContent =
+          parseInt(document.getElementById('sheet-followers').textContent) + (following ? 1 : -1);
+        if (following) loadFeed();
+      };
+    }
+    document.getElementById('sheet-loading').style.display = 'none';
+    document.getElementById('sheet-content').style.display = 'block';
+  } catch { sheet.classList.remove('open'); }
+}
+
+// close sheets/modals on overlay tap
+['log-modal','post-modal','profile-sheet'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
   });
 });
 
-// ── Like toggle ──
-function toggleLike(btn, base) {
-  btn.classList.toggle('liked');
-  const span = btn.querySelector('span');
-  const n = parseInt(span.textContent);
-  span.textContent = btn.classList.contains('liked') ? n + 1 : n - 1;
-  btn.querySelector('i').className = btn.classList.contains('liked') ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
-}
-
-// ── Ballistics ──
-const CARTS = {
-  '308win': { name:'.308 Win 168gr', bc:0.475, mv:2650, wt:168 },
-  '3006':   { name:'.30-06 165gr',   bc:0.435, mv:2800, wt:165 },
-  '65cm':   { name:'6.5 CM 140gr',   bc:0.535, mv:2710, wt:140 },
-  '300wm':  { name:'.300 WM 180gr',  bc:0.507, mv:2960, wt:180 },
-  '243':    { name:'.243 Win 95gr',  bc:0.379, mv:3025, wt:95  },
-  '7mm':    { name:'7mm RM 162gr',   bc:0.572, mv:2950, wt:162 },
-  '338':    { name:'.338 Lapua 300gr',bc:0.618,mv:2650, wt:300 },
-};
-
-function velAt(v0, bc, r) { return v0 * Math.pow(1 - 0.015 / bc, r / 100); }
-
-function tofAt(v0, bc, r) {
-  const N = 200, dr = r / N;
-  let t = 0;
-  for (let i = 0; i < N; i++) t += (dr * 3) / velAt(v0, bc, (i + .5) * dr);
-  return t;
-}
-
-function runBallistics() {
-  const key  = document.getElementById('b-cart').value;
-  const zero = +document.getElementById('b-zero').value || 100;
-  const wind = +document.getElementById('b-wind').value || 0;
-  const temp = +document.getElementById('b-temp').value || 59;
-  const alt  = +document.getElementById('b-alt').value  || 0;
-  const c = CARTS[key];
-  const bcEff = c.bc * Math.exp((alt + (59 - temp) * 120) / 145000);
-  const mv = c.mv;
-  const tofZ = tofAt(mv, bcEff, zero);
-  const theta = (1.5 - (-0.5 * 32.174 * tofZ * tofZ * 12)) / zero;
-
-  let rows = '', windLines = '';
-  [100,200,300,400,500,600,700,800].forEach(r => {
-    const v = velAt(mv, bcEff, r);
-    const t = tofAt(mv, bcEff, r);
-    const drop = -1.5 + theta * r + (-0.5 * 32.174 * t * t * 12);
-    const moa  = drop / (r / 100 * 1.047);
-    const wd   = wind * 1.467 * (t - (r * 3) / mv) * 12;
-    const ke   = (c.wt * v * v) / 450400;
-    const dc   = drop >= 0 ? 'drop-pos' : 'drop-neg';
-    rows += `<tr>
-      <td><strong>${r}</strong></td><td>${Math.round(v)}</td><td>${Math.round(ke)}</td>
-      <td class="${dc}">${drop >= 0?'+':''}${drop.toFixed(1)}"</td>
-      <td class="${dc}">${moa >= 0?'+':''}${moa.toFixed(1)}</td>
-      <td>${wd > 0?'+':''}${wd.toFixed(1)}"</td></tr>`;
-    windLines += `<div><span style="color:var(--muted);min-width:60px;display:inline-block">${r} yds:</span> <strong>${wd>0?'+':''}${wd.toFixed(1)}"</strong> &nbsp;<span style="color:var(--muted);font-size:.78rem">(${(wd/(r/100*1.047)).toFixed(1)} MOA)</span></div>`;
-  });
-
-  document.getElementById('traj-body').innerHTML = rows;
-  document.getElementById('balli-sub').textContent = `· ${c.name} · Zero: ${zero} yds`;
-  document.getElementById('wind-guide').innerHTML =
-    `<p style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${wind} mph full-value crosswind · ${c.name}</p>${windLines}`;
-  document.getElementById('balli-results').style.display = 'block';
-}
-
-// ── Harvest Log ──
+// ─────────────────────────────────────────────
+// Harvest log
+// ─────────────────────────────────────────────
 const ICONS = {'Bull Elk':'🦌','Cow Elk':'🦌','Mule Deer Buck':'🦌','Whitetail Buck':'🦌',
   'Pronghorn':'🐐','Black Bear':'🐻','Bison':'🐂','Coyote':'🐺','Other':'🎯'};
 
-function harvestToHTML(h) {
-  const date = h.date ? new Date(h.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
-  return `
-    <div class="log-entry-icon">${ICONS[h.species]||'🎯'}</div>
-    <div class="log-entry-body">
-      <div class="log-entry-title">${h.species}</div>
-      <div class="log-entry-meta">
-        <span><i class="fa-regular fa-calendar"></i> ${date}</span>
-        ${h.distance_yards ? `<span><i class="fa-solid fa-ruler-horizontal"></i> ${h.distance_yards} yds</span>` : ''}
-        ${h.cartridge ? `<span><i class="fa-solid fa-crosshairs"></i> ${h.cartridge}</span>` : ''}
-      </div>
-      <div class="log-tags">
-        ${h.location ? `<span class="pill pill-amber" style="font-size:.7rem">${h.location}</span>` : ''}
-        ${h.is_public ? '<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-share-nodes"></i> Public</span>' : '<span class="pill" style="font-size:.7rem;background:rgba(0,0,0,.2);border:1px solid var(--border)"><i class="fa-solid fa-lock"></i> Private</span>'}
-      </div>
-    </div>
-    <button class="icon-btn" style="align-self:flex-start"><i class="fa-solid fa-share-nodes"></i></button>`;
+let allHarvests = [];
+
+function filterLog() {
+  const f = document.getElementById('log-filter').value;
+  renderHarvestList(f ? allHarvests.filter(h => h.species === f) : allHarvests);
 }
 
 async function loadHarvests() {
@@ -743,27 +924,52 @@ async function loadHarvests() {
     const r = await fetch('/api/harvests');
     if (!r.ok) return;
     const { harvests } = await r.json();
-    const list = document.getElementById('log-list');
-    list.innerHTML = '';
-    if (harvests.length === 0) {
-      list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--muted)"><i class="fa-solid fa-book-open" style="font-size:2rem;display:block;margin-bottom:12px;color:var(--border)"></i>No harvests yet — tap + to log your first one.</div>';
-    } else {
-      harvests.forEach(h => {
-        const el = document.createElement('div');
-        el.className = 'log-entry';
-        el.innerHTML = harvestToHTML(h);
-        list.appendChild(el);
-      });
-    }
-    const countEl = document.getElementById('profile-harvests');
-    if (countEl) countEl.textContent = harvests.length;
-    document.querySelector('.log-stat-val').textContent = harvests.length;
-  } catch (err) {
-    console.error('loadHarvests', err);
-  }
+    allHarvests = harvests;
+    renderHarvestList(harvests);
+    const dists = harvests.map(h => h.distance_yards).filter(Boolean);
+    const avg = dists.length ? Math.round(dists.reduce((a,b)=>a+b,0)/dists.length) : '—';
+    const max = dists.length ? Math.max(...dists) : '—';
+    document.getElementById('stat-harvests').textContent = harvests.length;
+    document.getElementById('stat-avg-dist').textContent = dists.length ? avg : '—';
+    document.getElementById('stat-longest').textContent  = dists.length ? max : '—';
+    document.getElementById('profile-harvests').textContent = harvests.length;
+  } catch (e) { console.error('loadHarvests', e); }
 }
 
-function openLogModal() { document.getElementById('log-modal').classList.add('open'); }
+function renderHarvestList(harvests) {
+  const list = document.getElementById('log-list');
+  if (!harvests.length) {
+    list.innerHTML = `<div class="feed-state" style="padding:40px 20px">
+      <i class="fa-solid fa-book-open"></i>
+      <strong>No harvests yet</strong>
+      Tap + to log your first hunt.
+    </div>`;
+    return;
+  }
+  list.innerHTML = harvests.map(h => {
+    const date = h.date ? fmt(h.date) : '—';
+    return `<div class="log-entry">
+      <div class="log-entry-icon">${ICONS[h.species]||'🎯'}</div>
+      <div class="log-entry-body">
+        <div class="log-entry-title">${esc(h.species)}</div>
+        <div class="log-entry-meta">
+          <span><i class="fa-regular fa-calendar"></i> ${date}</span>
+          ${h.distance_yards?`<span><i class="fa-solid fa-ruler-horizontal"></i> ${h.distance_yards} yds</span>`:''}
+          ${h.cartridge?`<span><i class="fa-solid fa-crosshairs"></i> ${esc(h.cartridge)}</span>`:''}
+        </div>
+        <div class="log-tags">
+          ${h.location?`<span class="pill pill-amber" style="font-size:.7rem">${esc(h.location)}</span>`:''}
+          ${h.is_public
+            ? '<span class="pill pill-green" style="font-size:.7rem"><i class="fa-solid fa-globe"></i> Public</span>'
+            : '<span class="pill" style="font-size:.7rem;background:rgba(0,0,0,.2);border:1px solid var(--border)"><i class="fa-solid fa-lock"></i> Private</span>'}
+        </div>
+      </div>
+      <button class="icon-btn" style="align-self:flex-start" onclick="openPostModal()"><i class="fa-solid fa-share-nodes"></i></button>
+    </div>`;
+  }).join('');
+}
+
+function openLogModal()  { document.getElementById('log-modal').classList.add('open'); }
 function closeLogModal() { document.getElementById('log-modal').classList.remove('open'); }
 
 async function saveLogEntry() {
@@ -777,32 +983,91 @@ async function saveLogEntry() {
   const is_public = document.getElementById('m-share').checked;
 
   const btn = document.querySelector('#log-modal .btn-amber');
-  btn.disabled = true;
-  btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = 'Saving…';
 
   try {
     const r = await fetch('/api/harvests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ species, date: date || null, distance_yards: dist || null,
-        cartridge: cart, wind_mph: wind_mph || null, location: loc, notes, is_public }),
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ species, date: date||null, distance_yards: dist||null,
+        cartridge: cart, wind_mph: wind_mph||null, location: loc, notes, is_public }),
     });
-    if (!r.ok) { alert('Save failed — please try again.'); return; }
+    if (!r.ok) { alert('Save failed.'); return; }
     closeLogModal();
-    ['m-date','m-dist','m-loc','m-notes','m-mwind'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('m-share').checked = false;
+    ['m-date','m-dist','m-loc','m-notes','m-mwind'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('m-share').checked = true;
     await loadHarvests();
-  } catch {
-    alert('Network error — please try again.');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Entry';
-  }
+  } catch { alert('Network error.'); }
+  finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Entry'; }
 }
 
-document.getElementById('log-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeLogModal(); });
+// ─────────────────────────────────────────────
+// Ballistics
+// ─────────────────────────────────────────────
+const CARTS = {
+  '308win':{ name:'.308 Win 168gr',  bc:0.475, mv:2650, wt:168 },
+  '3006':  { name:'.30-06 165gr',    bc:0.435, mv:2800, wt:165 },
+  '65cm':  { name:'6.5 CM 140gr',    bc:0.535, mv:2710, wt:140 },
+  '300wm': { name:'.300 WM 180gr',   bc:0.507, mv:2960, wt:180 },
+  '243':   { name:'.243 Win 95gr',   bc:0.379, mv:3025, wt:95  },
+  '7mm':   { name:'7mm RM 162gr',    bc:0.572, mv:2950, wt:162 },
+  '338':   { name:'.338 Lapua 300gr',bc:0.618, mv:2650, wt:300 },
+};
+function velAt(v0,bc,r){ return v0*Math.pow(1-0.015/bc,r/100); }
+function tofAt(v0,bc,r){ const N=200,dr=r/N; let t=0; for(let i=0;i<N;i++) t+=(dr*3)/velAt(v0,bc,(i+.5)*dr); return t; }
+function runBallistics() {
+  const key=document.getElementById('b-cart').value, zero=+document.getElementById('b-zero').value||100,
+        wind=+document.getElementById('b-wind').value||0, temp=+document.getElementById('b-temp').value||59,
+        alt=+document.getElementById('b-alt').value||0, c=CARTS[key];
+  const bcEff=c.bc*Math.exp((alt+(59-temp)*120)/145000), mv=c.mv;
+  const tofZ=tofAt(mv,bcEff,zero), theta=(1.5-(-0.5*32.174*tofZ*tofZ*12))/zero;
+  let rows='',wl='';
+  [100,200,300,400,500,600,700,800].forEach(r=>{
+    const v=velAt(mv,bcEff,r),t=tofAt(mv,bcEff,r),
+          drop=-1.5+theta*r+(-0.5*32.174*t*t*12),moa=drop/(r/100*1.047),
+          wd=wind*1.467*(t-(r*3)/mv)*12,ke=(c.wt*v*v)/450400,dc=drop>=0?'drop-pos':'drop-neg';
+    rows+=`<tr><td><strong>${r}</strong></td><td>${Math.round(v)}</td><td>${Math.round(ke)}</td>
+      <td class="${dc}">${drop>=0?'+':''}${drop.toFixed(1)}"</td>
+      <td class="${dc}">${moa>=0?'+':''}${moa.toFixed(1)}</td>
+      <td>${wd>0?'+':''}${wd.toFixed(1)}"</td></tr>`;
+    wl+=`<div><span style="color:var(--muted);min-width:60px;display:inline-block">${r} yds:</span> <strong>${wd>0?'+':''}${wd.toFixed(1)}"</strong> <span style="color:var(--muted);font-size:.78rem">(${(wd/(r/100*1.047)).toFixed(1)} MOA)</span></div>`;
+  });
+  document.getElementById('traj-body').innerHTML=rows;
+  document.getElementById('balli-sub').textContent=`· ${c.name} · Zero: ${zero} yds`;
+  document.getElementById('wind-guide').innerHTML=`<p style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${wind} mph full-value crosswind · ${c.name}</p>${wl}`;
+  document.getElementById('balli-results').style.display='block';
+}
 
-// ── Boot ──
+// ─────────────────────────────────────────────
+// Utils
+// ─────────────────────────────────────────────
+function esc(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function timeAgo(d){
+  const sec=Math.floor((Date.now()-new Date(d))/1000);
+  if(sec<60) return 'just now';
+  if(sec<3600) return Math.floor(sec/60)+'m ago';
+  if(sec<86400) return Math.floor(sec/3600)+'h ago';
+  if(sec<604800) return Math.floor(sec/86400)+'d ago';
+  return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function fmt(d){
+  return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function avatarColor(u){
+  const c=['#3d6b4f','#6b4f3d','#4f3d6b','#3d4f6b','#6b3d4f','#4f6b3d'];
+  let h=0; for(const ch of(u||'')) h=(h*31+ch.charCodeAt(0))&0xffffffff;
+  return c[Math.abs(h)%c.length];
+}
+function makeAvatar(u,sz){
+  const l=((u.display_name||u.username||'?')[0]).toUpperCase();
+  return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${avatarColor(u.username)};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.round(sz*.42)}px;color:#fff;flex-shrink:0">${l}</div>`;
+}
+
+// ─────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────
 runBallistics();
 initApp();
 </script>

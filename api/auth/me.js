@@ -9,8 +9,11 @@ module.exports = async function handler(req, res) {
     const { userId } = await verifyToken(token);
     const sql = getDb();
     const [user] = await sql`
-      SELECT id, username, email, display_name, location, bio
-      FROM users WHERE id = ${userId} LIMIT 1
+      SELECT
+        u.id, u.username, u.email, u.display_name, u.location, u.bio,
+        (SELECT COUNT(*)::int FROM follows WHERE following_id = u.id) AS followers_count,
+        (SELECT COUNT(*)::int FROM follows WHERE follower_id  = u.id) AS following_count
+      FROM users u WHERE u.id = ${userId} LIMIT 1
     `;
     if (!user) return res.status(401).json({ error: 'User not found' });
     return res.json({ user });

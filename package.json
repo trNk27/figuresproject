@@ -5,6 +5,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^0.9.4",
     "bcryptjs": "^2.4.3",
-    "jose": "^5.2.4"
+    "jose": "^5.2.4",
+    "@vercel/blob": "^0.23.0"
   }
 }
